@@ -2,7 +2,13 @@ import { useLocation } from 'react-router-dom';
 import './Header.css';
 
 const ROUTE_LABELS: Record<string, string> = {
-  '/dashboard': 'Dashboard',
+  '/dashboard': 'Dashboard Tổng Quan',
+  '/dashboard/giang-vien': 'Dashboard Giảng Viên',
+  '/users': 'Quản Lý Người Dùng',
+  '/students': 'Quản Lý Học Viên',
+  '/courses': 'Quản Lý Khóa Học',
+  '/questions': 'Ngân Hàng Câu Hỏi',
+  '/exam-config': 'Cấu Hình Đề Thi',
 };
 
 export function Header() {
