@@ -1,0 +1,369 @@
+.student-detail {
+	color: #f3f4f6;
+	display: flex;
+	flex-direction: column;
+	gap: 18px;
+}
+
+.student-detail__topbar {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 16px;
+}
+
+.student-detail__topbar h1 {
+	font-size: 34px;
+	margin-bottom: 6px;
+}
+
+.student-detail__topbar p {
+	color: rgba(243, 244, 246, 0.65);
+}
+
+.student-detail__back,
+.detail-action,
+.detail-modal button {
+	border: 0;
+	cursor: pointer;
+}
+
+.student-detail__back {
+	width: 38px;
+	height: 38px;
+	border-radius: 10px;
+	background: #2a2a2a;
+	color: #fff;
+	margin-top: 2px;
+}
+
+.student-detail__actions {
+	display: flex;
+	gap: 10px;
+	flex-wrap: wrap;
+}
+
+.detail-action {
+	height: 40px;
+	border-radius: 10px;
+	padding: 0 14px;
+	font-weight: 700;
+}
+
+.detail-action--yellow {
+	background: transparent;
+	color: #f9c74f;
+	border: 1px solid #f9c74f;
+}
+
+.detail-action--green {
+	background: transparent;
+	color: #4ade80;
+	border: 1px solid #4ade80;
+}
+
+.detail-action--red {
+	background: transparent;
+	color: #ff6b6b;
+	border: 1px solid #ff6b6b;
+}
+
+.student-detail__grid {
+	display: grid;
+	grid-template-columns: 300px minmax(0, 1fr);
+	gap: 18px;
+}
+
+.card-surface {
+	background: #2a2a2a;
+	border: 1px solid rgba(255, 255, 255, 0.05);
+	border-radius: 16px;
+}
+
+.student-detail__profile {
+	padding: 22px;
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+}
+
+.student-detail__avatar {
+	width: 88px;
+	height: 88px;
+	border-radius: 50%;
+	display: grid;
+	place-items: center;
+	color: #1f1f1f;
+	font-size: 28px;
+	font-weight: 800;
+	margin-bottom: 6px;
+}
+
+.student-detail__name {
+	font-size: 22px;
+	font-weight: 800;
+}
+
+.detail-badge {
+	display: inline-flex;
+	width: fit-content;
+	border-radius: 999px;
+	padding: 6px 12px;
+	font-size: 12px;
+	font-weight: 700;
+}
+
+.detail-badge--success,
+.student-result--pass {
+	background: #35d07f;
+	color: #08260f;
+}
+
+.detail-badge--warning {
+	background: #f9c74f;
+	color: #1f1f1f;
+}
+
+.detail-badge--primary {
+	background: #60a5fa;
+	color: #08192d;
+}
+
+.detail-badge--danger,
+.student-result--fail {
+	background: #ff5a5f;
+	color: #fff;
+}
+
+.student-detail__info {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	color: rgba(243, 244, 246, 0.78);
+}
+
+.student-detail__divider {
+	height: 1px;
+	background: rgba(255, 255, 255, 0.06);
+	margin: 4px 0;
+}
+
+.student-detail__label {
+	color: rgba(243, 244, 246, 0.55);
+	font-size: 13px;
+}
+
+.student-detail__content {
+	display: flex;
+	flex-direction: column;
+	gap: 18px;
+}
+
+.student-detail__stats {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 16px;
+}
+
+.student-detail__stat {
+	padding: 18px;
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	min-height: 82px;
+}
+
+.student-detail__stat-title {
+	color: rgba(243, 244, 246, 0.6);
+	display: block;
+	margin-bottom: 4px;
+}
+
+.student-detail__stat strong {
+	font-size: 28px;
+}
+
+.student-detail__stat--blue strong {
+	color: #60a5fa;
+}
+.student-detail__stat--green strong {
+	color: #35d07f;
+}
+
+.student-detail__chart-card {
+	padding: 18px;
+}
+
+.student-detail__chart-card h2,
+.student-detail__history h2 {
+	font-size: 18px;
+	margin-bottom: 16px;
+}
+
+.student-detail__chart {
+	height: 280px;
+}
+
+.student-detail__history {
+	padding: 18px;
+}
+
+.student-detail__history table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+.student-detail__history th,
+.student-detail__history td {
+	padding: 12px 10px;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+	text-align: left;
+}
+
+.student-score--good {
+	color: #4ade80;
+}
+.student-score--warn {
+	color: #f9c74f;
+}
+.student-score--bad {
+	color: #ff6b6b;
+}
+
+.detail-empty {
+	padding: 48px;
+	color: #f3f4f6;
+}
+
+.detail-empty button {
+	margin-top: 16px;
+	height: 40px;
+	padding: 0 16px;
+	border-radius: 10px;
+	background: #2a2a2a;
+	color: #fff;
+}
+
+.detail-modal__backdrop {
+	position: fixed;
+	inset: 0;
+	background: rgba(0, 0, 0, 0.7);
+	display: grid;
+	place-items: center;
+	padding: 24px;
+	z-index: 100;
+}
+
+.detail-modal {
+	width: min(560px, 100%);
+	background: #2d2d2d;
+	color: #f3f4f6;
+	border-radius: 18px;
+	padding: 24px;
+	box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
+}
+
+.detail-modal__title {
+	font-size: 22px;
+	font-weight: 800;
+	margin-bottom: 16px;
+	text-align: center;
+}
+
+.detail-modal__hint {
+	color: rgba(243, 244, 246, 0.82);
+	margin-bottom: 16px;
+	text-align: center;
+}
+
+.detail-modal__field {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	margin-bottom: 16px;
+}
+
+.detail-modal__field label {
+	font-weight: 600;
+}
+
+.detail-modal__field textarea {
+	min-height: 108px;
+	resize: vertical;
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	border-radius: 12px;
+	background: #3a3a3a;
+	color: #fff;
+	padding: 12px;
+	outline: none;
+}
+
+.detail-modal__rank-list,
+.detail-modal__template-list,
+.detail-modal__channels {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+}
+
+.detail-modal__rank,
+.detail-modal__template {
+	border-radius: 12px;
+	padding: 10px 14px;
+	background: #404040;
+	color: #fff;
+}
+
+.detail-modal__rank--active,
+.detail-modal__template--active {
+	background: #f9c74f;
+	color: #1f1f1f;
+	font-weight: 800;
+}
+
+.detail-modal__channels label {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	padding: 10px 12px;
+	border-radius: 10px;
+	background: #404040;
+}
+
+.detail-modal__footer {
+	display: flex;
+	gap: 12px;
+	margin-top: 4px;
+}
+
+.detail-modal__footer button {
+	flex: 1;
+	height: 42px;
+	border-radius: 10px;
+	background: #404040;
+	color: #fff;
+	font-weight: 700;
+}
+
+.detail-modal__confirm--yellow {
+	background: #f9c74f !important;
+	color: #1f1f1f !important;
+}
+.detail-modal__confirm--green {
+	background: #35d07f !important;
+	color: #081f10 !important;
+}
+.detail-modal__confirm--red {
+	background: #ff5a5f !important;
+	color: #fff !important;
+}
+
+@media (max-width: 1200px) {
+	.student-detail__grid {
+		grid-template-columns: 1fr;
+	}
+
+	.student-detail__stats {
+		grid-template-columns: 1fr;
+	}
+}

@@ -15,6 +15,9 @@ import { DashboardPage } from "./pages/DashboardPage";
 import { DashboardGiangVienPage } from "./pages/DashboardGiangVienPage";
 import UserManagementPage from "./pages/UserManagementPage";
 import AddUserPage from "./pages/AddUserPage";
+import StudentManagementPage from "./pages/StudentManagementPage";
+import StudentDetailPage from "./pages/StudentDetailPage";
+import AddStudentPage from "./pages/AddStudentPage";
 
 const router = createBrowserRouter([
 	{
@@ -64,6 +67,18 @@ const router = createBrowserRouter([
 						path: "users/new",
 						element: <AddUserPage />,
 					},
+					{
+						path: "students",
+						element: <StudentManagementPage />,
+					},
+					{
+						path: "students/new",
+						element: <AddStudentPage />,
+					},
+					{
+						path: "students/:studentId",
+						element: <StudentDetailPage />,
+					},
 				],
 			},
 		],
@@ -72,7 +87,7 @@ const router = createBrowserRouter([
 		path: "*",
 		element: (
 			<div style={{ padding: 40, textAlign: "center" }}>
-				404 — Trang không tìm thấy
+				404 - Trang khong tim thay
 			</div>
 		),
 	},
