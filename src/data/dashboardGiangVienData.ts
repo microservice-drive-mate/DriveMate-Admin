@@ -54,11 +54,11 @@ export const TODAY_SESSIONS: TodaySession[] = [
 
 export const DARK_TOOLTIP = {
   contentStyle: {
-    background: '#1e293b',
-    border: '1px solid rgba(255,255,255,0.12)',
+    background: '#242424',
+    border: '1px solid #333333',
     borderRadius: 8,
-    color: '#f8fafc',
+    color: '#f0f0f0',
     fontSize: 13,
   },
-  labelStyle: { color: '#f8fafc' },
+  labelStyle: { color: '#f0f0f0' },
 };

@@ -14,8 +14,8 @@
 }
 
 .stat-card--dark {
-  background: #1e293b;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #242424;
+  border: 1px solid #333333;
 }
 
 .stat-card__info {
@@ -34,7 +34,7 @@
 }
 
 .stat-card--dark .stat-card__title {
-  color: #94a3b8;
+  color: #888888;
   margin-bottom: 8px;
 }
 
@@ -50,7 +50,7 @@
 }
 
 .stat-card--dark .stat-card__value {
-  color: #f8fafc;
+  color: #f0f0f0;
 }
 
 .stat-card__change {

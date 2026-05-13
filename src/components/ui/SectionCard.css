@@ -10,8 +10,8 @@
 }
 
 .section-card--dark {
-  background: #1e293b;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #242424;
+  border: 1px solid #333333;
 }
 
 .section-card__title {
@@ -25,5 +25,5 @@
 }
 
 .section-card--dark .section-card__title {
-  color: #f8fafc;
+  color: #f0f0f0;
 }

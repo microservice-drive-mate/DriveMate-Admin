@@ -24,10 +24,10 @@ interface ChartsSectionProps {
 }
 
 const darkTooltipStyle = {
-  backgroundColor: '#1e293b',
-  border: '1px solid rgba(255,255,255,0.1)',
+  backgroundColor: '#242424',
+  border: '1px solid #333333',
   borderRadius: 6,
-  color: '#f8fafc',
+  color: '#f0f0f0',
 };
 
 const darkAxisTick = { fontSize: 12, fill: '#94a3b8' };

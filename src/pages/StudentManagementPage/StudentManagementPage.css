@@ -2,7 +2,7 @@
 	display: flex;
 	flex-direction: column;
 	gap: 20px;
-	color: #f3f4f6;
+	color: #f0f0f0;
 }
 
 .student-management__header {
@@ -49,8 +49,8 @@
 .student-table-wrap,
 .student-empty,
 .student-pagination {
-	background: #2a2a2a;
-	border: 1px solid rgba(255, 255, 255, 0.05);
+	background: #242424;
+	border: 1px solid #333333;
 	border-radius: 16px;
 }
 
@@ -83,9 +83,9 @@
 .student-filters__search,
 .student-filters select {
 	height: 44px;
-	background: #3a3a3a;
-	color: #f3f4f6;
-	border: 1px solid rgba(255, 255, 255, 0.05);
+	background: #1a1a1a;
+	color: #f0f0f0;
+	border: 1px solid #333333;
 	border-radius: 8px;
 }
 
@@ -185,8 +185,8 @@
 	justify-content: center;
 	padding: 4px 8px;
 	border-radius: 8px;
-	background: #3b3b3b;
-	color: #f3f4f6;
+	background: #2e2e2e;
+	color: #f0f0f0;
 	font-weight: 700;
 }
 
@@ -230,7 +230,7 @@
 	height: 36px;
 	padding: 0 14px;
 	border-radius: 10px;
-	background: #3d3d3d;
+	background: #2e2e2e;
 	color: #fff;
 	font-weight: 600;
 }
@@ -250,7 +250,7 @@
 }
 
 .student-pagination button {
-	background: #3a3a3a;
+	background: #2e2e2e;
 	color: #fff;
 	padding: 10px 14px;
 	border-radius: 10px;
