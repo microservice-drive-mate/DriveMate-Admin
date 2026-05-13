@@ -18,6 +18,11 @@ import AddUserPage from "./pages/AddUserPage";
 import StudentManagementPage from "./pages/StudentManagementPage";
 import StudentDetailPage from "./pages/StudentDetailPage";
 import AddStudentPage from "./pages/AddStudentPage";
+import CourseManagementPage from "./pages/CourseManagementPage";
+import CourseDetailPage from "./pages/CourseDetailPage";
+import AddCoursePage from "./pages/AddCoursePage";
+import QuestionManagementPage from "./pages/QuestionManagementPage";
+import AddQuestionPage from "./pages/AddQuestionPage";
 
 const router = createBrowserRouter([
 	{
@@ -78,6 +83,34 @@ const router = createBrowserRouter([
 					{
 						path: "students/:studentId",
 						element: <StudentDetailPage />,
+					},
+					{
+						path: "courses",
+						element: <CourseManagementPage />,
+					},
+					{
+						path: "courses/new",
+						element: <AddCoursePage />,
+					},
+					{
+						path: "courses/:courseId",
+						element: <CourseDetailPage />,
+					},
+					{
+						path: "courses/:courseId/edit",
+						element: <AddCoursePage />,
+					},
+					{
+						path: "questions",
+						element: <QuestionManagementPage />,
+					},
+					{
+						path: "questions/new",
+						element: <AddQuestionPage />,
+					},
+					{
+						path: "questions/:id/edit",
+						element: <AddQuestionPage />,
 					},
 				],
 			},
