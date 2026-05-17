@@ -27,4 +27,4 @@ dist-ssr
 .claude
 
 #Document
-docs
+docs/*.pdf
