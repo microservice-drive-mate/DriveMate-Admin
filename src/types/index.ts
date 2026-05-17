@@ -52,10 +52,12 @@ export interface RecentActivity {
 }
 
 // Auth Types
+export type UserRole = "ADMIN" | "CENTER_MANAGER" | "INSTRUCTOR" | "STUDENT";
+
 export interface AuthUser {
 	id: string;
 	email: string;
-	role: "admin" | "staff" | "user";
+	role: UserRole;
 }
 
 export interface LoginCredentials {

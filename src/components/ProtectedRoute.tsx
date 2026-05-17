@@ -1,22 +1,19 @@
 import { Navigate, Outlet } from "react-router-dom";
 import { useAuthStore } from "../store/authStore";
+import { AUTH_CONFIG } from "@/constants";
 
 export function ProtectedRoute() {
-	const { isAuthenticated, token } = useAuthStore();
+	const { isAuthenticated, isInitializing } = useAuthStore();
 
-	// Check if user has a valid token
-	const hasValidToken = !!token || !!localStorage.getItem("authToken");
-
-	if (!isAuthenticated && !hasValidToken) {
-		// Redirect to login if not authenticated
-		return (
-			<Navigate
-				to="/login"
-				replace
-			/>
-		);
+	if (isInitializing) {
+		return null;
 	}
 
-	// Render the protected content
+	const hasToken = !!localStorage.getItem(AUTH_CONFIG.ACCESS_TOKEN_STORAGE_KEY);
+
+	if (!isAuthenticated && !hasToken) {
+		return <Navigate to="/login" replace />;
+	}
+
 	return <Outlet />;
 }

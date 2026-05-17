@@ -1,68 +1,105 @@
-export type QuestionDifficulty = 'easy' | 'medium' | 'hard';
-export type QuestionStatus = 'active' | 'retired' | 'deleted';
-export type LicenseClass = 'A1' | 'A2' | 'B1' | 'B2' | 'C' | 'D' | 'E' | 'F';
+export type QuestionType = 'THEORY' | 'TRAFFIC_SIGN' | 'SCENARIO_RELATED';
+export type QuestionDifficulty = 'EASY' | 'MEDIUM' | 'HARD';
+export type LicenseCategory = 'A1' | 'A2' | 'B1' | 'B2' | 'C' | 'D' | 'E' | 'F';
 
 export interface QuestionOption {
-  key: 'A' | 'B' | 'C' | 'D';
+  id: string;
   content: string;
-  imageUrl?: string;
   isCorrect: boolean;
+  displayOrder: number;
 }
 
-export interface QuestionVersion {
-  version: number;
-  updatedAt: string;
-  updatedBy: string;
+export interface TopicResponse {
+  id: string;
+  name: string;
+  description: string | null;
+  parentId: string | null;
+  createdAt: string;
 }
 
-export interface Question {
-  id: number;
+export interface QuestionResponse {
+  id: string;
   content: string;
-  imageUrl?: string;
-  isCritical: boolean;
+  type: QuestionType;
+  licenseCategories: LicenseCategory[];
   difficulty: QuestionDifficulty;
-  licenseClass: LicenseClass;
-  topic: string;
-  options: QuestionOption[];
   explanation: string;
-  status: QuestionStatus;
+  imageUrl: string | null;
+  mediaFileId: string | null;
+  isCritical: boolean;
+  isActive: boolean;
+  isDeleted: boolean;
+  topicId: string;
+  createdById: string;
   version: number;
-  versions: QuestionVersion[];
-  tags: string[];
+  deletedById: string | null;
+  deletedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+  options: QuestionOption[];
 }
 
 export interface QuestionFilters {
-  search: string;
-  licenseClass: string;
-  topic: string;
-  difficulty: string;
+  keyword: string;
+  licenseCategory: LicenseCategory | '';
+  type: QuestionType | '';
+  difficulty: QuestionDifficulty | '';
+  topicId: string;
+  includeDeleted: boolean;
 }
 
 export interface QuestionFormData {
   content: string;
-  imageUrl: string;
-  isCritical: boolean;
+  type: QuestionType | '';
+  licenseCategories: LicenseCategory[];
   difficulty: QuestionDifficulty | '';
-  licenseClass: LicenseClass | '';
-  topic: string;
-  options: { key: 'A' | 'B' | 'C' | 'D'; content: string; isCorrect: boolean }[];
   explanation: string;
-  tags: string[];
+  isCritical: boolean;
+  isActive: boolean;
+  topicId: string;
+  options: { content: string; isCorrect: boolean; displayOrder: number }[];
+}
+
+export interface CreateQuestionPayload {
+  content: string;
+  type: QuestionType;
+  licenseCategories: LicenseCategory[];
+  difficulty: QuestionDifficulty;
+  explanation: string;
+  isCritical: boolean;
+  isActive: boolean;
+  topicId: string;
+  options: { content: string; isCorrect: boolean; displayOrder: number }[];
+  imageUrl?: string | null;
+  mediaFileId?: string | null;
+}
+
+export interface UpdateQuestionPayload extends Partial<CreateQuestionPayload> {
+  version: number;
 }
 
 export const DIFFICULTY_LABELS: Record<QuestionDifficulty, string> = {
-  easy: 'Dễ',
-  medium: 'TB',
-  hard: 'Khó',
+  EASY: 'Dễ',
+  MEDIUM: 'TB',
+  HARD: 'Khó',
 };
 
-export const TOPIC_OPTIONS = [
-  'Biển báo',
-  'Luật giao thông',
-  'Tốc độ',
-  'Xử lý tình huống',
-  'Vạch kẻ đường',
-  'Kỹ thuật lái',
+export const QUESTION_TYPE_LABELS: Record<QuestionType, string> = {
+  THEORY: 'Lý thuyết',
+  TRAFFIC_SIGN: 'Biển báo',
+  SCENARIO_RELATED: 'Tình huống',
+};
+
+export const LICENSE_CATEGORY_OPTIONS: LicenseCategory[] = ['A1', 'A2', 'B1', 'B2', 'C', 'D', 'E', 'F'];
+
+export const DIFFICULTY_OPTIONS: { value: QuestionDifficulty; label: string }[] = [
+  { value: 'EASY', label: 'Dễ' },
+  { value: 'MEDIUM', label: 'TB' },
+  { value: 'HARD', label: 'Khó' },
 ];
 
-export const LICENSE_CLASS_OPTIONS: LicenseClass[] = ['A1', 'A2', 'B1', 'B2', 'C', 'D', 'E', 'F'];
+export const QUESTION_TYPE_OPTIONS: { value: QuestionType; label: string }[] = [
+  { value: 'THEORY', label: 'Lý thuyết' },
+  { value: 'TRAFFIC_SIGN', label: 'Biển báo' },
+  { value: 'SCENARIO_RELATED', label: 'Tình huống' },
+];

@@ -1,14 +1,17 @@
-import type { ApiResponse, AuthUser, LoginCredentials } from "@/types";
+import type { ApiResponse, LoginCredentials } from "@/types";
 import { withErrorHandling } from "@/utils";
 import { apiService } from "@/lib";
 
-interface AuthTokens {
+export interface LoginResponseData {
   accessToken: string;
   refreshToken: string;
+  expiresIn: number;
+  refreshExpiresIn: number;
+  tokenType: string;
+  scope: string;
 }
 
-interface LoginResponseData {
-  user: AuthUser;
+interface AuthTokens {
   accessToken: string;
   refreshToken: string;
 }
@@ -30,7 +33,10 @@ interface ResetPasswordPayload {
 
 export const authService = {
   login: withErrorHandling((credentials: LoginCredentials) =>
-    apiService.post<ApiResponse<LoginResponseData>>("/auth/login", credentials),
+    apiService.post<ApiResponse<LoginResponseData>>("/auth/login", {
+      username: credentials.email,
+      password: credentials.password,
+    }),
   ),
 
   logout: withErrorHandling(() =>

@@ -2,12 +2,14 @@ export interface ApiResponse<T> {
   data: T;
   message: string;
   success: boolean;
+  code?: string;
+  timestamp?: string;
+  path?: string;
 }
 
 export interface PaginatedResponse<T> {
-  data: T[];
+  items: T[];
   total: number;
   page: number;
-  limit: number;
-  totalPages: number;
+  size: number;
 }

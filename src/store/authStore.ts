@@ -1,151 +1,167 @@
 import { create } from "zustand";
-import type { AuthState, AuthUser, LoginCredentials } from "../types";
+import type { AuthState, AuthUser, LoginCredentials, UserRole } from "../types";
+import { authService } from "@/services";
+import { AUTH_CONFIG } from "@/constants";
+import {
+  getAuthToken,
+  getStorageItem,
+  getUserData,
+  removeAuthToken,
+  removeStorageItem,
+  removeUserData,
+  setAuthToken,
+  setStorageItem,
+  setUserData,
+} from "@/utils";
 
 interface AuthStore extends AuthState {
-	login: (credentials: LoginCredentials) => void;
-	logout: () => void;
-	requestPasswordReset: (email: string) => void;
-	verifyOTP: (otp: string) => boolean;
-	resetPassword: (newPassword: string) => void;
-	clearError: () => void;
-	initializeAuth: () => void;
+  isInitializing: boolean;
+  login: (credentials: LoginCredentials) => Promise<void>;
+  logout: () => Promise<void>;
+  requestPasswordReset: (email: string) => Promise<void>;
+  verifyOTP: (otp: string) => boolean;
+  resetPassword: (newPassword: string) => void;
+  clearError: () => void;
+  initializeAuth: () => Promise<void>;
+}
+
+function decodeJwtPayload(token: string): Record<string, unknown> {
+  try {
+    const payload = token.split(".")[1];
+    const decoded = atob(payload.replace(/-/g, "+").replace(/_/g, "/"));
+    return JSON.parse(decoded);
+  } catch {
+    return {};
+  }
+}
+
+function extractRoleFromJwt(payload: Record<string, unknown>): UserRole {
+  const realmAccess = payload?.realm_access as { roles?: string[] } | undefined;
+  const roles = realmAccess?.roles ?? [];
+  const priority: UserRole[] = ["ADMIN", "CENTER_MANAGER", "INSTRUCTOR", "STUDENT"];
+  for (const role of priority) {
+    if (roles.includes(role)) return role;
+  }
+  return "STUDENT";
 }
 
 export const useAuthStore = create<AuthStore>((set, get) => ({
-	user: null,
-	token: null,
-	isAuthenticated: false,
-	loading: false,
-	error: null,
-	isResettingPassword: false,
-	resetEmail: null,
-	resetOtpVerified: false,
+  user: null,
+  token: null,
+  isAuthenticated: false,
+  loading: false,
+  error: null,
+  isInitializing: true,
+  isResettingPassword: false,
+  resetEmail: null,
+  resetOtpVerified: false,
 
-	initializeAuth: () => {
-		// Check if token exists in localStorage on app init
-		const token = localStorage.getItem("authToken");
-		if (token) {
-			// In production, verify token with backend
-			const userStr = localStorage.getItem("authUser");
-			if (userStr) {
-				const user = JSON.parse(userStr);
-				set({
-					token,
-					user,
-					isAuthenticated: true,
-				});
-			}
-		}
-	},
+  initializeAuth: async () => {
+    set({ isInitializing: true });
+    const token = await getAuthToken();
+    if (token) {
+      const user = await getUserData();
+      if (user) {
+        set({ token, user, isAuthenticated: true, isInitializing: false });
+        return;
+      }
+    }
+    set({ isInitializing: false });
+  },
 
-	login: (credentials: LoginCredentials) => {
-		set({ loading: true, error: null });
+  login: async (credentials: LoginCredentials) => {
+    set({ loading: true, error: null });
 
-		// Mock API call delay
-		setTimeout(() => {
-			// Demo: accept any email/password (you can add real validation)
-			if (credentials.email && credentials.password) {
-				const mockUser: AuthUser = {
-					id: "1",
-					email: credentials.email,
-					role: "admin",
-				};
-				const mockToken = `token_${Date.now()}`;
+    const result = await authService.login(credentials);
 
-				// Save to localStorage
-				localStorage.setItem("authToken", mockToken);
-				localStorage.setItem("authUser", JSON.stringify(mockUser));
+    if (!result.success) {
+      set({ loading: false, error: result.error });
+      return;
+    }
 
-				set({
-					user: mockUser,
-					token: mockToken,
-					isAuthenticated: true,
-					loading: false,
-					error: null,
-				});
-			} else {
-				set({
-					loading: false,
-					error: "Email và mật khẩu không được để trống",
-				});
-			}
-		}, 500);
-	},
+    const { accessToken, refreshToken } = result.data;
+    const payload = decodeJwtPayload(accessToken);
+    const user: AuthUser = {
+      id: (payload.sub as string) ?? "",
+      email: (payload.email as string) ?? credentials.email,
+      role: extractRoleFromJwt(payload),
+    };
 
-	logout: () => {
-		localStorage.removeItem("authToken");
-		localStorage.removeItem("authUser");
-		set({
-			user: null,
-			token: null,
-			isAuthenticated: false,
-			error: null,
-			isResettingPassword: false,
-			resetEmail: null,
-			resetOtpVerified: false,
-		});
-	},
+    await setAuthToken(accessToken);
+    await setStorageItem(AUTH_CONFIG.REFRESH_TOKEN_STORAGE_KEY, refreshToken);
+    await setUserData(user);
 
-	requestPasswordReset: (email: string) => {
-		if (!email) {
-			set({ error: "Vui lòng nhập email" });
-			return;
-		}
+    set({ user, token: accessToken, isAuthenticated: true, loading: false, error: null });
+  },
 
-		// Mock: accept any email
-		set({
-			isResettingPassword: true,
-			resetEmail: email,
-			resetOtpVerified: false,
-			error: null,
-		});
-	},
+  logout: async () => {
+    const refreshToken = await getStorageItem<string>(AUTH_CONFIG.REFRESH_TOKEN_STORAGE_KEY);
+    if (refreshToken) {
+      await authService.logout();
+    }
+    await removeAuthToken();
+    await removeUserData();
+    await removeStorageItem(AUTH_CONFIG.REFRESH_TOKEN_STORAGE_KEY);
 
-	verifyOTP: (otp: string): boolean => {
-		// Mock OTP verification: accept any 6-digit number
-		if (otp.length === 6 && /^\d+$/.test(otp)) {
-			set({
-				resetOtpVerified: true,
-				error: null,
-			});
-			return true;
-		} else {
-			set({ error: "OTP không hợp lệ. Vui lòng nhập 6 chữ số" });
-			return false;
-		}
-	},
+    set({
+      user: null,
+      token: null,
+      isAuthenticated: false,
+      error: null,
+      isResettingPassword: false,
+      resetEmail: null,
+      resetOtpVerified: false,
+    });
+  },
 
-	resetPassword: (newPassword: string) => {
-		const state = get();
-		if (!state.resetEmail || !state.resetOtpVerified) {
-			set({ error: "Không thể đặt lại mật khẩu. Vui lòng thử lại." });
-			return;
-		}
+  requestPasswordReset: async (email: string) => {
+    if (!email) {
+      set({ error: "Vui lòng nhập email" });
+      return;
+    }
 
-		if (!newPassword || newPassword.length < 8) {
-			set({ error: "Mật khẩu phải có ít nhất 8 ký tự" });
-			return;
-		}
+    set({ loading: true, error: null });
+    const result = await authService.forgotPassword({ email });
 
-		// Mock: success
-		set({
-			isResettingPassword: false,
-			resetEmail: null,
-			resetOtpVerified: false,
-			error: null,
-		});
+    if (!result.success) {
+      set({ loading: false, error: result.error });
+      return;
+    }
 
-		// Clear localStorage to force login again
-		localStorage.removeItem("authToken");
-		localStorage.removeItem("authUser");
-		set({
-			user: null,
-			token: null,
-			isAuthenticated: false,
-		});
-	},
+    set({ loading: false, isResettingPassword: true, resetEmail: email, error: null });
+  },
 
-	clearError: () => {
-		set({ error: null });
-	},
+  verifyOTP: (otp: string): boolean => {
+    if (otp.length === 6 && /^\d+$/.test(otp)) {
+      set({ resetOtpVerified: true, error: null });
+      return true;
+    }
+    set({ error: "OTP không hợp lệ. Vui lòng nhập 6 chữ số" });
+    return false;
+  },
+
+  resetPassword: (newPassword: string) => {
+    const state = get();
+    if (!state.resetEmail || !state.resetOtpVerified) {
+      set({ error: "Không thể đặt lại mật khẩu. Vui lòng thử lại." });
+      return;
+    }
+    if (!newPassword || newPassword.length < 8) {
+      set({ error: "Mật khẩu phải có ít nhất 8 ký tự" });
+      return;
+    }
+    set({
+      isResettingPassword: false,
+      resetEmail: null,
+      resetOtpVerified: false,
+      error: null,
+      user: null,
+      token: null,
+      isAuthenticated: false,
+    });
+  },
+
+  clearError: () => {
+    set({ error: null });
+  },
 }));

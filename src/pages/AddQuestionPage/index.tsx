@@ -1,27 +1,32 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { MOCK_QUESTIONS } from '../../data/questionData';
-import type { QuestionFormData } from '../../types/question.types';
-import { DIFFICULTY_LABELS, TOPIC_OPTIONS, LICENSE_CLASS_OPTIONS } from '../../types/question.types';
+import { questionService, topicService } from '@/services';
+import type { QuestionFormData, TopicResponse } from '../../types/question.types';
+import {
+  DIFFICULTY_OPTIONS,
+  QUESTION_TYPE_OPTIONS,
+  LICENSE_CATEGORY_OPTIONS,
+  type LicenseCategory,
+  type QuestionDifficulty,
+  type QuestionType,
+} from '../../types/question.types';
 import './index.css';
-
-const OPTION_KEYS = ['A', 'B', 'C', 'D'] as const;
 
 const DEFAULT_FORM: QuestionFormData = {
   content: '',
-  imageUrl: '',
+  type: '',
   isCritical: false,
   difficulty: '',
-  licenseClass: '',
-  topic: '',
+  licenseCategories: [],
+  topicId: '',
+  isActive: true,
   options: [
-    { key: 'A', content: '', isCorrect: false },
-    { key: 'B', content: '', isCorrect: false },
-    { key: 'C', content: '', isCorrect: false },
-    { key: 'D', content: '', isCorrect: false },
+    { content: '', isCorrect: false, displayOrder: 1 },
+    { content: '', isCorrect: false, displayOrder: 2 },
+    { content: '', isCorrect: false, displayOrder: 3 },
+    { content: '', isCorrect: false, displayOrder: 4 },
   ],
   explanation: '',
-  tags: [],
 };
 
 export default function AddQuestionPage() {
@@ -30,69 +35,119 @@ export default function AddQuestionPage() {
   const isEdit = Boolean(id);
 
   const [form, setForm] = useState<QuestionFormData>(DEFAULT_FORM);
-  const [errors, setErrors] = useState<Partial<Record<keyof QuestionFormData, string>>>({});
-  const [tagInput, setTagInput] = useState('');
+  const [version, setVersion] = useState<number>(1);
+  const [topics, setTopics] = useState<TopicResponse[]>([]);
+  const [errors, setErrors] = useState<Partial<Record<keyof QuestionFormData | 'options', string>>>({});
   const [isDragging, setIsDragging] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [fetchLoading, setFetchLoading] = useState(false);
+  const [submitError, setSubmitError] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (isEdit && id) {
-      const q = MOCK_QUESTIONS.find((item) => item.id === Number(id));
-      if (q) {
+    topicService.list({ size: 100 }).then((res) => {
+      if (res.success) setTopics(res.data.items);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!isEdit || !id) return;
+    setFetchLoading(true);
+    questionService.getById(id).then((res) => {
+      setFetchLoading(false);
+      if (res.success) {
+        const q = res.data;
+        setVersion(q.version);
         setForm({
           content: q.content,
-          imageUrl: q.imageUrl ?? '',
+          type: q.type,
           isCritical: q.isCritical,
           difficulty: q.difficulty,
-          licenseClass: q.licenseClass,
-          topic: q.topic,
-          options: q.options.map((o) => ({ key: o.key, content: o.content, isCorrect: o.isCorrect })),
+          licenseCategories: [...q.licenseCategories],
+          topicId: q.topicId,
+          isActive: q.isActive,
+          options: q.options
+            .sort((a, b) => a.displayOrder - b.displayOrder)
+            .map((o) => ({ content: o.content, isCorrect: o.isCorrect, displayOrder: o.displayOrder })),
           explanation: q.explanation,
-          tags: [...q.tags],
         });
+      } else {
+        setSubmitError(res.error);
       }
-    }
+    });
   }, [isEdit, id]);
 
   const update = (patch: Partial<QuestionFormData>) => setForm((f) => ({ ...f, ...patch }));
 
   const updateOption = (index: number, field: 'content' | 'isCorrect', value: string | boolean) => {
     const next = form.options.map((o, i) => {
-      if (field === 'isCorrect') {
-        return { ...o, isCorrect: i === index ? (value as boolean) : false };
-      }
-      return i === index ? { ...o, [field]: value } : o;
+      if (i !== index) return o;
+      if (field === 'isCorrect') return { ...o, isCorrect: value as boolean };
+      return { ...o, content: value as string };
     });
     update({ options: next });
   };
 
-  const addTag = () => {
-    const tag = tagInput.trim();
-    if (tag && !form.tags.includes(tag)) {
-      update({ tags: [...form.tags, tag] });
-    }
-    setTagInput('');
-  };
-
-  const removeTag = (tag: string) => {
-    update({ tags: form.tags.filter((t) => t !== tag) });
+  const toggleLicenseCategory = (cls: LicenseCategory) => {
+    const next = form.licenseCategories.includes(cls)
+      ? form.licenseCategories.filter((c) => c !== cls)
+      : [...form.licenseCategories, cls];
+    update({ licenseCategories: next });
+    setErrors((er) => ({ ...er, licenseCategories: '' }));
   };
 
   const validate = (): boolean => {
     const errs: typeof errors = {};
     if (!form.content.trim()) errs.content = 'Vui lòng nhập nội dung câu hỏi';
-    if (!form.licenseClass) errs.licenseClass = 'Vui lòng chọn hạng bằng';
-    if (!form.topic) errs.topic = 'Vui lòng chọn chủ đề';
+    if (!form.type) errs.type = 'Vui lòng chọn loại câu hỏi';
+    if (form.licenseCategories.length === 0) errs.licenseCategories = 'Vui lòng chọn ít nhất một hạng bằng';
+    if (!form.topicId) errs.topicId = 'Vui lòng chọn chủ đề';
     if (!form.difficulty) errs.difficulty = 'Vui lòng chọn độ khó';
+    const hasCorrect = form.options.some((o) => o.isCorrect);
+    if (!hasCorrect) errs.options = 'Vui lòng chọn một đáp án đúng';
+    const hasEmpty = form.options.some((o) => !o.content.trim());
+    if (hasEmpty) errs.options = errs.options ?? 'Vui lòng điền đầy đủ các đáp án';
     setErrors(errs);
     return Object.keys(errs).length === 0;
   };
 
-  const handleSubmit = () => {
-    if (validate()) {
+  const handleSubmit = async () => {
+    if (!validate()) return;
+    setLoading(true);
+    setSubmitError('');
+
+    const payload = {
+      content: form.content.trim(),
+      type: form.type as QuestionType,
+      licenseCategories: form.licenseCategories,
+      difficulty: form.difficulty as QuestionDifficulty,
+      explanation: form.explanation.trim(),
+      isCritical: form.isCritical,
+      isActive: form.isActive,
+      topicId: form.topicId,
+      options: form.options.map((o) => ({
+        content: o.content.trim(),
+        isCorrect: o.isCorrect,
+        displayOrder: o.displayOrder,
+      })),
+    };
+
+    const result = isEdit && id
+      ? await questionService.update(id, { ...payload, version })
+      : await questionService.create(payload);
+
+    setLoading(false);
+
+    if (result.success) {
       navigate('/questions');
+    } else {
+      setSubmitError(result.error);
     }
   };
+
+  if (fetchLoading) {
+    return <div className="add-q"><div className="add-q__loading">Đang tải...</div></div>;
+  }
 
   return (
     <div className="add-q">
@@ -107,6 +162,8 @@ export default function AddQuestionPage() {
           <p>{isEdit ? 'Cập nhật thông tin câu hỏi' : 'Tạo câu hỏi mới cho ngân hàng đề'}</p>
         </div>
       </div>
+
+      {submitError && <div className="add-q__submit-error">{submitError}</div>}
 
       <div className="add-q__body">
         {/* ─── Left panel ─── */}
@@ -150,11 +207,12 @@ export default function AddQuestionPage() {
           {/* Options */}
           <div className="add-q__section">
             <div className="add-q__section-title">Đáp Án</div>
+            {errors.options && <span className="add-q__error">{errors.options}</span>}
             <div className="add-q__options">
-              {OPTION_KEYS.map((key, idx) => {
-                const opt = form.options[idx];
+              {form.options.map((opt, idx) => {
+                const label = String.fromCharCode(65 + idx);
                 return (
-                  <div key={key} className="add-q__option-row">
+                  <div key={idx} className="add-q__option-row">
                     <div className="add-q__option-left">
                       <label className="add-q__option-correct-label">
                         <input
@@ -163,23 +221,16 @@ export default function AddQuestionPage() {
                           checked={opt.isCorrect}
                           onChange={() => updateOption(idx, 'isCorrect', true)}
                         />
-                        <span>Đáp án đúng</span>
+                        <span>Đúng</span>
                       </label>
                     </div>
-                    <div className="add-q__option-key">{key}</div>
+                    <div className="add-q__option-key">{label}</div>
                     <input
                       className="add-q__option-input"
                       value={opt.content}
                       onChange={(e) => updateOption(idx, 'content', e.target.value)}
-                      placeholder={`Nhập nội dung đáp án ${key}...`}
+                      placeholder={`Nhập nội dung đáp án ${label}...`}
                     />
-                    <button className="add-q__option-img-btn" title="Thêm hình ảnh cho đáp án">
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-                        <circle cx="8.5" cy="8.5" r="1.5" />
-                        <polyline points="21 15 16 10 5 21" />
-                      </svg>
-                    </button>
                   </div>
                 );
               })}
@@ -203,60 +254,84 @@ export default function AddQuestionPage() {
 
         {/* ─── Right sidebar ─── */}
         <div className="add-q__sidebar">
-          {/* Info */}
           <div className="add-q__sidebar-card">
             <div className="add-q__sidebar-title">Thông Tin</div>
 
+            {/* Type */}
             <div className="add-q__form-group">
-              <label>Hạng bằng *</label>
+              <label>Loại câu hỏi *</label>
               <select
-                value={form.licenseClass}
-                onChange={(e) => { update({ licenseClass: e.target.value as QuestionFormData['licenseClass'] }); setErrors((er) => ({ ...er, licenseClass: '' })); }}
-                className={errors.licenseClass ? 'add-q__input--error' : ''}
+                value={form.type}
+                onChange={(e) => { update({ type: e.target.value as QuestionType }); setErrors((er) => ({ ...er, type: '' })); }}
+                className={errors.type ? 'add-q__input--error' : ''}
               >
-                <option value="">Chọn hạng</option>
-                {LICENSE_CLASS_OPTIONS.map((cls) => (
-                  <option key={cls} value={cls}>{cls}</option>
+                <option value="">Chọn loại</option>
+                {QUESTION_TYPE_OPTIONS.map((t) => (
+                  <option key={t.value} value={t.value}>{t.label}</option>
                 ))}
               </select>
-              {errors.licenseClass && <span className="add-q__error">{errors.licenseClass}</span>}
+              {errors.type && <span className="add-q__error">{errors.type}</span>}
             </div>
 
+            {/* License categories */}
+            <div className="add-q__form-group">
+              <label>Hạng bằng * <span className="add-q__hint">(chọn nhiều)</span></label>
+              <div className={`add-q__checkbox-group ${errors.licenseCategories ? 'add-q__input--error' : ''}`}>
+                {LICENSE_CATEGORY_OPTIONS.map((cls) => (
+                  <label key={cls} className="add-q__checkbox-item">
+                    <input
+                      type="checkbox"
+                      checked={form.licenseCategories.includes(cls)}
+                      onChange={() => toggleLicenseCategory(cls)}
+                    />
+                    <span>{cls}</span>
+                  </label>
+                ))}
+              </div>
+              {errors.licenseCategories && <span className="add-q__error">{errors.licenseCategories}</span>}
+            </div>
+
+            {/* Topic */}
             <div className="add-q__form-group">
               <label>Chủ đề *</label>
               <select
-                value={form.topic}
-                onChange={(e) => { update({ topic: e.target.value }); setErrors((er) => ({ ...er, topic: '' })); }}
-                className={errors.topic ? 'add-q__input--error' : ''}
+                value={form.topicId}
+                onChange={(e) => { update({ topicId: e.target.value }); setErrors((er) => ({ ...er, topicId: '' })); }}
+                className={errors.topicId ? 'add-q__input--error' : ''}
               >
                 <option value="">Chọn chủ đề</option>
-                {TOPIC_OPTIONS.map((t) => (
-                  <option key={t} value={t}>{t}</option>
+                {topics.map((t) => (
+                  <option key={t.id} value={t.id}>{t.name}</option>
                 ))}
               </select>
-              {errors.topic && <span className="add-q__error">{errors.topic}</span>}
+              {errors.topicId && <span className="add-q__error">{errors.topicId}</span>}
             </div>
 
+            {/* Difficulty */}
             <div className="add-q__form-group">
               <label>Độ khó *</label>
               <div className="add-q__difficulty-group">
-                {(['easy', 'medium', 'hard'] as const).map((d) => (
-                  <label key={d} className={`add-q__difficulty-option ${form.difficulty === d ? 'add-q__difficulty-option--active' : ''}`}>
+                {DIFFICULTY_OPTIONS.map((d) => (
+                  <label
+                    key={d.value}
+                    className={`add-q__difficulty-option ${form.difficulty === d.value ? 'add-q__difficulty-option--active' : ''}`}
+                  >
                     <input
                       type="radio"
                       name="difficulty"
-                      value={d}
-                      checked={form.difficulty === d}
-                      onChange={() => { update({ difficulty: d }); setErrors((er) => ({ ...er, difficulty: '' })); }}
+                      value={d.value}
+                      checked={form.difficulty === d.value}
+                      onChange={() => { update({ difficulty: d.value as QuestionDifficulty }); setErrors((er) => ({ ...er, difficulty: '' })); }}
                     />
-                    <span className={`add-q__difficulty-dot add-q__difficulty-dot--${d}`} />
-                    {DIFFICULTY_LABELS[d]}
+                    <span className={`add-q__difficulty-dot add-q__difficulty-dot--${d.value.toLowerCase()}`} />
+                    {d.label}
                   </label>
                 ))}
               </div>
               {errors.difficulty && <span className="add-q__error">{errors.difficulty}</span>}
             </div>
 
+            {/* Flags */}
             <label className="add-q__critical-label">
               <input
                 type="checkbox"
@@ -265,46 +340,27 @@ export default function AddQuestionPage() {
               />
               <span>Câu hỏi điểm liệt</span>
             </label>
-          </div>
 
-          {/* Tags */}
-          <div className="add-q__sidebar-card">
-            <div className="add-q__sidebar-title">Tags</div>
-            <div className="add-q__tag-input-row">
+            <label className="add-q__critical-label" style={{ marginTop: '8px' }}>
               <input
-                value={tagInput}
-                onChange={(e) => setTagInput(e.target.value)}
-                onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addTag(); } }}
-                placeholder="Thêm tag..."
+                type="checkbox"
+                checked={form.isActive}
+                onChange={(e) => update({ isActive: e.target.checked })}
               />
-            </div>
-            {form.tags.length > 0 && (
-              <div className="add-q__tags">
-                {form.tags.map((tag) => (
-                  <span key={tag} className="add-q__tag">
-                    {tag}
-                    <button onClick={() => removeTag(tag)}>
-                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                        <line x1="18" y1="6" x2="6" y2="18" />
-                        <line x1="6" y1="6" x2="18" y2="18" />
-                      </svg>
-                    </button>
-                  </span>
-                ))}
-              </div>
-            )}
+              <span>Kích hoạt câu hỏi</span>
+            </label>
           </div>
 
           {/* Actions */}
-          <button className="add-q__submit-btn" onClick={handleSubmit}>
+          <button className="add-q__submit-btn" onClick={handleSubmit} disabled={loading}>
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
               <polyline points="17 21 17 13 7 13 7 21" />
               <polyline points="7 3 7 8 15 8" />
             </svg>
-            {isEdit ? 'Lưu Thay Đổi' : 'Tạo Mới'}
+            {loading ? 'Đang lưu...' : isEdit ? 'Lưu Thay Đổi' : 'Tạo Mới'}
           </button>
-          <button className="add-q__cancel-btn" onClick={() => navigate('/questions')}>
+          <button className="add-q__cancel-btn" onClick={() => navigate('/questions')} disabled={loading}>
             Hủy
           </button>
         </div>

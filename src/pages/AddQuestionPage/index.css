@@ -424,6 +424,86 @@
   color: #f0f0f0;
 }
 
+/* Submit error */
+.add-q__submit-error {
+  background: rgba(255, 90, 95, 0.1);
+  border: 1px solid rgba(255, 90, 95, 0.3);
+  border-radius: 12px;
+  padding: 12px 16px;
+  color: #ff5a5f;
+  font-size: 14px;
+}
+
+/* Loading state */
+.add-q__loading {
+  text-align: center;
+  padding: 60px;
+  color: rgba(243, 244, 246, 0.5);
+  font-size: 15px;
+}
+
+/* Disabled buttons */
+.add-q__submit-btn:disabled,
+.add-q__cancel-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Hint text */
+.add-q__hint {
+  font-size: 12px;
+  font-weight: 400;
+  color: rgba(243, 244, 246, 0.45);
+  margin-left: 4px;
+}
+
+/* License category checkboxes */
+.add-q__checkbox-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 10px;
+  background: #1a1a1a;
+  border: 1px solid #333333;
+  border-radius: 8px;
+}
+
+.add-q__checkbox-group.add-q__input--error {
+  border-color: #ff5a5f;
+}
+
+.add-q__checkbox-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(243, 244, 246, 0.8);
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  transition: border-color 0.1s;
+}
+
+.add-q__checkbox-item:has(input:checked) {
+  border-color: #f9c74f;
+  color: #f9c74f;
+  background: rgba(249, 199, 79, 0.08);
+}
+
+.add-q__checkbox-item input[type='checkbox'] {
+  accent-color: #f9c74f;
+  width: 14px;
+  height: 14px;
+  cursor: pointer;
+}
+
+/* Difficulty dots for uppercase values */
+.add-q__difficulty-dot--easy { background: #4ade80; }
+.add-q__difficulty-dot--medium { background: #f9c74f; }
+.add-q__difficulty-dot--hard { background: #ff5a5f; }
+
 @media (max-width: 900px) {
   .add-q__body {
     grid-template-columns: 1fr;

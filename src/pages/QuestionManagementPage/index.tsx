@@ -1,38 +1,38 @@
-import { useMemo, useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MOCK_QUESTIONS, QUESTION_STATS } from '../../data/questionData';
-import type { Question, QuestionFilters, QuestionDifficulty, QuestionStatus } from '../../types/question.types';
+import { questionService, topicService } from '@/services';
+import type { QuestionResponse, QuestionFilters, QuestionDifficulty, TopicResponse } from '../../types/question.types';
 import {
   DIFFICULTY_LABELS,
-  TOPIC_OPTIONS,
-  LICENSE_CLASS_OPTIONS,
+  QUESTION_TYPE_LABELS,
+  LICENSE_CATEGORY_OPTIONS,
+  DIFFICULTY_OPTIONS,
+  QUESTION_TYPE_OPTIONS,
 } from '../../types/question.types';
 import './index.css';
 
 const PAGE_SIZE = 10;
 
 const DIFFICULTY_CLASS: Record<QuestionDifficulty, string> = {
-  easy: 'q-badge--easy',
-  medium: 'q-badge--medium',
-  hard: 'q-badge--hard',
+  EASY: 'q-badge--easy',
+  MEDIUM: 'q-badge--medium',
+  HARD: 'q-badge--hard',
 };
 
-function SummaryCard({
-  title,
-  value,
-  accent,
-}: {
-  title: string;
-  value: string | number;
-  accent?: string;
-}) {
+const DEFAULT_FILTERS: QuestionFilters = {
+  keyword: '',
+  licenseCategory: '',
+  type: '',
+  difficulty: '',
+  topicId: '',
+  includeDeleted: false,
+};
+
+function SummaryCard({ title, value, accent }: { title: string; value: string | number; accent?: string }) {
   return (
     <div className="q-summary-card">
       <div className="q-summary-card__title">{title}</div>
-      <div
-        className="q-summary-card__value"
-        style={accent ? { color: accent } : undefined}
-      >
+      <div className="q-summary-card__value" style={accent ? { color: accent } : undefined}>
         {typeof value === 'number' ? value.toLocaleString('vi-VN') : value}
       </div>
     </div>
@@ -41,9 +41,11 @@ function SummaryCard({
 
 function FilterBar({
   filters,
+  topics,
   onChange,
 }: {
   filters: QuestionFilters;
+  topics: TopicResponse[];
   onChange: (next: QuestionFilters) => void;
 }) {
   const update = (patch: Partial<QuestionFilters>) => onChange({ ...filters, ...patch });
@@ -56,58 +58,60 @@ function FilterBar({
           <path d="m21 21-4.35-4.35" />
         </svg>
         <input
-          value={filters.search}
-          onChange={(e) => update({ search: e.target.value })}
+          value={filters.keyword}
+          onChange={(e) => update({ keyword: e.target.value })}
           placeholder="Tìm kiếm câu hỏi..."
         />
       </div>
 
-      <select value={filters.licenseClass} onChange={(e) => update({ licenseClass: e.target.value })}>
+      <select value={filters.licenseCategory} onChange={(e) => update({ licenseCategory: e.target.value as QuestionFilters['licenseCategory'] })}>
         <option value="">Hạng bằng</option>
-        {LICENSE_CLASS_OPTIONS.map((cls) => (
+        {LICENSE_CATEGORY_OPTIONS.map((cls) => (
           <option key={cls} value={cls}>{cls}</option>
         ))}
       </select>
 
-      <select value={filters.topic} onChange={(e) => update({ topic: e.target.value })}>
-        <option value="">Chủ đề</option>
-        {TOPIC_OPTIONS.map((t) => (
-          <option key={t} value={t}>{t}</option>
+      <select value={filters.type} onChange={(e) => update({ type: e.target.value as QuestionFilters['type'] })}>
+        <option value="">Loại câu hỏi</option>
+        {QUESTION_TYPE_OPTIONS.map((t) => (
+          <option key={t.value} value={t.value}>{t.label}</option>
         ))}
       </select>
 
-      <select value={filters.difficulty} onChange={(e) => update({ difficulty: e.target.value })}>
-        <option value="">Độ khó</option>
-        <option value="easy">Dễ</option>
-        <option value="medium">TB</option>
-        <option value="hard">Khó</option>
+      <select value={filters.topicId} onChange={(e) => update({ topicId: e.target.value })}>
+        <option value="">Chủ đề</option>
+        {topics.map((t) => (
+          <option key={t.id} value={t.id}>{t.name}</option>
+        ))}
       </select>
 
-      <button
-        className="q-filters__btn"
-        onClick={() => onChange({ search: filters.search, licenseClass: filters.licenseClass, topic: filters.topic, difficulty: filters.difficulty })}
-      >
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
-        </svg>
-        Lọc
-      </button>
+      <select value={filters.difficulty} onChange={(e) => update({ difficulty: e.target.value as QuestionFilters['difficulty'] })}>
+        <option value="">Độ khó</option>
+        {DIFFICULTY_OPTIONS.map((d) => (
+          <option key={d.value} value={d.value}>{d.label}</option>
+        ))}
+      </select>
+
+      <label className="q-filters__deleted-toggle">
+        <input
+          type="checkbox"
+          checked={filters.includeDeleted}
+          onChange={(e) => update({ includeDeleted: e.target.checked })}
+        />
+        <span>Hiện đã xóa</span>
+      </label>
     </div>
   );
 }
 
 function ActionMenu({
-  questionId,
-  status,
+  question,
   onEdit,
   onDelete,
-  onRestore,
 }: {
-  questionId: number;
-  status: QuestionStatus;
-  onEdit: (id: number) => void;
-  onDelete: (id: number) => void;
-  onRestore: (id: number) => void;
+  question: QuestionResponse;
+  onEdit: (id: string) => void;
+  onDelete: (id: string, version: number) => void;
 }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -115,9 +119,7 @@ function ActionMenu({
   useEffect(() => {
     if (!open) return;
     function handler(e: MouseEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
     }
     document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);
@@ -134,19 +136,19 @@ function ActionMenu({
       </button>
       {open && (
         <div className="q-action-menu__dropdown">
-          <button
-            onClick={() => { onEdit(questionId); setOpen(false); }}
-          >
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-            </svg>
-            Chỉnh sửa
-          </button>
-          {status !== 'deleted' ? (
+          {!question.isDeleted && (
+            <button onClick={() => { onEdit(question.id); setOpen(false); }}>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+              </svg>
+              Chỉnh sửa
+            </button>
+          )}
+          {!question.isDeleted && (
             <button
               className="q-action-menu__item--danger"
-              onClick={() => { onDelete(questionId); setOpen(false); }}
+              onClick={() => { onDelete(question.id, question.version); setOpen(false); }}
             >
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <polyline points="3 6 5 6 21 6" />
@@ -154,17 +156,6 @@ function ActionMenu({
                 <path d="M10 11v6M14 11v6M9 6V4h6v2" />
               </svg>
               Xóa
-            </button>
-          ) : (
-            <button
-              className="q-action-menu__item--restore"
-              onClick={() => { onRestore(questionId); setOpen(false); }}
-            >
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <polyline points="1 4 1 10 7 10" />
-                <path d="M3.51 15a9 9 0 1 0 .49-3.5" />
-              </svg>
-              Kích hoạt lại
             </button>
           )}
         </div>
@@ -175,78 +166,72 @@ function ActionMenu({
 
 function QuestionTable({
   questions,
+  topics,
+  loading,
   onEdit,
   onDelete,
-  onRestore,
 }: {
-  questions: Question[];
-  onEdit: (id: number) => void;
-  onDelete: (id: number) => void;
-  onRestore: (id: number) => void;
+  questions: QuestionResponse[];
+  topics: TopicResponse[];
+  loading: boolean;
+  onEdit: (id: string) => void;
+  onDelete: (id: string, version: number) => void;
 }) {
-  if (!questions.length) {
-    return <div className="q-empty">Không tìm thấy câu hỏi nào.</div>;
-  }
+  const topicMap = Object.fromEntries(topics.map((t) => [t.id, t.name]));
+
+  if (loading) return <div className="q-empty">Đang tải...</div>;
+  if (!questions.length) return <div className="q-empty">Không tìm thấy câu hỏi nào.</div>;
 
   return (
     <div className="q-table-wrap">
       <table className="q-table">
         <thead>
           <tr>
-            <th>ID</th>
             <th>Nội Dung</th>
             <th>Loại</th>
             <th>Hạng</th>
             <th>Chủ Đề</th>
             <th>Độ Khó</th>
+            <th>Trạng thái</th>
             <th>Version</th>
             <th>Thao Tác</th>
           </tr>
         </thead>
         <tbody>
           {questions.map((q) => (
-            <tr key={q.id} className={q.status === 'deleted' ? 'q-table__row--deleted' : ''}>
-              <td className="q-table__id">#{q.id}</td>
+            <tr key={q.id} className={q.isDeleted ? 'q-table__row--deleted' : ''}>
               <td className="q-table__content">
                 <span title={q.content}>{q.content}</span>
+                {q.isCritical && <span className="q-type-badge q-type-badge--critical">Liệt</span>}
               </td>
               <td>
-                {q.isCritical ? (
-                  <span className="q-type-badge q-type-badge--critical">Câu liệt</span>
-                ) : (
-                  <span className="q-type-badge">Trắc nghiệm</span>
-                )}
+                <span className="q-type-badge">{QUESTION_TYPE_LABELS[q.type]}</span>
               </td>
               <td>
-                <span className="q-class-badge">{q.licenseClass}</span>
+                <div className="q-class-list">
+                  {q.licenseCategories.map((c) => (
+                    <span key={c} className="q-class-badge">{c}</span>
+                  ))}
+                </div>
               </td>
-              <td className="q-table__topic">{q.topic}</td>
+              <td className="q-table__topic">{topicMap[q.topicId] ?? q.topicId}</td>
               <td>
                 <span className={`q-badge ${DIFFICULTY_CLASS[q.difficulty]}`}>
                   {DIFFICULTY_LABELS[q.difficulty]}
                 </span>
               </td>
               <td>
-                <div className="q-version-cell">
-                  <span>v{q.version}</span>
-                  {q.versions.length > 1 && (
-                    <button className="q-version-btn" onClick={() => {}} title="Lịch sử phiên bản">
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <circle cx="12" cy="12" r="10" />
-                        <polyline points="12 6 12 12 16 14" />
-                      </svg>
-                    </button>
-                  )}
-                </div>
+                {q.isDeleted ? (
+                  <span className="q-status q-status--deleted">Đã xóa</span>
+                ) : q.isActive ? (
+                  <span className="q-status q-status--active">Hoạt động</span>
+                ) : (
+                  <span className="q-status q-status--inactive">Tạm dừng</span>
+                )}
               </td>
+              <td>v{q.version}</td>
               <td>
-                <ActionMenu
-                  questionId={q.id}
-                  status={q.status}
-                  onEdit={onEdit}
-                  onDelete={onDelete}
-                  onRestore={onRestore}
-                />
+                <ActionMenu question={q} onEdit={onEdit} onDelete={onDelete} />
               </td>
             </tr>
           ))}
@@ -271,6 +256,7 @@ function Pagination({
 }) {
   const start = (currentPage - 1) * pageSize + 1;
   const end = Math.min(currentPage * pageSize, totalItems);
+  const pages = Array.from({ length: Math.min(totalPages, 7) }, (_, i) => i + 1);
 
   return (
     <div className="q-pagination">
@@ -278,10 +264,8 @@ function Pagination({
         Hiển thị {start}–{end} / {totalItems} câu hỏi
       </span>
       <div className="q-pagination__controls">
-        <button disabled={currentPage === 1} onClick={() => onChange(currentPage - 1)}>
-          Trước
-        </button>
-        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+        <button disabled={currentPage === 1} onClick={() => onChange(currentPage - 1)}>Trước</button>
+        {pages.map((page) => (
           <button
             key={page}
             className={page === currentPage ? 'q-pagination__page--active' : ''}
@@ -290,9 +274,7 @@ function Pagination({
             {page}
           </button>
         ))}
-        <button disabled={currentPage === totalPages} onClick={() => onChange(currentPage + 1)}>
-          Sau
-        </button>
+        <button disabled={currentPage === totalPages} onClick={() => onChange(currentPage + 1)}>Sau</button>
       </div>
     </div>
   );
@@ -300,46 +282,79 @@ function Pagination({
 
 export default function QuestionManagementPage() {
   const navigate = useNavigate();
-  const [questions, setQuestions] = useState<Question[]>(MOCK_QUESTIONS);
-  const [filters, setFilters] = useState<QuestionFilters>({
-    search: '',
-    licenseClass: '',
-    topic: '',
-    difficulty: '',
-  });
+  const [questions, setQuestions] = useState<QuestionResponse[]>([]);
+  const [topics, setTopics] = useState<TopicResponse[]>([]);
+  const [total, setTotal] = useState(0);
+  const [totalActive, setTotalActive] = useState(0);
+  const [totalCritical, setTotalCritical] = useState(0);
+  const [filters, setFilters] = useState<QuestionFilters>(DEFAULT_FILTERS);
   const [currentPage, setCurrentPage] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const filtered = useMemo(() => {
-    const q = filters.search.trim().toLowerCase();
-    return questions.filter((item) => {
-      const matchSearch = !q || item.content.toLowerCase().includes(q);
-      const matchClass = !filters.licenseClass || item.licenseClass === filters.licenseClass;
-      const matchTopic = !filters.topic || item.topic === filters.topic;
-      const matchDiff = !filters.difficulty || item.difficulty === filters.difficulty;
-      return matchSearch && matchClass && matchTopic && matchDiff;
-    });
-  }, [questions, filters]);
+  const fetchQuestions = useCallback(async (page: number, f: QuestionFilters) => {
+    setLoading(true);
+    setError('');
+    const params = {
+      page,
+      size: PAGE_SIZE,
+      ...(f.keyword ? { keyword: f.keyword } : {}),
+      ...(f.licenseCategory ? { licenseCategory: f.licenseCategory } : {}),
+      ...(f.type ? { type: f.type } : {}),
+      ...(f.difficulty ? { difficulty: f.difficulty } : {}),
+      ...(f.topicId ? { topicId: f.topicId } : {}),
+      ...(f.includeDeleted ? { includeDeleted: true } : {}),
+    };
+    const result = await questionService.list(params);
+    if (result.success) {
+      setQuestions(result.data.items);
+      setTotal(result.data.total);
+    } else {
+      setError(result.error);
+    }
+    setLoading(false);
+  }, []);
 
-  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
-  const pageSafe = Math.min(currentPage, totalPages);
-  const paginated = filtered.slice((pageSafe - 1) * PAGE_SIZE, pageSafe * PAGE_SIZE);
+  const fetchTopics = useCallback(async () => {
+    const result = await topicService.list({ size: 100 });
+    if (result.success) setTopics(result.data.items);
+  }, []);
+
+  const fetchStats = useCallback(async () => {
+    const [activeRes, criticalRes] = await Promise.all([
+      questionService.list({ size: 1, isActive: true }),
+      questionService.list({ size: 1, isCritical: true }),
+    ]);
+    if (activeRes.success) setTotalActive(activeRes.data.total);
+    if (criticalRes.success) setTotalCritical(criticalRes.data.total);
+  }, []);
+
+  useEffect(() => {
+    fetchTopics();
+    fetchStats();
+  }, [fetchTopics, fetchStats]);
+
+  useEffect(() => {
+    fetchQuestions(currentPage, filters);
+  }, [currentPage, filters, fetchQuestions]);
 
   const handleFilters = (next: QuestionFilters) => {
     setFilters(next);
     setCurrentPage(1);
   };
 
-  const handleDelete = (id: number) => {
-    setQuestions((prev) =>
-      prev.map((q) => (q.id === id ? { ...q, status: 'deleted' as const } : q)),
-    );
+  const handleDelete = async (id: string, version: number) => {
+    if (!window.confirm('Xác nhận xóa câu hỏi này?')) return;
+    const result = await questionService.delete(id, version);
+    if (result.success) {
+      fetchQuestions(currentPage, filters);
+      fetchStats();
+    } else {
+      alert(result.error);
+    }
   };
 
-  const handleRestore = (id: number) => {
-    setQuestions((prev) =>
-      prev.map((q) => (q.id === id ? { ...q, status: 'active' as const } : q)),
-    );
-  };
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
   return (
     <div className="q-management">
@@ -354,26 +369,27 @@ export default function QuestionManagementPage() {
       </div>
 
       <div className="q-summary-grid">
-        <SummaryCard title="Tổng câu hỏi" value={QUESTION_STATS.total} />
-        <SummaryCard title="Đang dùng" value={QUESTION_STATS.active} accent="#4ade80" />
-        <SummaryCard title="Câu liệt" value={QUESTION_STATS.critical} accent="#ff5a5f" />
-        <SummaryCard title="Đã xóa" value={QUESTION_STATS.deleted} />
-        <SummaryCard title="Chỉnh sửa" value={QUESTION_STATS.edited} accent="#f9c74f" />
+        <SummaryCard title="Tổng câu hỏi" value={total} />
+        <SummaryCard title="Đang dùng" value={totalActive} accent="#4ade80" />
+        <SummaryCard title="Câu liệt" value={totalCritical} accent="#ff5a5f" />
       </div>
 
-      <FilterBar filters={filters} onChange={handleFilters} />
+      {error && <div className="q-error">{error}</div>}
+
+      <FilterBar filters={filters} topics={topics} onChange={handleFilters} />
 
       <QuestionTable
-        questions={paginated}
+        questions={questions}
+        topics={topics}
+        loading={loading}
         onEdit={(id) => navigate(`/questions/${id}/edit`)}
         onDelete={handleDelete}
-        onRestore={handleRestore}
       />
 
       <Pagination
-        currentPage={pageSafe}
+        currentPage={currentPage}
         totalPages={totalPages}
-        totalItems={filtered.length}
+        totalItems={total}
         pageSize={PAGE_SIZE}
         onChange={setCurrentPage}
       />
