@@ -24,7 +24,6 @@
 
 .student-management__add,
 .student-table__action,
-.student-pagination button,
 .student-filters__clear {
 	border: 0;
 	cursor: pointer;
@@ -47,8 +46,7 @@
 .student-summary-card,
 .student-filters,
 .student-table-wrap,
-.student-empty,
-.student-pagination {
+.student-empty {
 	background: #242424;
 	border: 1px solid #333333;
 	border-radius: 16px;
@@ -239,36 +237,6 @@
 	padding: 32px;
 	text-align: center;
 	color: rgba(243, 244, 246, 0.68);
-}
-
-.student-pagination {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	gap: 12px;
-	padding: 12px;
-}
-
-.student-pagination button {
-	background: #2e2e2e;
-	color: #fff;
-	padding: 10px 14px;
-	border-radius: 10px;
-}
-
-.student-pagination button:disabled {
-	opacity: 0.45;
-	cursor: not-allowed;
-}
-
-.student-pagination__pages {
-	display: flex;
-	gap: 8px;
-}
-
-.student-pagination__page--active {
-	background: #f9c74f !important;
-	color: #1f1f1f !important;
 }
 
 @media (max-width: 1200px) {

@@ -73,6 +73,82 @@
   line-height: 1.6;
 }
 
+/* Filters */
+.ec-filters {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  background: #242424;
+  border: 1px solid #333333;
+  border-radius: 16px;
+  flex-wrap: wrap;
+}
+
+.ec-filters__select {
+  height: 44px;
+  min-width: 190px;
+  padding: 0 42px 0 14px;
+  background-color: #1a1a1a;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23a3a3a3' stroke-width='1.6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  border: 1px solid #333333;
+  border-radius: 8px;
+  color: #f0f0f0;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 14px;
+  outline: none;
+  appearance: none;
+  transition: border-color 0.16s ease, box-shadow 0.16s ease, background-color 0.16s ease;
+}
+
+.ec-filters__select:hover {
+  background-color: #202020;
+  border-color: #444444;
+}
+
+.ec-filters__select:focus {
+  border-color: rgba(249, 199, 79, 0.72);
+  box-shadow: 0 0 0 3px rgba(249, 199, 79, 0.12);
+}
+
+.ec-filters__select option {
+  background: #1f1f1f;
+  color: #f0f0f0;
+}
+
+.ec-filters__clear {
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 0 16px;
+  background: #2e2e2e;
+  border: 1px solid #444444;
+  border-radius: 8px;
+  color: rgba(243, 244, 246, 0.82);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+  transition: background 0.16s ease, border-color 0.16s ease, color 0.16s ease, opacity 0.16s ease;
+}
+
+.ec-filters__clear:hover:not(:disabled) {
+  background: #383838;
+  border-color: #555555;
+  color: #f0f0f0;
+}
+
+.ec-filters__clear:disabled {
+  cursor: not-allowed;
+  opacity: 0.46;
+}
+
 /* Cards grid */
 .ec-cards-grid {
   display: grid;
@@ -415,6 +491,20 @@
 }
 
 @media (max-width: 768px) {
+  .ec-management__header {
+    flex-direction: column;
+  }
+
+  .ec-filters {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .ec-filters__select,
+  .ec-filters__clear {
+    width: 100%;
+  }
+
   .ec-stats-bar {
     grid-template-columns: 1fr;
   }

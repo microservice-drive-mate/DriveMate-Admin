@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
 import { auditService } from '@/services';
 import type { AuditLog, AuditLogListParams } from '@/types/audit.types';
+import Pagination from '../../components/Pagination';
+import { DEFAULT_PAGE_SIZE } from '../../constants/pagination';
 import './AuditLogPage.css';
-
-const PAGE_SIZE = 20;
 
 function formatDate(iso: string) {
   return new Date(iso).toLocaleString('vi-VN');
@@ -41,7 +41,7 @@ export default function AuditLogPage() {
     setError('');
     const params: AuditLogListParams = {
       page: p,
-      size: PAGE_SIZE,
+      size: DEFAULT_PAGE_SIZE,
       ...(f.serviceName ? { serviceName: f.serviceName } : {}),
       ...(f.action ? { action: f.action } : {}),
       ...(f.resourceType ? { resourceType: f.resourceType } : {}),
@@ -68,7 +68,7 @@ export default function AuditLogPage() {
     setPage(1);
   };
 
-  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  const totalPages = Math.max(1, Math.ceil(total / DEFAULT_PAGE_SIZE));
 
   return (
     <div className="audit-page">
@@ -165,16 +165,14 @@ export default function AuditLogPage() {
         </table>
       </div>
 
-      <div className="audit-pagination">
-        <span className="audit-pagination__info">
-          {total > 0 ? `${(page - 1) * PAGE_SIZE + 1}–${Math.min(page * PAGE_SIZE, total)} / ${total}` : '0 bản ghi'}
-        </span>
-        <div className="audit-pagination__controls">
-          <button disabled={page === 1} onClick={() => setPage((p) => p - 1)}>Trước</button>
-          <span>{page} / {totalPages}</span>
-          <button disabled={page === totalPages} onClick={() => setPage((p) => p + 1)}>Sau</button>
-        </div>
-      </div>
+      <Pagination
+        currentPage={page}
+        totalPages={totalPages}
+        totalItems={total}
+        pageSize={DEFAULT_PAGE_SIZE}
+        label="bản ghi"
+        onChange={setPage}
+      />
 
       {selected && (
         <div className="audit-detail__overlay" onClick={() => setSelected(null)}>

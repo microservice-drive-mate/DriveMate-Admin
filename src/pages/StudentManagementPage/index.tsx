@@ -16,9 +16,9 @@ import type {
 	StudentFilters,
 	StudentStatus,
 } from "../../types/student.types";
+import Pagination from "../../components/Pagination";
+import { DEFAULT_PAGE_SIZE } from "../../constants/pagination";
 import "./StudentManagementPage.css";
-
-const PAGE_SIZE = 10;
 
 const STATUS_THEME: Record<StudentStatus, string> = {
 	studying: "student-pill--studying",
@@ -211,49 +211,6 @@ function StudentTable({
 	);
 }
 
-function Pagination({
-	currentPage,
-	totalPages,
-	onChange,
-}: {
-	currentPage: number;
-	totalPages: number;
-	onChange: (page: number) => void;
-}) {
-	if (totalPages <= 1) return null;
-
-	return (
-		<div className="student-pagination">
-			<button
-				disabled={currentPage === 1}
-				onClick={() => onChange(currentPage - 1)}>
-				‹ Trước
-			</button>
-			<div className="student-pagination__pages">
-				{Array.from(
-					{ length: totalPages },
-					(_, index) => index + 1,
-				).map((page) => (
-					<button
-						key={page}
-						className={
-							page === currentPage
-								? "student-pagination__page student-pagination__page--active"
-								: "student-pagination__page"
-						}
-						onClick={() => onChange(page)}>
-						{page}
-					</button>
-				))}
-			</div>
-			<button
-				disabled={currentPage === totalPages}
-				onClick={() => onChange(currentPage + 1)}>
-				Tiếp ›
-			</button>
-		</div>
-	);
-}
 
 export default function StudentManagementPage() {
 	const navigate = useNavigate();
@@ -284,7 +241,7 @@ export default function StudentManagementPage() {
 			.list({
 				role: "STUDENT",
 				page: currentPage,
-				size: PAGE_SIZE,
+				size: DEFAULT_PAGE_SIZE,
 				search: filters.search.trim() || undefined,
 				isActive,
 			})
@@ -312,7 +269,7 @@ export default function StudentManagementPage() {
 		};
 	}, [filters.search, filters.status, filters.licenseTier, currentPage]);
 
-	const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+	const totalPages = Math.max(1, Math.ceil(total / DEFAULT_PAGE_SIZE));
 
 	const summary = useMemo(() => {
 		const studying = students.filter(

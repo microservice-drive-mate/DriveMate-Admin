@@ -137,42 +137,6 @@
   color: #f87171;
 }
 
-/* Pagination */
-.audit-pagination {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.audit-pagination__info {
-  font-size: 13px;
-  color: rgba(255, 255, 255, 0.4);
-}
-
-.audit-pagination__controls {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.audit-pagination__controls button {
-  background: #242424;
-  border: 1px solid #333;
-  border-radius: 8px;
-  color: #f0f0f0;
-  padding: 6px 14px;
-  cursor: pointer;
-  font-size: 13px;
-}
-
-.audit-pagination__controls button:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-.audit-pagination__controls button:not(:disabled):hover {
-  background: #333;
-}
 
 /* Detail modal */
 .audit-detail__overlay {

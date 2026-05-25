@@ -5,10 +5,9 @@ import { identityService } from "@/services";
 import { useAuthStore } from "../../store/authStore";
 import UserFilters from "./UserFilters";
 import UserTable from "./UserTable";
-import Pagination from "./Pagination";
+import Pagination from "../../components/Pagination";
+import { DEFAULT_PAGE_SIZE } from "../../constants/pagination";
 import "./UserManagementPage.css";
-
-const PAGE_SIZE = 10;
 
 export interface UserManagementFilters {
   search: string;
@@ -46,7 +45,7 @@ export default function UserManagementPage() {
     setError(null);
     const result = await identityService.list({
       page,
-      size: PAGE_SIZE,
+      size: DEFAULT_PAGE_SIZE,
       role: filters.role || undefined,
       isActive:
         filters.isActive === ""
@@ -69,7 +68,7 @@ export default function UserManagementPage() {
     fetchUsers();
   }, [fetchUsers]);
 
-  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  const totalPages = Math.max(1, Math.ceil(total / DEFAULT_PAGE_SIZE));
 
   const handleFiltersChange = (next: UserManagementFilters) => {
     setFilters(next);

@@ -7,9 +7,9 @@ import {
   COURSE_STATUS_LABELS,
   COURSE_STATUS_OPTIONS,
 } from '../../types/course.types';
+import Pagination from '../../components/Pagination';
+import { DEFAULT_PAGE_SIZE } from '../../constants/pagination';
 import './CourseManagementPage.css';
-
-const PAGE_SIZE = 10;
 
 const STATUS_PILL: Record<CourseStatus, string> = {
   ACTIVE: 'course-pill--active',
@@ -160,44 +160,6 @@ function CourseTable({
   );
 }
 
-function Pagination({
-  currentPage,
-  totalPages,
-  totalItems,
-  pageSize,
-  onChange,
-}: {
-  currentPage: number;
-  totalPages: number;
-  totalItems: number;
-  pageSize: number;
-  onChange: (page: number) => void;
-}) {
-  const start = (currentPage - 1) * pageSize + 1;
-  const end = Math.min(currentPage * pageSize, totalItems);
-  const pages = Array.from({ length: Math.min(totalPages, 7) }, (_, i) => i + 1);
-
-  return (
-    <div className="course-pagination">
-      <span className="course-pagination__info">
-        Hiển thị {start}–{end} / {totalItems} khóa học
-      </span>
-      <div className="course-pagination__controls">
-        <button disabled={currentPage === 1} onClick={() => onChange(currentPage - 1)}>Trước</button>
-        {pages.map((page) => (
-          <button
-            key={page}
-            className={page === currentPage ? 'course-pagination__page--active' : ''}
-            onClick={() => onChange(page)}
-          >
-            {page}
-          </button>
-        ))}
-        <button disabled={currentPage === totalPages} onClick={() => onChange(currentPage + 1)}>Sau</button>
-      </div>
-    </div>
-  );
-}
 
 export default function CourseManagementPage() {
   const navigate = useNavigate();
@@ -214,7 +176,7 @@ export default function CourseManagementPage() {
     setError('');
     const params = {
       page,
-      size: PAGE_SIZE,
+      size: DEFAULT_PAGE_SIZE,
       ...(f.licenseCategory ? { licenseCategory: f.licenseCategory } : {}),
       ...(f.status ? { status: f.status } : {}),
     };
@@ -252,7 +214,7 @@ export default function CourseManagementPage() {
     return courses.filter((c) => c.title.toLowerCase().includes(q));
   }, [courses, filters.search]);
 
-  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  const totalPages = Math.max(1, Math.ceil(total / DEFAULT_PAGE_SIZE));
 
   return (
     <div className="course-management">
@@ -289,7 +251,8 @@ export default function CourseManagementPage() {
         currentPage={currentPage}
         totalPages={totalPages}
         totalItems={total}
-        pageSize={PAGE_SIZE}
+        pageSize={DEFAULT_PAGE_SIZE}
+        label="khóa học"
         onChange={setCurrentPage}
       />
     </div>

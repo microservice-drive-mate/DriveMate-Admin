@@ -1,7 +1,13 @@
 import { useRef, useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { questionService, topicService } from '@/services';
-import type { QuestionResponse, QuestionFilters, QuestionDifficulty, TopicResponse } from '../../types/question.types';
+import type {
+  LicenseCategory,
+  QuestionResponse,
+  QuestionFilters,
+  QuestionDifficulty,
+  TopicResponse,
+} from '../../types/question.types';
 import {
   DIFFICULTY_LABELS,
   QUESTION_TYPE_LABELS,
@@ -9,9 +15,9 @@ import {
   DIFFICULTY_OPTIONS,
   QUESTION_TYPE_OPTIONS,
 } from '../../types/question.types';
+import Pagination from '../../components/Pagination';
+import { DEFAULT_PAGE_SIZE } from '../../constants/pagination';
 import './index.css';
-
-const PAGE_SIZE = 10;
 
 const DIFFICULTY_CLASS: Record<QuestionDifficulty, string> = {
   EASY: 'q-badge--easy',
@@ -164,6 +170,38 @@ function ActionMenu({
   );
 }
 
+function LicenseCategoryBadges({ categories }: { categories?: LicenseCategory[] }) {
+  const visibleCategories = categories ?? [];
+  const tooltipLabel = visibleCategories.join(', ');
+
+  if (!visibleCategories.length) {
+    return <span className="q-class-empty">-</span>;
+  }
+
+  if (visibleCategories.length <= 2) {
+    return (
+      <div className="q-class-list" aria-label={`Hang: ${tooltipLabel}`}>
+        {visibleCategories.map((category) => (
+          <span key={category} className="q-class-badge">{category}</span>
+        ))}
+      </div>
+    );
+  }
+
+  return (
+    <div className="q-class-list q-class-list--compact">
+      <span className="q-class-tooltip" tabIndex={0} aria-label={`Hang: ${tooltipLabel}`}>
+        <span className="q-class-badge q-class-badge--more">+{visibleCategories.length}</span>
+        <span className="q-class-tooltip__content" role="tooltip">
+          {visibleCategories.map((category) => (
+            <span key={category} className="q-class-badge">{category}</span>
+          ))}
+        </span>
+      </span>
+    </div>
+  );
+}
+
 function QuestionTable({
   questions,
   topics,
@@ -208,11 +246,7 @@ function QuestionTable({
                 <span className="q-type-badge">{QUESTION_TYPE_LABELS[q.type]}</span>
               </td>
               <td>
-                <div className="q-class-list">
-                  {q.licenseCategories.map((c) => (
-                    <span key={c} className="q-class-badge">{c}</span>
-                  ))}
-                </div>
+                <LicenseCategoryBadges categories={q.licenseCategories} />
               </td>
               <td className="q-table__topic">{topicMap[q.topicId] ?? q.topicId}</td>
               <td>
@@ -241,44 +275,6 @@ function QuestionTable({
   );
 }
 
-function Pagination({
-  currentPage,
-  totalPages,
-  totalItems,
-  pageSize,
-  onChange,
-}: {
-  currentPage: number;
-  totalPages: number;
-  totalItems: number;
-  pageSize: number;
-  onChange: (page: number) => void;
-}) {
-  const start = (currentPage - 1) * pageSize + 1;
-  const end = Math.min(currentPage * pageSize, totalItems);
-  const pages = Array.from({ length: Math.min(totalPages, 7) }, (_, i) => i + 1);
-
-  return (
-    <div className="q-pagination">
-      <span className="q-pagination__info">
-        Hiển thị {start}–{end} / {totalItems} câu hỏi
-      </span>
-      <div className="q-pagination__controls">
-        <button disabled={currentPage === 1} onClick={() => onChange(currentPage - 1)}>Trước</button>
-        {pages.map((page) => (
-          <button
-            key={page}
-            className={page === currentPage ? 'q-pagination__page--active' : ''}
-            onClick={() => onChange(page)}
-          >
-            {page}
-          </button>
-        ))}
-        <button disabled={currentPage === totalPages} onClick={() => onChange(currentPage + 1)}>Sau</button>
-      </div>
-    </div>
-  );
-}
 
 const EMPTY_TOPIC_FORM = { name: '', description: '', parentId: '' };
 
@@ -306,7 +302,7 @@ export default function QuestionManagementPage() {
     setError('');
     const params = {
       page,
-      size: PAGE_SIZE,
+      size: DEFAULT_PAGE_SIZE,
       ...(f.keyword ? { keyword: f.keyword } : {}),
       ...(f.licenseCategory ? { licenseCategory: f.licenseCategory } : {}),
       ...(f.type ? { type: f.type } : {}),
@@ -399,7 +395,7 @@ export default function QuestionManagementPage() {
     }
   };
 
-  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  const totalPages = Math.max(1, Math.ceil(total / DEFAULT_PAGE_SIZE));
 
   return (
     <div className="q-management">
@@ -440,7 +436,8 @@ export default function QuestionManagementPage() {
         currentPage={currentPage}
         totalPages={totalPages}
         totalItems={total}
-        pageSize={PAGE_SIZE}
+        pageSize={DEFAULT_PAGE_SIZE}
+        label="câu hỏi"
         onChange={setCurrentPage}
       />
 

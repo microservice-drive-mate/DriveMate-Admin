@@ -399,6 +399,32 @@
   border: 1px solid #333333;
   border-radius: 16px;
   overflow: auto;
+  scrollbar-color: rgba(249, 199, 79, 0.62) #1a1a1a;
+  scrollbar-width: thin;
+}
+
+.q-table-wrap::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+.q-table-wrap::-webkit-scrollbar-track {
+  background: #1a1a1a;
+  border-radius: 999px;
+}
+
+.q-table-wrap::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(249, 199, 79, 0.72), rgba(249, 199, 79, 0.44));
+  border: 3px solid #1a1a1a;
+  border-radius: 999px;
+}
+
+.q-table-wrap::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, rgba(249, 199, 79, 0.92), rgba(249, 199, 79, 0.58));
+}
+
+.q-table-wrap::-webkit-scrollbar-corner {
+  background: #1a1a1a;
 }
 
 .q-empty {
@@ -499,6 +525,12 @@
   color: #f9c74f;
   font-weight: 700;
   font-size: 13px;
+}
+
+.q-class-badge--more {
+  cursor: help;
+  border: 1px solid rgba(249, 199, 79, 0.26);
+  background: rgba(249, 199, 79, 0.13);
 }
 
 /* Difficulty badge */
@@ -624,60 +656,75 @@
   background: rgba(74, 222, 128, 0.08) !important;
 }
 
-/* Pagination */
-.q-pagination {
-  background: #242424;
-  border: 1px solid #333333;
-  border-radius: 16px;
-  padding: 14px 20px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.q-pagination__info {
-  color: rgba(243, 244, 246, 0.6);
-  font-size: 14px;
-}
-
-.q-pagination__controls {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.q-pagination__controls button {
-  height: 36px;
-  min-width: 36px;
-  padding: 0 12px;
-  background: #2e2e2e;
-  color: #f0f0f0;
-  border: 0;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 600;
-  font-size: 14px;
-}
-
-.q-pagination__controls button:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-.q-pagination__controls button:hover:not(:disabled) {
-  background: #383838;
-}
-
-.q-pagination__page--active {
-  background: #f9c74f !important;
-  color: #1f1f1f !important;
-}
 
 /* License class list (multiple badges) */
 .q-class-list {
   display: flex;
-  flex-wrap: wrap;
+  align-items: center;
+  flex-wrap: nowrap;
   gap: 4px;
+  min-height: 26px;
+}
+
+.q-class-list--compact {
+  display: inline-flex;
+}
+
+.q-class-empty {
+  color: rgba(243, 244, 246, 0.45);
+  font-size: 13px;
+}
+
+.q-class-tooltip {
+  position: relative;
+  display: inline-flex;
+  outline: none;
+}
+
+.q-class-tooltip:focus-visible .q-class-badge--more {
+  box-shadow: 0 0 0 2px rgba(249, 199, 79, 0.28);
+}
+
+.q-class-tooltip__content {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 50%;
+  z-index: 30;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  width: max-content;
+  max-width: 220px;
+  padding: 8px;
+  border: 1px solid #444;
+  border-radius: 8px;
+  background: #1a1a1a;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.42);
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, -2px);
+  transition: opacity 0.14s ease, transform 0.14s ease, visibility 0.14s ease;
+  visibility: hidden;
+}
+
+.q-class-tooltip__content::before {
+  position: absolute;
+  top: -5px;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  border-top: 1px solid #444;
+  border-left: 1px solid #444;
+  background: #1a1a1a;
+  content: '';
+  transform: translateX(-50%) rotate(45deg);
+}
+
+.q-class-tooltip:hover .q-class-tooltip__content,
+.q-class-tooltip:focus .q-class-tooltip__content {
+  opacity: 1;
+  transform: translate(-50%, 0);
+  visibility: visible;
 }
 
 /* Status badges */
