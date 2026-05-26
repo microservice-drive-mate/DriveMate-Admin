@@ -1,15 +1,11 @@
-import type { ApiResponse, LoginCredentials } from "@/types";
+import type {
+  ApiResponse,
+  LoginCredentials,
+  LoginResponseData,
+  LogoutResponseData,
+} from "@/types";
 import { withErrorHandling } from "@/utils";
 import { apiService } from "@/lib";
-
-export interface LoginResponseData {
-  accessToken: string;
-  refreshToken: string;
-  expiresIn: number;
-  refreshExpiresIn: number;
-  tokenType: string;
-  scope: string;
-}
 
 interface ForgotPasswordPayload {
   email: string;
@@ -24,7 +20,7 @@ export const authService = {
   ),
 
   logout: withErrorHandling((refreshToken: string) =>
-    apiService.post<ApiResponse<null>>("/auth/logout", { refreshToken }),
+    apiService.post<ApiResponse<LogoutResponseData>>("/auth/logout", { refreshToken }),
   ),
 
   refreshToken: withErrorHandling((refreshToken: string) =>

@@ -7,6 +7,13 @@ import { identityService, userService } from "@/services";
 import { ImageUploader } from "@/components/common/ImageUploader";
 import type { MediaReference } from "@/types/media.types";
 import { validateEmail } from "../../utils/authUtils";
+import {
+  getCreateAccountErrorMessage,
+  getCreateAccountSuccessMessage,
+  getLicenseAssignmentErrorMessage,
+  getUpdateAccountErrorMessage,
+  SRS_MESSAGES,
+} from "../../utils/srsMessages";
 import Toast from "../../components/ui/Toast";
 import "./AddUserPage.css";
 
@@ -75,24 +82,24 @@ export default function AddUserPage() {
 
   const validate = (): boolean => {
     const next: FormErrors = {};
-    if (!form.fullName.trim()) next.fullName = "Vui lòng nhập họ và tên.";
+    if (!form.fullName.trim()) next.fullName = SRS_MESSAGES.MSG08;
     if (!form.email.trim()) {
-      next.email = "Vui lòng nhập email.";
+      next.email = SRS_MESSAGES.MSG08;
     } else if (!validateEmail(form.email)) {
-      next.email = "Email không hợp lệ.";
+      next.email = SRS_MESSAGES.MSG08;
     }
     if (!form.temporaryPassword) {
-      next.temporaryPassword = "Vui lòng nhập mật khẩu tạm thời.";
+      next.temporaryPassword = SRS_MESSAGES.MSG08;
     } else if (form.temporaryPassword.length < 8) {
-      next.temporaryPassword = "Mật khẩu tối thiểu 8 ký tự.";
+      next.temporaryPassword = SRS_MESSAGES.MSG08;
     }
     if (
       form.phoneNumber.trim() &&
       !/^[0-9]{9,11}$/.test(form.phoneNumber.replace(/\s+/g, ""))
     ) {
-      next.phoneNumber = "Số điện thoại không hợp lệ.";
+      next.phoneNumber = SRS_MESSAGES.MSG08;
     }
-    if (!form.role) next.role = "Vui lòng chọn vai trò.";
+    if (!form.role) next.role = SRS_MESSAGES.MSG08;
     setErrors(next);
     return Object.keys(next).length === 0;
   };
@@ -110,7 +117,7 @@ export default function AddUserPage() {
 
     if (!created.success) {
       setLoading(false);
-      showToast(created.error, "error");
+      showToast(getCreateAccountErrorMessage(created, "user"), "error");
       return;
     }
 
@@ -119,7 +126,7 @@ export default function AddUserPage() {
     if (!profile.success) {
       setLoading(false);
       showToast(
-        "Đã tạo account nhưng profile chưa đồng bộ. Vui lòng làm mới danh sách sau ít phút.",
+        "User account created successfully. Profile is still syncing. Please refresh the list later.",
         "error",
       );
       setTimeout(() => navigate("/users"), 2000);
@@ -148,7 +155,7 @@ export default function AddUserPage() {
       if (!updateResult.success) {
         setLoading(false);
         showToast(
-          `Account đã tạo nhưng cập nhật profile lỗi: ${updateResult.error}`,
+          `User account created, but profile update failed: ${getUpdateAccountErrorMessage(updateResult, "user")}`,
           "error",
         );
         return;
@@ -163,7 +170,7 @@ export default function AddUserPage() {
       if (!licenseResult.success) {
         setLoading(false);
         showToast(
-          `Đã tạo user nhưng gán hạng bằng lái lỗi: ${licenseResult.error}`,
+          `User account created, but license assignment failed: ${getLicenseAssignmentErrorMessage(licenseResult)}`,
           "error",
         );
         return;
@@ -171,7 +178,7 @@ export default function AddUserPage() {
     }
 
     setLoading(false);
-    showToast("Tạo người dùng thành công!", "success");
+    showToast(getCreateAccountSuccessMessage("user"), "success");
     setTimeout(() => navigate("/users"), 1500);
   };
 

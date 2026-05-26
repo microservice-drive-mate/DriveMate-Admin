@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import { validateEmail } from '../utils/authUtils';
+import { SRS_MESSAGES } from '../utils/srsMessages';
 import { FormGroup } from '../components/ui/FormGroup';
 import { ErrorMessage } from '../components/ui/ErrorMessage';
 import { Button } from '../components/ui/Button';
@@ -29,7 +30,7 @@ export function LoginPage() {
     setLocalError('');
 
     if (!email.trim() || !validateEmail(email) || !password.trim()) {
-      setLocalError('Please enter email and password.');
+      setLocalError(SRS_MESSAGES.MSG01);
       return;
     }
 

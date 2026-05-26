@@ -3,12 +3,16 @@ import type { AuthState, AuthUser, LoginCredentials, UserRole } from "../types";
 import { authService } from "@/services";
 import { AUTH_CONFIG } from "@/constants";
 import {
+  getForgotPasswordErrorMessage,
   getAuthToken,
   getStorageItem,
   getUserData,
+  getLoginErrorMessage,
+  isForgotPasswordNotFound,
   removeAuthToken,
   removeStorageItem,
   removeUserData,
+  SRS_MESSAGES,
   setAuthToken,
   setStorageItem,
   setUserData,
@@ -73,7 +77,7 @@ export const useAuthStore = create<AuthStore>((set) => ({
     const result = await authService.login(credentials);
 
     if (!result.success) {
-      set({ loading: false, error: result.error });
+      set({ loading: false, error: getLoginErrorMessage(result) });
       return;
     }
 
@@ -112,7 +116,7 @@ export const useAuthStore = create<AuthStore>((set) => ({
 
   requestPasswordReset: async (email: string) => {
     if (!email) {
-      set({ error: "Vui lòng nhập email" });
+      set({ error: SRS_MESSAGES.MSG04 });
       return;
     }
 
@@ -120,7 +124,11 @@ export const useAuthStore = create<AuthStore>((set) => ({
     const result = await authService.forgotPassword({ email });
 
     if (!result.success) {
-      set({ loading: false, error: result.error });
+      if (isForgotPasswordNotFound(result)) {
+        set({ loading: false, passwordResetEmailSent: true, error: null });
+        return;
+      }
+      set({ loading: false, error: getForgotPasswordErrorMessage(result) });
       return;
     }
 

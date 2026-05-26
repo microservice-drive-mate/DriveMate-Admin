@@ -28,20 +28,17 @@ export const parseError = (error: unknown): ApiError => {
     );
   }
 
-  const errorCode = data?.error?.code || data?.code || ERROR_CODES.INTERNAL_ERROR;
+  const rawCode = data?.error?.code || data?.code || ERROR_CODES.INTERNAL_ERROR;
+  const errorCode = typeof rawCode === "string" ? rawCode : ERROR_CODES.INTERNAL_ERROR;
   const errorMessage =
     data?.error?.message || data?.message || data?.error || ERROR_MESSAGES.GENERIC_ERROR;
-
-  const validCode = Object.values(ERROR_CODES).includes(errorCode)
-    ? errorCode
-    : ERROR_CODES.INTERNAL_ERROR;
 
   const finalMessage =
     errorMessage && errorMessage !== ERROR_MESSAGES.GENERIC_ERROR
       ? errorMessage
-      : ERROR_MESSAGES[validCode as keyof typeof ERROR_MESSAGES] || errorMessage;
+      : ERROR_MESSAGES[errorCode as keyof typeof ERROR_MESSAGES] || errorMessage;
 
-  return new ApiError(finalMessage, status, validCode);
+  return new ApiError(finalMessage, status, errorCode);
 };
 
 export const withErrorHandling = <TArgs extends unknown[], TData>(
@@ -67,7 +64,7 @@ export const withErrorHandling = <TArgs extends unknown[], TData>(
       return {
         success: false,
         error: response.data?.message ?? ERROR_MESSAGES.GENERIC_ERROR,
-        code: ERROR_CODES.INTERNAL_ERROR,
+        code: response.data?.code ?? ERROR_CODES.INTERNAL_ERROR,
       };
     } catch (error: unknown) {
       const parsedError = parseError(error);
@@ -100,8 +97,6 @@ export const shouldLogout = (error: unknown): boolean => {
   if (!(error instanceof ApiError)) return false;
   return (
     error.status === 401 ||
-    error.status === 403 ||
-    error.code === ERROR_CODES.UNAUTHORIZED ||
-    error.code === ERROR_CODES.FORBIDDEN
+    error.code === ERROR_CODES.UNAUTHORIZED
   );
 };

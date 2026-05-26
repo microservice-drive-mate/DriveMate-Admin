@@ -1,5 +1,5 @@
 import { API_CONFIG, AUTH_CONFIG, ROUTES } from "@/constants";
-import type { ApiResponse } from "@/types";
+import type { ApiResponse, LoginResponseData } from "@/types";
 import {
   getAuthToken,
   getStorageItem,
@@ -111,8 +111,15 @@ class ApiService {
             const refreshResponse = await this._performTokenRefresh(refreshToken as string);
 
             if (refreshResponse.data.success === true && refreshResponse.data.data) {
-              const { accessToken: newAccessToken } = refreshResponse.data.data;
+              const {
+                accessToken: newAccessToken,
+                refreshToken: newRefreshToken,
+              } = refreshResponse.data.data;
               await setStorageItem(AUTH_CONFIG.ACCESS_TOKEN_STORAGE_KEY, newAccessToken);
+              await setStorageItem(
+                AUTH_CONFIG.REFRESH_TOKEN_STORAGE_KEY,
+                newRefreshToken,
+              );
 
               originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
               this._processQueue(null, newAccessToken);
@@ -166,7 +173,7 @@ class ApiService {
   }
 
   private async _performTokenRefresh(refreshToken: string) {
-    return axios.post<ApiResponse<{ accessToken: string }>>(
+    return axios.post<ApiResponse<LoginResponseData>>(
       `${this.baseUrl}/auth/refresh`,
       { refreshToken },
     );

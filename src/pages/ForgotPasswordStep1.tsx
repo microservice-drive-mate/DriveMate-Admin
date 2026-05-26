@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import { validateEmail } from '../utils/authUtils';
+import { SRS_MESSAGES } from '../utils/srsMessages';
 import { FormGroup } from '../components/ui/FormGroup';
 import { ErrorMessage } from '../components/ui/ErrorMessage';
 import { Button } from '../components/ui/Button';
@@ -24,7 +25,7 @@ export function ForgotPasswordStep1() {
     setLocalError('');
 
     if (!email.trim() || !validateEmail(email)) {
-      setLocalError('Please enter a valid email address.');
+      setLocalError(SRS_MESSAGES.MSG04);
       return;
     }
 

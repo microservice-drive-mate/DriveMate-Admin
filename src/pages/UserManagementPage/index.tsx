@@ -11,6 +11,14 @@ import type { MediaReference } from "@/types/media.types";
 import { identityService, userService } from "@/services";
 import { ImageUploader } from "@/components/common/ImageUploader";
 import { validateEmail } from "@/utils/authUtils";
+import {
+  getLicenseAssignmentErrorMessage,
+  getLockAccountErrorMessage,
+  getLockAccountSuccessMessage,
+  getUpdateAccountErrorMessage,
+  getUpdateAccountSuccessMessage,
+  getSrsMessage,
+} from "@/utils/srsMessages";
 import { useAuthStore } from "../../store/authStore";
 import UserFilters from "./UserFilters";
 import UserTable from "./UserTable";
@@ -102,6 +110,7 @@ export default function UserManagementPage() {
   const [filters, setFilters] = useState<UserManagementFilters>(INITIAL_FILTERS);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
   const [togglingId, setTogglingId] = useState<string | null>(null);
 
   const [editModal, setEditModal] = useState<IdentityUser | null>(null);
@@ -147,7 +156,7 @@ export default function UserManagementPage() {
   }, [page, filters]);
 
   useEffect(() => {
-    fetchUsers();
+    void Promise.resolve().then(fetchUsers);
   }, [fetchUsers]);
 
   const totalPages = Math.max(1, Math.ceil(total / DEFAULT_PAGE_SIZE));
@@ -155,17 +164,21 @@ export default function UserManagementPage() {
   const handleFiltersChange = (next: UserManagementFilters) => {
     setFilters(next);
     setPage(1);
+    setNotice(null);
   };
 
   const handleToggleStatus = async (user: IdentityUser) => {
     if (user.isDeleted) return;
+    setError(null);
+    setNotice(null);
     setTogglingId(user.userId);
     const result = await identityService.setLock(user.userId, user.isActive);
     setTogglingId(null);
     if (!result.success) {
-      setError(result.error);
+      setError(getLockAccountErrorMessage(result, "user"));
       return;
     }
+    setNotice(getLockAccountSuccessMessage(user.isActive, "user"));
     await fetchUsers();
   };
 
@@ -188,30 +201,31 @@ export default function UserManagementPage() {
     if (result.success) {
       hydrateProfileForm(result.data);
     } else {
-      setModalError(`Không tải được profile: ${result.error}`);
+      setModalError(getUpdateAccountErrorMessage(result, "user"));
     }
     setProfileLoading(false);
   };
 
   const validateEdit = () => {
     if (!editForm.fullName.trim()) {
-      return "Vui lòng nhập họ và tên.";
+      return getSrsMessage("MSG13", "user");
     }
     if (!editForm.email.trim()) {
-      return "Vui lòng nhập email.";
+      return getSrsMessage("MSG13", "user");
     }
     if (!validateEmail(editForm.email.trim())) {
-      return "Email không hợp lệ.";
+      return getSrsMessage("MSG13", "user");
     }
     const normalizedPhone = profileForm.phoneNumber.replace(/\s+/g, "");
     if (normalizedPhone && !/^[0-9]{9,11}$/.test(normalizedPhone)) {
-      return "Số điện thoại không hợp lệ.";
+      return getSrsMessage("MSG13", "user");
     }
     return null;
   };
 
   const handleEditSubmit = async () => {
     if (!editModal) return;
+    setNotice(null);
     const validationError = validateEdit();
     if (validationError) {
       setModalError(validationError);
@@ -228,7 +242,7 @@ export default function UserManagementPage() {
 
     if (!identityResult.success) {
       setModalLoading(false);
-      setModalError(identityResult.error);
+      setModalError(getUpdateAccountErrorMessage(identityResult, "user"));
       return;
     }
 
@@ -245,7 +259,7 @@ export default function UserManagementPage() {
     if (!profileResult.success) {
       setModalLoading(false);
       setModalError(
-        `Đã cập nhật account nhưng cập nhật profile lỗi: ${profileResult.error}`,
+        `Account was updated, but profile update failed: ${getUpdateAccountErrorMessage(profileResult, "user")}`,
       );
       return;
     }
@@ -258,7 +272,7 @@ export default function UserManagementPage() {
       if (!licenseResult.success) {
         setModalLoading(false);
         setModalError(
-          `Đã cập nhật profile nhưng gán hạng bằng lái lỗi: ${licenseResult.error}`,
+          `Profile was updated, but license assignment failed: ${getLicenseAssignmentErrorMessage(licenseResult)}`,
         );
         return;
       }
@@ -266,6 +280,7 @@ export default function UserManagementPage() {
 
     setModalLoading(false);
     setEditModal(null);
+    setNotice(getUpdateAccountSuccessMessage("user"));
     await fetchUsers();
   };
 
@@ -287,12 +302,13 @@ export default function UserManagementPage() {
 
   const handleRoleSubmit = async () => {
     if (!roleModal) return;
+    setNotice(null);
     setModalLoading(true);
     setModalError(null);
     const result = await identityService.changeRole(roleModal.userId, roleValue);
     if (!result.success) {
       setModalLoading(false);
-      setModalError(result.error);
+      setModalError(getUpdateAccountErrorMessage(result, "user"));
       return;
     }
 
@@ -301,7 +317,11 @@ export default function UserManagementPage() {
       if (!profileResult?.success) {
         setModalLoading(false);
         setModalError(
-          `Đã đổi role nhưng profile student chưa đồng bộ: ${profileResult?.error ?? "Không tải được profile"}`,
+          `Role was updated, but the student profile is still syncing: ${
+            profileResult?.success === false
+              ? getUpdateAccountErrorMessage(profileResult, "user")
+              : "Please try again later."
+          }`,
         );
         return;
       }
@@ -313,7 +333,7 @@ export default function UserManagementPage() {
       if (!licenseResult.success) {
         setModalLoading(false);
         setModalError(
-          `Đã đổi role nhưng gán hạng bằng lái lỗi: ${licenseResult.error}`,
+          `Role was updated, but license assignment failed: ${getLicenseAssignmentErrorMessage(licenseResult)}`,
         );
         return;
       }
@@ -321,12 +341,15 @@ export default function UserManagementPage() {
 
     setModalLoading(false);
     setRoleModal(null);
+    setNotice(getUpdateAccountSuccessMessage("user"));
     await fetchUsers();
   };
 
   const handleDelete = async (user: IdentityUser) => {
     if (user.isDeleted) return;
     if (!window.confirm(`Xóa tài khoản "${user.fullName}" (${user.email})? Thao tác này không thể hoàn tác.`)) return;
+    setError(null);
+    setNotice(null);
     setTogglingId(user.userId);
     const result = await identityService.softDelete(user.userId, currentUserId);
     setTogglingId(null);
@@ -354,6 +377,7 @@ export default function UserManagementPage() {
       <UserFilters filters={filters} onChange={handleFiltersChange} />
 
       {error && <div className="user-mgmt__error">{error}</div>}
+      {notice && <div className="user-mgmt__notice">{notice}</div>}
 
       {loading ? (
         <div className="user-mgmt__loading">Đang tải...</div>

@@ -5,6 +5,13 @@ import type { Gender, LicenseTier } from "@/types/user-profile.types";
 import { ImageUploader } from "@/components/common/ImageUploader";
 import type { MediaReference } from "@/types/media.types";
 import { validateEmail } from "../../utils/authUtils";
+import {
+	getCreateAccountErrorMessage,
+	getCreateAccountSuccessMessage,
+	getLicenseAssignmentErrorMessage,
+	getUpdateAccountErrorMessage,
+	SRS_MESSAGES,
+} from "../../utils/srsMessages";
 import Toast from "../../components/ui/Toast";
 import { STUDENT_LICENSE_TIERS } from "../../types/student.types";
 import "./AddStudentPage.css";
@@ -108,17 +115,17 @@ export default function AddStudentPage() {
 		const next: FormErrors = {};
 
 		if (!form.fullName.trim())
-			next.fullName = "Vui lòng nhập họ và tên học viên.";
-		if (!form.email.trim()) next.email = "Vui lòng nhập email.";
+			next.fullName = SRS_MESSAGES.MSG08;
+		if (!form.email.trim()) next.email = SRS_MESSAGES.MSG08;
 		else if (!validateEmail(form.email))
-			next.email = "Email không hợp lệ.";
+			next.email = SRS_MESSAGES.MSG08;
 		if (!form.temporaryPassword)
-			next.temporaryPassword = "Vui lòng nhập mật khẩu tạm thời.";
+			next.temporaryPassword = SRS_MESSAGES.MSG08;
 		else if (form.temporaryPassword.length < 8)
-			next.temporaryPassword = "Mật khẩu tối thiểu 8 ký tự.";
+			next.temporaryPassword = SRS_MESSAGES.MSG08;
 		if (form.phoneNumber && !/^[0-9]{9,11}$/.test(form.phoneNumber.replace(/\s+/g, "")))
-			next.phoneNumber = "Số điện thoại không hợp lệ.";
-		if (!form.licenseTier) next.licenseTier = "Vui lòng chọn hạng bằng.";
+			next.phoneNumber = SRS_MESSAGES.MSG08;
+		if (!form.licenseTier) next.licenseTier = SRS_MESSAGES.MSG20;
 
 		setErrors(next);
 		return Object.keys(next).length === 0;
@@ -138,7 +145,7 @@ export default function AddStudentPage() {
 
 		if (!created.success) {
 			setLoading(false);
-			showToast(created.error, "error");
+			showToast(getCreateAccountErrorMessage(created, "student"), "error");
 			return;
 		}
 
@@ -149,7 +156,7 @@ export default function AddStudentPage() {
 		if (!profile.success) {
 			setLoading(false);
 			showToast(
-				"Đã tạo account nhưng profile chưa đồng bộ. Vui lòng làm mới danh sách sau ít phút.",
+				"Student account created successfully. Profile is still syncing. Please refresh the list later.",
 				"error",
 			);
 			setTimeout(() => navigate("/students"), 2000);
@@ -177,7 +184,7 @@ export default function AddStudentPage() {
 			if (!updateResult.success) {
 				setLoading(false);
 				showToast(
-					`Account đã tạo nhưng cập nhật profile lỗi: ${updateResult.error}`,
+					`Student account created, but profile update failed: ${getUpdateAccountErrorMessage(updateResult, "student")}`,
 					"error",
 				);
 				return;
@@ -193,7 +200,7 @@ export default function AddStudentPage() {
 			if (!licenseResult.success) {
 				setLoading(false);
 				showToast(
-					`Đã tạo học viên nhưng gán hạng bằng lỗi: ${licenseResult.error}`,
+					`Student account created, but license assignment failed: ${getLicenseAssignmentErrorMessage(licenseResult)}`,
 					"error",
 				);
 				return;
@@ -201,7 +208,7 @@ export default function AddStudentPage() {
 		}
 
 		setLoading(false);
-		showToast("Tạo học viên thành công!", "success");
+		showToast(getCreateAccountSuccessMessage("student"), "success");
 		setTimeout(() => navigate("/students"), 1500);
 	};
 

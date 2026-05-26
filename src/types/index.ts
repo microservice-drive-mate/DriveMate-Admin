@@ -68,6 +68,21 @@ export interface LoginCredentials {
 	password: string;
 }
 
+export interface LoginResponseData {
+	accessToken: string;
+	refreshToken: string;
+	expiresIn: number;
+	refreshExpiresIn: number;
+	tokenType: string;
+	scope: string;
+}
+
+export interface LogoutResponseData {
+	success: boolean;
+	message: string;
+	instruction: string;
+}
+
 export interface AuthState {
 	user: AuthUser | null;
 	token: string | null;
