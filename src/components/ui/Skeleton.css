@@ -1,0 +1,30 @@
+.skeleton {
+  background: linear-gradient(90deg, #242424 0%, #303030 42%, #242424 84%);
+  background-size: 220% 100%;
+  border-radius: 8px;
+  display: inline-block;
+  max-width: 100%;
+  overflow: hidden;
+  position: relative;
+  vertical-align: middle;
+  animation: skeleton-shimmer 1.35s ease-in-out infinite;
+}
+
+.skeleton--text {
+  border-radius: 999px;
+  height: 1em;
+}
+
+.skeleton--block {
+  min-height: 16px;
+}
+
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: 100% 0;
+  }
+
+  100% {
+    background-position: -120% 0;
+  }
+}

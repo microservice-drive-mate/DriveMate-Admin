@@ -6,6 +6,7 @@ export * from "./identity.types";
 export * from "./user-profile.types";
 export * from "./exam-template.types";
 export * from "./media.types";
+export * from "./health-metrics.types";
 
 export interface NavItem {
 	label: string;

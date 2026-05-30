@@ -24,6 +24,7 @@ import AddQuestionPage from "./pages/AddQuestionPage";
 import ExamConfigManagementPage from "./pages/ExamConfigManagementPage";
 import AddExamConfigPage from "./pages/AddExamConfigPage";
 import AuditLogPage from "./pages/AuditLogPage";
+import SystemHealthPage from "./pages/SystemHealthPage";
 
 const router = createBrowserRouter([
 	{
@@ -120,6 +121,10 @@ const router = createBrowserRouter([
 					{
 						path: "audit-logs",
 						element: <AuditLogPage />,
+					},
+					{
+						path: "system-health",
+						element: <SystemHealthPage />,
 					},
 				],
 			},

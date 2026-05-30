@@ -13,6 +13,7 @@ const ROUTE_LABELS: Record<string, string> = {
   '/courses': 'Course Management',
   '/questions': 'Question Bank',
   '/exam-config': 'Exam Configuration',
+  '/system-health': 'System Health',
 };
 
 function getInitials(name: string): string {
