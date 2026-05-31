@@ -14,6 +14,7 @@ import {
 } from "../../utils/srsMessages";
 import Toast from "../../components/ui/Toast";
 import { STUDENT_LICENSE_TIERS } from "../../types/student.types";
+import { Field } from "./components/Field";
 import "./AddStudentPage.css";
 
 interface FormState {
@@ -54,24 +55,6 @@ interface ToastState {
 	message: string;
 	type: "success" | "error";
 	visible: boolean;
-}
-
-function Field({
-	label,
-	children,
-	error,
-}: {
-	label: string;
-	children: React.ReactNode;
-	error?: string;
-}) {
-	return (
-		<div className="add-student__field">
-			<label>{label}</label>
-			{children}
-			{error && <span className="add-student__error">{error}</span>}
-		</div>
-	);
 }
 
 export default function AddStudentPage() {

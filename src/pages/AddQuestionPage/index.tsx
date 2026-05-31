@@ -42,7 +42,7 @@ export default function AddQuestionPage() {
   const [errors, setErrors] = useState<Partial<Record<keyof QuestionFormData | 'options', string>>>({});
   const [image, setImage] = useState<MediaReference | null>(null);
   const [loading, setLoading] = useState(false);
-  const [fetchLoading, setFetchLoading] = useState(false);
+  const [loadedQuestionId, setLoadedQuestionId] = useState<string | null>(null);
   const [submitError, setSubmitError] = useState('');
 
   useEffect(() => {
@@ -53,9 +53,8 @@ export default function AddQuestionPage() {
 
   useEffect(() => {
     if (!isEdit || !id) return;
-    setFetchLoading(true);
     questionService.getById(id).then((res) => {
-      setFetchLoading(false);
+      setLoadedQuestionId(id);
       if (res.success) {
         const q = res.data;
         setVersion(q.version);
@@ -150,6 +149,8 @@ export default function AddQuestionPage() {
       setSubmitError(result.error);
     }
   };
+
+  const fetchLoading = isEdit && Boolean(id) && loadedQuestionId !== id;
 
   if (fetchLoading) {
     return <div className="add-q"><div className="add-q__loading">Đang tải...</div></div>;

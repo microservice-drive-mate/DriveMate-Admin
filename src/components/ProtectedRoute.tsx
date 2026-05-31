@@ -1,17 +1,16 @@
 import { Navigate, Outlet } from "react-router-dom";
-import { useAuthStore } from "../store/authStore";
-import { AUTH_CONFIG } from "@/constants";
+
+import { useAuthStore } from "@/store/authStore";
 
 export function ProtectedRoute() {
-	const { isAuthenticated, isInitializing } = useAuthStore();
+	const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+	const isInitializing = useAuthStore((state) => state.isInitializing);
 
 	if (isInitializing) {
 		return null;
 	}
 
-	const hasToken = !!localStorage.getItem(AUTH_CONFIG.ACCESS_TOKEN_STORAGE_KEY);
-
-	if (!isAuthenticated && !hasToken) {
+	if (!isAuthenticated) {
 		return <Navigate to="/login" replace />;
 	}
 

@@ -1,13 +1,12 @@
-import { useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { analyticsService, examService, identityService, notificationService, userService } from "@/services";
+import { useAsyncData } from "@/hooks/useAsyncData";
 import type { Gender, LicenseTier } from "@/types/user-profile.types";
 import { GENDER_LABELS } from "@/types/user-profile.types";
-import { useMediaUrl } from "@/hooks/useMediaUrl";
 import { ImageUploader } from "@/components/common/ImageUploader";
 import type { MediaReference } from "@/types/media.types";
 import type { AdminExamSession } from "@/types/exam-session.types";
-import { EXAM_SESSION_STATUS_LABELS } from "@/types/exam-session.types";
 import type { AcademicWarningSeverity } from "@/types/notification.types";
 import { SEVERITY_LABELS } from "@/types/notification.types";
 import type { ProgressDashboard } from "@/types/analytics.types";
@@ -15,17 +14,15 @@ import Toast from "../../components/ui/Toast";
 import {
 	STUDENT_ALERT_TEMPLATES,
 	STUDENT_RANK_OPTIONS,
-	STUDENT_STATUS_LABELS,
-	STUDENT_STATUS_TONES,
-	studentAvatarColor,
 	studentFromProfile,
-	studentInitials,
 	studentStatus,
 } from "../../types/student.types";
-import type {
-	Student,
-	StudentStatus,
-} from "../../types/student.types";
+import type { Student } from "../../types/student.types";
+import { Badge } from "./components/Badge";
+import { DetailAvatar } from "./components/DetailAvatar";
+import { ExamSessionTable } from "./components/ExamSessionTable";
+import { InlineButton } from "./components/InlineButton";
+import { Modal } from "./components/Modal";
 import "./StudentDetailPage.css";
 
 type ModalType = "edit" | "rank" | "alert" | "lock" | null;
@@ -50,131 +47,9 @@ function toDateInput(value: string | null | undefined) {
 	return value ? value.slice(0, 10) : "";
 }
 
-function Badge({ status }: { status: StudentStatus }) {
-	return (
-		<span
-			className={`detail-badge detail-badge--${STUDENT_STATUS_TONES[status]}`}>
-			{STUDENT_STATUS_LABELS[status]}
-		</span>
-	);
-}
-
-function InlineButton({
-	children,
-	tone,
-	onClick,
-	disabled,
-}: {
-	children: string;
-	tone: "yellow" | "green" | "red";
-	onClick: () => void;
-	disabled?: boolean;
-}) {
-	return (
-		<button
-			className={`detail-action detail-action--${tone}`}
-			onClick={onClick}
-			disabled={disabled}>
-			{children}
-		</button>
-	);
-}
-
-function DetailAvatar({ student }: { student: Student }) {
-	const { url } = useMediaUrl(student.mediaFileId);
-	const imageUrl = url || student.avatarUrl;
-
-	return (
-		<div
-			className="student-detail__avatar"
-			style={
-				imageUrl
-					? undefined
-					: { background: studentAvatarColor(student.id) }
-			}>
-			{imageUrl ? (
-				<img src={imageUrl} alt={student.fullName} />
-			) : (
-				studentInitials(student.fullName)
-			)}
-		</div>
-	);
-}
-
-function Modal({
-	title,
-	children,
-	onClose,
-	footer,
-}: {
-	title: string;
-	children: React.ReactNode;
-	onClose: () => void;
-	footer?: React.ReactNode;
-}) {
-	return (
-		<div
-			className="detail-modal__backdrop"
-			onClick={onClose}>
-			<div
-				className="detail-modal"
-				onClick={(e) => e.stopPropagation()}>
-				<div className="detail-modal__title">{title}</div>
-				{children}
-				{footer}
-			</div>
-		</div>
-	);
-}
-
-function ExamSessionTable({ sessions }: { sessions: AdminExamSession[] }) {
-	if (sessions.length === 0) {
-		return <p style={{ color: "rgba(255,255,255,0.4)", padding: "16px 0" }}>Chưa có lịch sử thi.</p>;
-	}
-	return (
-		<table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
-			<thead>
-				<tr style={{ color: "rgba(255,255,255,0.5)", textAlign: "left" }}>
-					<th style={{ padding: "6px 8px" }}>Ngày thi</th>
-					<th style={{ padding: "6px 8px" }}>Hạng</th>
-					<th style={{ padding: "6px 8px" }}>Điểm</th>
-					<th style={{ padding: "6px 8px" }}>Kết quả</th>
-					<th style={{ padding: "6px 8px" }}>Trạng thái</th>
-				</tr>
-			</thead>
-			<tbody>
-				{sessions.map((s) => (
-					<tr key={s.id} style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
-						<td style={{ padding: "8px" }}>
-							{s.startedAt ? new Date(s.startedAt).toLocaleDateString("vi-VN") : "—"}
-						</td>
-						<td style={{ padding: "8px" }}>{s.licenseCategory}</td>
-						<td style={{ padding: "8px" }}>{s.score ?? "—"}</td>
-						<td style={{ padding: "8px" }}>
-							{s.isPassed === null ? "—" : s.isPassed ? (
-								<span style={{ color: "#4ade80", fontWeight: 600 }}>Đạt</span>
-							) : (
-								<span style={{ color: "#f87171", fontWeight: 600 }}>
-									{s.failedByCritical ? "Trượt (điểm liệt)" : "Trượt"}
-								</span>
-							)}
-						</td>
-						<td style={{ padding: "8px", color: "rgba(255,255,255,0.6)" }}>
-							{EXAM_SESSION_STATUS_LABELS[s.status]}
-						</td>
-					</tr>
-				))}
-			</tbody>
-		</table>
-	);
-}
-
 export default function StudentDetailPage() {
 	const navigate = useNavigate();
 	const { studentId } = useParams();
-	const [student, setStudent] = useState<Student | null>(null);
-	const [loading, setLoading] = useState(true);
-	const [error, setError] = useState("");
 	const [modal, setModal] = useState<ModalType>(null);
 	const [profileForm, setProfileForm] =
 		useState<ProfileForm>(EMPTY_PROFILE_FORM);
@@ -189,34 +64,47 @@ export default function StudentDetailPage() {
 	const [toastVisible, setToastVisible] = useState(false);
 	const [submitting, setSubmitting] = useState(false);
 
-	const [examSessions, setExamSessions] = useState<AdminExamSession[]>([]);
-	const [sessionsLoading, setSessionsLoading] = useState(false);
-	const [analytics, setAnalytics] = useState<ProgressDashboard | null>(null);
-
-	useEffect(() => {
-		if (!studentId) return;
-		setLoading(true);
-		userService.getById(studentId).then((res) => {
-			if (res.success) {
-				setStudent(studentFromProfile(res.data));
-			} else {
-				setError(res.error);
-			}
-			setLoading(false);
-		});
+	const loadStudent = useCallback(async () => {
+		if (!studentId) {
+			return { success: true as const, data: null };
+		}
+		const res = await userService.getById(studentId);
+		if (!res.success) return res;
+		return { success: true as const, data: studentFromProfile(res.data) };
 	}, [studentId]);
+	const studentQuery = useAsyncData<Student | null>(loadStudent, {
+		initialData: null,
+		enabled: Boolean(studentId),
+		retainPreviousData: false,
+	});
 
-	useEffect(() => {
-		if (!studentId) return;
-		setSessionsLoading(true);
-		examService.listSessions({ studentId, size: 20 }).then((res) => {
-			if (res.success) setExamSessions(res.data.items);
-			setSessionsLoading(false);
-		});
-		analyticsService.getStudentProgress(studentId).then((res) => {
-			if (res.success) setAnalytics(res.data);
-		});
+	const loadExamSessions = useCallback(async () => {
+		if (!studentId) {
+			return { success: true as const, data: [] as AdminExamSession[] };
+		}
+		const res = await examService.listSessions({ studentId, size: 20 });
+		if (!res.success) return res;
+		return { success: true as const, data: res.data.items };
 	}, [studentId]);
+	const examSessionsQuery = useAsyncData(loadExamSessions, {
+		initialData: [] as AdminExamSession[],
+		enabled: Boolean(studentId),
+		retainPreviousData: false,
+	});
+
+	const loadAnalytics = useCallback(async () => {
+		if (!studentId) {
+			return { success: true as const, data: null };
+		}
+		const res = await analyticsService.getStudentProgress(studentId);
+		if (!res.success) return { success: true as const, data: null };
+		return { success: true as const, data: res.data };
+	}, [studentId]);
+	const analyticsQuery = useAsyncData<ProgressDashboard | null>(loadAnalytics, {
+		initialData: null,
+		enabled: Boolean(studentId),
+		retainPreviousData: false,
+	});
 
 	const showToast = (message: string, type: "success" | "error") => {
 		setToastMessage(message);
@@ -224,7 +112,12 @@ export default function StudentDetailPage() {
 		setToastVisible(true);
 	};
 
-	if (loading) {
+	const student = studentQuery.data;
+	const error = studentQuery.error ?? "";
+	const examSessions = examSessionsQuery.data;
+	const analytics = analyticsQuery.data;
+
+	if (studentQuery.loading) {
 		return <div className="detail-empty">Đang tải hồ sơ học viên...</div>;
 	}
 
@@ -282,7 +175,7 @@ export default function StudentDetailPage() {
 		const res = await userService.assignLicenseTier(student.id, rank);
 		setSubmitting(false);
 		if (res.success) {
-			setStudent({ ...student, licenseTier: rank });
+			studentQuery.setData({ ...student, licenseTier: rank });
 			showToast(`Đã cập nhật hạng bằng sang ${rank}.`, "success");
 			setModal(null);
 		} else {
@@ -310,7 +203,7 @@ export default function StudentDetailPage() {
 		setSubmitting(false);
 
 		if (res.success) {
-			setStudent(studentFromProfile(res.data));
+			studentQuery.setData(studentFromProfile(res.data));
 			showToast("Đã cập nhật hồ sơ học viên.", "success");
 			setModal(null);
 		} else {
@@ -348,7 +241,7 @@ export default function StudentDetailPage() {
 		const res = await identityService.setLock(student.id, true);
 		setSubmitting(false);
 		if (res.success) {
-			setStudent({ ...student, isActive: false });
+			studentQuery.setData({ ...student, isActive: false });
 			showToast("Đã khóa tài khoản học viên.", "success");
 			setModal(null);
 		} else {
@@ -362,7 +255,7 @@ export default function StudentDetailPage() {
 		const res = await identityService.setLock(student.id, false);
 		setSubmitting(false);
 		if (res.success) {
-			setStudent({ ...student, isActive: true });
+			studentQuery.setData({ ...student, isActive: true });
 			showToast("Đã mở khóa tài khoản.", "success");
 		} else {
 			showToast(`Mở khóa lỗi: ${res.error}`, "error");
@@ -499,7 +392,7 @@ export default function StudentDetailPage() {
 					)}
 					<div className="card-surface student-detail__chart-card">
 						<h2>Lịch Sử Thi</h2>
-						{sessionsLoading ? (
+						{examSessionsQuery.loading ? (
 							<p style={{ color: "rgba(255,255,255,0.4)", padding: "16px 0" }}>Đang tải...</p>
 						) : (
 							<ExamSessionTable sessions={examSessions} />

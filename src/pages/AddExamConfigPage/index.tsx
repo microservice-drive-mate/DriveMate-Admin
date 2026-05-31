@@ -46,7 +46,7 @@ export default function AddExamConfigPage() {
   const [form, setForm] = useState<ExamTemplateFormData>(DEFAULT_FORM);
   const [version, setVersion] = useState(1);
   const [errors, setErrors] = useState<FormErrors>({});
-  const [fetchLoading, setFetchLoading] = useState(false);
+  const [loadedConfigId, setLoadedConfigId] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState('');
   const [topics, setTopics] = useState<TopicResponse[]>([]);
@@ -59,9 +59,8 @@ export default function AddExamConfigPage() {
 
   useEffect(() => {
     if (!isEdit || !configId) return;
-    setFetchLoading(true);
     examService.getById(configId).then((res) => {
-      setFetchLoading(false);
+      setLoadedConfigId(configId);
       if (res.success) {
         setForm({
           name: res.data.name,
@@ -188,6 +187,7 @@ export default function AddExamConfigPage() {
   };
 
   const previewClass = form.licenseCategory || 'B1';
+  const fetchLoading = isEdit && Boolean(configId) && loadedConfigId !== configId;
 
   if (fetchLoading) {
     return <div style={{ padding: 24 }}>Đang tải...</div>;

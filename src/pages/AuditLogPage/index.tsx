@@ -1,5 +1,6 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { auditService } from '@/services';
+import { useAsyncData } from '@/hooks/useAsyncData';
 import type { AuditLog, AuditLogListParams } from '@/types/audit.types';
 import Pagination from '../../components/Pagination';
 import { DEFAULT_PAGE_SIZE } from '../../constants/pagination';
@@ -27,47 +28,43 @@ const DEFAULT_FILTERS: Filters = {
   to: '',
 };
 
+const EMPTY_AUDIT_PAGE = {
+  items: [] as AuditLog[],
+  total: 0,
+  page: 1,
+  size: DEFAULT_PAGE_SIZE,
+};
+
 export default function AuditLogPage() {
-  const [logs, setLogs] = useState<AuditLog[]>([]);
-  const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const [filters, setFilters] = useState<Filters>(DEFAULT_FILTERS);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
   const [selected, setSelected] = useState<AuditLog | null>(null);
 
-  const fetchLogs = useCallback(async (p: number, f: Filters) => {
-    setLoading(true);
-    setError('');
+  const loadLogs = useCallback(() => {
     const params: AuditLogListParams = {
-      page: p,
+      page,
       size: DEFAULT_PAGE_SIZE,
-      ...(f.serviceName ? { serviceName: f.serviceName } : {}),
-      ...(f.action ? { action: f.action } : {}),
-      ...(f.resourceType ? { resourceType: f.resourceType } : {}),
-      ...(f.actorId ? { actorId: f.actorId } : {}),
-      ...(f.from ? { from: f.from } : {}),
-      ...(f.to ? { to: f.to } : {}),
+      ...(filters.serviceName ? { serviceName: filters.serviceName } : {}),
+      ...(filters.action ? { action: filters.action } : {}),
+      ...(filters.resourceType ? { resourceType: filters.resourceType } : {}),
+      ...(filters.actorId ? { actorId: filters.actorId } : {}),
+      ...(filters.from ? { from: filters.from } : {}),
+      ...(filters.to ? { to: filters.to } : {}),
     };
-    const res = await auditService.list(params);
-    if (res.success) {
-      setLogs(res.data.items);
-      setTotal(res.data.total);
-    } else {
-      setError(res.error);
-    }
-    setLoading(false);
-  }, []);
-
-  useEffect(() => {
-    fetchLogs(page, filters);
-  }, [page, filters, fetchLogs]);
+    return auditService.list(params);
+  }, [page, filters]);
+  const logsQuery = useAsyncData(loadLogs, {
+    initialData: EMPTY_AUDIT_PAGE,
+    retainPreviousData: false,
+  });
 
   const handleFilter = (patch: Partial<Filters>) => {
     setFilters((f) => ({ ...f, ...patch }));
     setPage(1);
   };
 
+  const logs = logsQuery.data.items;
+  const total = logsQuery.data.total;
   const totalPages = Math.max(1, Math.ceil(total / DEFAULT_PAGE_SIZE));
 
   return (
@@ -126,7 +123,7 @@ export default function AuditLogPage() {
         </button>
       </div>
 
-      {error && <div className="audit-page__error">{error}</div>}
+      {logsQuery.error && <div className="audit-page__error">{logsQuery.error}</div>}
 
       <div className="audit-table-wrap">
         <table className="audit-table">
@@ -141,7 +138,7 @@ export default function AuditLogPage() {
             </tr>
           </thead>
           <tbody>
-            {loading ? (
+            {logsQuery.loading ? (
               <tr><td colSpan={6} className="audit-table__loading">Đang tải...</td></tr>
             ) : logs.length === 0 ? (
               <tr><td colSpan={6} className="audit-table__loading">Không có dữ liệu.</td></tr>

@@ -32,15 +32,14 @@ export default function AddCoursePage() {
   const [instructors, setInstructors] = useState<IdentityUser[]>([]);
   const [instructorSearch, setInstructorSearch] = useState('');
   const [loading, setLoading] = useState(false);
-  const [fetchLoading, setFetchLoading] = useState(false);
+  const [loadedCourseId, setLoadedCourseId] = useState<string | null>(null);
   const [submitError, setSubmitError] = useState('');
   const [errors, setErrors] = useState<Partial<Record<'title' | 'licenseCategory', string>>>({});
 
   useEffect(() => {
     if (!isEdit || !courseId) return;
-    setFetchLoading(true);
     courseService.getById(courseId).then((res) => {
-      setFetchLoading(false);
+      setLoadedCourseId(courseId);
       if (res.success) {
         const c = res.data;
         setForm({
@@ -125,6 +124,8 @@ export default function AddCoursePage() {
       setSubmitError(result.error);
     }
   };
+
+  const fetchLoading = isEdit && Boolean(courseId) && loadedCourseId !== courseId;
 
   if (fetchLoading) {
     return <div className="add-course"><div className="add-course__loading">Đang tải...</div></div>;

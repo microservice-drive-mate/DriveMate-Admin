@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { courseService } from '@/services';
 import { FileUploader } from '@/components/common/FileUploader';
-import { getRenderableMediaUrl } from '@/lib';
-import type { CourseMaterial, CourseResponse } from '../../types/course.types';
+import type { CourseResponse } from '../../types/course.types';
 import { COURSE_STATUS_LABELS } from '../../types/course.types';
+import { MaterialDownloadButton } from './components/MaterialDownloadButton';
 import './CourseDetailPage.css';
 
 type DetailTab = 'lessons' | 'materials';
@@ -33,44 +33,6 @@ interface MaterialForm {
   file: MaterialUpload | null;
 }
 
-function MaterialDownloadButton({ material }: { material: CourseMaterial }) {
-  const [loading, setLoading] = useState(false);
-
-  const handleClick = async () => {
-    if (material.mediaFileId) {
-      setLoading(true);
-      try {
-        const url = await getRenderableMediaUrl(material.mediaFileId);
-        window.open(url, '_blank', 'noopener,noreferrer');
-      } catch {
-        if (material.fileUrl) {
-          window.open(material.fileUrl, '_blank', 'noopener,noreferrer');
-        }
-      } finally {
-        setLoading(false);
-      }
-      return;
-    }
-    if (material.fileUrl) {
-      window.open(material.fileUrl, '_blank', 'noopener,noreferrer');
-    }
-  };
-
-  if (!material.mediaFileId && !material.fileUrl) {
-    return <span className="course-detail__no-file">Chưa có file</span>;
-  }
-
-  return (
-    <button
-      type="button"
-      className="course-detail__download-btn"
-      onClick={handleClick}
-      disabled={loading}
-    >
-      {loading ? 'Đang mở...' : 'Tải xuống'}
-    </button>
-  );
-}
 
 export default function CourseDetailPage() {
   const { courseId } = useParams<{ courseId: string }>();

@@ -8,39 +8,45 @@ interface UseMediaUrlResult {
 	error: string | null;
 }
 
+interface MediaUrlState extends UseMediaUrlResult {
+	mediaFileId: string | null;
+}
+
 export function useMediaUrl(
 	mediaFileId: string | null | undefined,
 ): UseMediaUrlResult {
-	const [url, setUrl] = useState<string | null>(null);
-	const [loading, setLoading] = useState<boolean>(false);
-	const [error, setError] = useState<string | null>(null);
+	const [state, setState] = useState<MediaUrlState>({
+		mediaFileId: null,
+		url: null,
+		loading: false,
+		error: null,
+	});
 
 	useEffect(() => {
 		let cancelled = false;
 
 		if (!mediaFileId) {
-			setUrl(null);
-			setLoading(false);
-			setError(null);
 			return;
 		}
-
-		setLoading(true);
-		setError(null);
 
 		getRenderableMediaUrl(mediaFileId)
 			.then((resolved) => {
 				if (cancelled) return;
-				setUrl(resolved);
+				setState({
+					mediaFileId,
+					url: resolved,
+					loading: false,
+					error: null,
+				});
 			})
 			.catch((err: unknown) => {
 				if (cancelled) return;
-				setError(err instanceof Error ? err.message : "Không thể tải tệp.");
-				setUrl(null);
-			})
-			.finally(() => {
-				if (cancelled) return;
-				setLoading(false);
+				setState({
+					mediaFileId,
+					url: null,
+					loading: false,
+					error: err instanceof Error ? err.message : "Không thể tải tệp.",
+				});
 			});
 
 		return () => {
@@ -48,5 +54,17 @@ export function useMediaUrl(
 		};
 	}, [mediaFileId]);
 
-	return { url, loading, error };
+	if (!mediaFileId) {
+		return { url: null, loading: false, error: null };
+	}
+
+	if (state.mediaFileId !== mediaFileId) {
+		return { url: null, loading: true, error: null };
+	}
+
+	return {
+		url: state.url,
+		loading: state.loading,
+		error: state.error,
+	};
 }

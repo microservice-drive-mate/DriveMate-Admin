@@ -1,5 +1,7 @@
-import type { IdentityUser, UserRole } from "@/types/identity.types";
-import { ROLE_LABELS } from "@/types/identity.types";
+import type { IdentityUser } from "@/types/identity.types";
+import { RoleBadge } from "./components/RoleBadge";
+import { StatusCell } from "./components/StatusCell";
+import { formatDate, getAvatarColor, getInitials } from "./userTableUtils";
 
 interface Props {
   users: IdentityUser[];
@@ -8,69 +10,6 @@ interface Props {
   onEdit: (user: IdentityUser) => void;
   onChangeRole: (user: IdentityUser) => void;
   onDelete: (user: IdentityUser) => void;
-}
-
-const ROLE_BADGE_CLASS: Record<UserRole, string> = {
-  ADMIN: "badge badge--admin",
-  CENTER_MANAGER: "badge badge--manager",
-  INSTRUCTOR: "badge badge--instructor",
-  STUDENT: "badge badge--student",
-};
-
-const AVATAR_PALETTE = [
-  "#F5A623",
-  "#4A90E2",
-  "#7ED321",
-  "#9B59B6",
-  "#E74C3C",
-  "#16A085",
-];
-
-function getInitials(fullName: string) {
-  const parts = fullName.trim().split(/\s+/);
-  if (parts.length === 0) return "?";
-  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
-  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-}
-
-function getAvatarColor(userId: string) {
-  let hash = 0;
-  for (let i = 0; i < userId.length; i++) {
-    hash = (hash * 31 + userId.charCodeAt(i)) >>> 0;
-  }
-  return AVATAR_PALETTE[hash % AVATAR_PALETTE.length];
-}
-
-function formatDate(value: string | null) {
-  if (!value) return "";
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return value;
-  return date.toLocaleDateString("vi-VN");
-}
-
-function RoleBadge({ role }: { role: UserRole }) {
-  return <span className={ROLE_BADGE_CLASS[role]}>{ROLE_LABELS[role]}</span>;
-}
-
-function StatusCell({ user }: { user: IdentityUser }) {
-  if (user.isDeleted) {
-    return (
-      <div className="user-table__status-cell">
-        <span className="badge badge--deleted">Đã xóa</span>
-        {user.deletedAt && (
-          <span className="user-table__status-meta">
-            {formatDate(user.deletedAt)}
-          </span>
-        )}
-      </div>
-    );
-  }
-
-  return (
-    <span className={`badge ${user.isActive ? "badge--active" : "badge--inactive"}`}>
-      {user.isActive ? "Hoạt động" : "Tạm dừng"}
-    </span>
-  );
 }
 
 export default function UserTable({
@@ -84,7 +23,7 @@ export default function UserTable({
   if (users.length === 0) {
     return (
       <div className="user-table__empty">
-        <p>Không tìm thấy người dùng nào.</p>
+        <p>KhÃ´ng tÃ¬m tháº¥y ngÆ°á»i dÃ¹ng nÃ o.</p>
       </div>
     );
   }
@@ -94,12 +33,12 @@ export default function UserTable({
       <table className="user-table">
         <thead>
           <tr>
-            <th>Họ Tên</th>
+            <th>Há» TÃªn</th>
             <th>Email</th>
-            <th>Vai Trò</th>
-            <th>Trạng Thái</th>
-            <th>Ngày Tạo</th>
-            <th>Thao Tác</th>
+            <th>Vai TrÃ²</th>
+            <th>Tráº¡ng ThÃ¡i</th>
+            <th>NgÃ y Táº¡o</th>
+            <th>Thao TÃ¡c</th>
           </tr>
         </thead>
         <tbody>
@@ -134,31 +73,31 @@ export default function UserTable({
                           ? "action-btn--deactivate"
                           : "action-btn--activate"
                       }`}
-                      title={user.isActive ? "Khóa đăng nhập" : "Mở khóa"}
+                      title={user.isActive ? "KhÃ³a Ä‘Äƒng nháº­p" : "Má»Ÿ khÃ³a"}
                       disabled={disabled}
                       onClick={() => onToggleStatus(user)}>
-                      {busy ? "..." : user.isActive ? "⏸" : "▶"}
+                      {busy ? "..." : user.isActive ? "â¸" : "â–¶"}
                     </button>
                     <button
                       className="action-btn action-btn--edit"
-                      title="Sửa thông tin"
+                      title="Sá»­a thÃ´ng tin"
                       disabled={disabled}
                       onClick={() => onEdit(user)}>
-                      ✎
+                      âœŽ
                     </button>
                     <button
                       className="action-btn action-btn--role"
-                      title="Đổi vai trò"
+                      title="Äá»•i vai trÃ²"
                       disabled={disabled}
                       onClick={() => onChangeRole(user)}>
-                      ◆
+                      â—†
                     </button>
                     <button
                       className="action-btn action-btn--delete"
-                      title="Xóa tài khoản"
+                      title="XÃ³a tÃ i khoáº£n"
                       disabled={disabled}
                       onClick={() => onDelete(user)}>
-                      ×
+                      Ã—
                     </button>
                   </div>
                 </td>
