@@ -15,6 +15,8 @@ import {
 	getLicenseAssignmentSuccessMessage,
 	getLockAccountErrorMessage,
 	getLockAccountSuccessMessage,
+	getUpdateAccountErrorMessage,
+	getUpdateAccountSuccessMessage,
 } from "@/utils/srsMessages";
 import Toast from "../../components/ui/Toast";
 import {
@@ -209,10 +211,10 @@ export default function StudentDetailPage() {
 
 		if (res.success) {
 			studentQuery.setData(studentFromProfile(res.data));
-			showToast("Đã cập nhật hồ sơ học viên.", "success");
+			showToast(getUpdateAccountSuccessMessage(), "success");
 			setModal(null);
 		} else {
-			showToast(`Cập nhật hồ sơ lỗi: ${res.error}`, "error");
+			showToast(getUpdateAccountErrorMessage(res), "error");
 		}
 	};
 

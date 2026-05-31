@@ -9,6 +9,8 @@ import type { MediaReference } from "@/types/media.types";
 import { validateEmail } from "../../utils/authUtils";
 import {
   getCreateAccountErrorMessage,
+  getCreateAccountPartialErrorMessage,
+  getCreateAccountProfileSyncMessage,
   getCreateAccountSuccessMessage,
   getLicenseAssignmentErrorMessage,
   getUpdateAccountErrorMessage,
@@ -125,10 +127,7 @@ export default function AddUserPage() {
     const profile = await userService.getByIdWithRetry(userId);
     if (!profile.success) {
       setLoading(false);
-      showToast(
-        "User account created successfully. Profile is still syncing. Please refresh the list later.",
-        "error",
-      );
+      showToast(getCreateAccountProfileSyncMessage(), "error");
       setTimeout(() => navigate("/users"), 2000);
       return;
     }
@@ -155,7 +154,7 @@ export default function AddUserPage() {
       if (!updateResult.success) {
         setLoading(false);
         showToast(
-          `User account created, but profile update failed: ${getUpdateAccountErrorMessage(updateResult)}`,
+          getCreateAccountPartialErrorMessage("profile", getUpdateAccountErrorMessage(updateResult)),
           "error",
         );
         return;
@@ -170,7 +169,7 @@ export default function AddUserPage() {
       if (!licenseResult.success) {
         setLoading(false);
         showToast(
-          `User account created, but license assignment failed: ${getLicenseAssignmentErrorMessage(licenseResult)}`,
+          getCreateAccountPartialErrorMessage("license", getLicenseAssignmentErrorMessage(licenseResult)),
           "error",
         );
         return;

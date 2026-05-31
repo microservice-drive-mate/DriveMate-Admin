@@ -392,11 +392,6 @@
   border-color: rgba(128, 90, 213, 0.4);
 }
 
-.action-btn--delete:hover {
-  background: rgba(229, 62, 62, 0.15);
-  border-color: rgba(229, 62, 62, 0.4);
-}
-
 .action-btn:disabled {
   opacity: 0.4;
   cursor: not-allowed;

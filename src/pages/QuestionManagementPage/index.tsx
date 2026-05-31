@@ -44,6 +44,7 @@ export default function QuestionManagementPage() {
   const [filters, setFilters] = useState<QuestionFilters>(DEFAULT_FILTERS);
   const [currentPage, setCurrentPage] = useState(1);
 
+  const [deleteError, setDeleteError] = useState<string | null>(null);
   const [topicModalOpen, setTopicModalOpen] = useState(false);
   const [topicForm, setTopicForm] = useState(EMPTY_TOPIC_FORM);
   const [editingTopicId, setEditingTopicId] = useState<string | null>(null);
@@ -136,12 +137,13 @@ export default function QuestionManagementPage() {
 
   const handleDelete = async (id: string, version: number) => {
     if (!window.confirm('Xác nhận xóa câu hỏi này?')) return;
+    setDeleteError(null);
     const result = await questionService.delete(id, version);
     if (result.success) {
       questionsQuery.refetch();
       statsQuery.refetch();
     } else {
-      alert(result.error);
+      setDeleteError(result.error);
     }
   };
 
@@ -175,6 +177,7 @@ export default function QuestionManagementPage() {
       </div>
 
       {questionsQuery.error && <div className="q-error">{questionsQuery.error}</div>}
+      {deleteError && <div className="q-error">{deleteError}</div>}
 
       <FilterBar filters={filters} topics={topics} onChange={handleFilters} />
 

@@ -16,11 +16,12 @@ import {
   getLicenseAssignmentSuccessMessage,
   getLockAccountErrorMessage,
   getLockAccountSuccessMessage,
+  getPartialSaveErrorMessage,
   getUpdateAccountErrorMessage,
   getUpdateAccountSuccessMessage,
   SRS_MESSAGES,
 } from "@/utils/srsMessages";
-import { useAuthStore } from "../../store/authStore";
+import Toast from "../../components/ui/Toast";
 import UserFilters from "./UserFilters";
 import UserTable from "./UserTable";
 import Pagination from "../../components/Pagination";
@@ -45,6 +46,12 @@ interface ProfileEditForm {
   gender: Gender | "";
   address: string;
   notes: string;
+}
+
+interface ToastState {
+  message: string;
+  type: "success" | "error";
+  visible: boolean;
 }
 
 const INITIAL_FILTERS: UserManagementFilters = {
@@ -104,14 +111,17 @@ async function waitForStudentProfile(id: string) {
 
 export default function UserManagementPage() {
   const navigate = useNavigate();
-  const currentUserId = useAuthStore((s) => s.user?.id ?? "");
   const [items, setItems] = useState<IdentityUser[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const [filters, setFilters] = useState<UserManagementFilters>(INITIAL_FILTERS);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [notice, setNotice] = useState<string | null>(null);
+  const [toast, setToast] = useState<ToastState>({
+    message: "",
+    type: "success",
+    visible: false,
+  });
   const [togglingId, setTogglingId] = useState<string | null>(null);
 
   const [editModal, setEditModal] = useState<IdentityUser | null>(null);
@@ -162,16 +172,20 @@ export default function UserManagementPage() {
 
   const totalPages = Math.max(1, Math.ceil(total / DEFAULT_PAGE_SIZE));
 
+  const showToast = (message: string, type: ToastState["type"]) => {
+    setToast({ message, type, visible: true });
+  };
+
   const handleFiltersChange = (next: UserManagementFilters) => {
     setFilters(next);
     setPage(1);
-    setNotice(null);
+    setToast((current) => ({ ...current, visible: false }));
   };
 
   const handleToggleStatus = async (user: IdentityUser) => {
     if (user.isDeleted) return;
     setError(null);
-    setNotice(null);
+    setToast((current) => ({ ...current, visible: false }));
     setTogglingId(user.userId);
     const result = await identityService.setLock(user.userId, user.isActive);
     setTogglingId(null);
@@ -179,7 +193,7 @@ export default function UserManagementPage() {
       setError(getLockAccountErrorMessage(result));
       return;
     }
-    setNotice(getLockAccountSuccessMessage(user.isActive));
+    showToast(getLockAccountSuccessMessage(user.isActive), "success");
     await fetchUsers();
   };
 
@@ -234,7 +248,7 @@ export default function UserManagementPage() {
 
   const handleEditSubmit = async () => {
     if (!editModal) return;
-    setNotice(null);
+    setToast((current) => ({ ...current, visible: false }));
     const validationError = validateEdit();
     if (validationError) {
       setModalError(validationError);
@@ -275,7 +289,7 @@ export default function UserManagementPage() {
       await refreshOpenProfile(editModal.userId);
       setModalLoading(false);
       setModalError(
-        `Partial update: ${getUpdateAccountErrorMessage(profileResult)}`,
+        getPartialSaveErrorMessage(getUpdateAccountErrorMessage(profileResult)),
       );
       return;
     }
@@ -291,7 +305,7 @@ export default function UserManagementPage() {
         await refreshOpenProfile(editModal.userId);
         setModalLoading(false);
         setModalError(
-          `Partial update: ${getLicenseAssignmentErrorMessage(licenseResult)}`,
+          getPartialSaveErrorMessage(getLicenseAssignmentErrorMessage(licenseResult)),
         );
         return;
       }
@@ -300,10 +314,11 @@ export default function UserManagementPage() {
 
     setModalLoading(false);
     setEditModal(null);
-    setNotice(
+    showToast(
       editModal.role === "STUDENT" && profileLicenseTier
         ? `${getUpdateAccountSuccessMessage()} ${getLicenseAssignmentSuccessMessage()}`
         : getUpdateAccountSuccessMessage(),
+      "success",
     );
     await fetchUsers();
   };
@@ -326,7 +341,7 @@ export default function UserManagementPage() {
 
   const handleRoleSubmit = async () => {
     if (!roleModal) return;
-    setNotice(null);
+    setToast((current) => ({ ...current, visible: false }));
     if (roleValue === "STUDENT" && !roleLicenseTier) {
       setModalError(SRS_MESSAGES.MSG20);
       return;
@@ -346,11 +361,11 @@ export default function UserManagementPage() {
         await fetchUsers();
         setModalLoading(false);
         setModalError(
-          `Partial update: ${
+          getPartialSaveErrorMessage(
             profileResult?.success === false
               ? getUpdateAccountErrorMessage(profileResult)
-              : "Please try again later."
-          }`,
+              : "Please try again later.",
+          ),
         );
         return;
       }
@@ -363,7 +378,7 @@ export default function UserManagementPage() {
         await fetchUsers();
         setModalLoading(false);
         setModalError(
-          `Partial update: ${getLicenseAssignmentErrorMessage(licenseResult)}`,
+          getPartialSaveErrorMessage(getLicenseAssignmentErrorMessage(licenseResult)),
         );
         return;
       }
@@ -371,31 +386,24 @@ export default function UserManagementPage() {
 
     setModalLoading(false);
     setRoleModal(null);
-    setNotice(
+    showToast(
       roleValue === "STUDENT"
         ? `${getUpdateAccountSuccessMessage()} ${getLicenseAssignmentSuccessMessage()}`
         : getUpdateAccountSuccessMessage(),
+      "success",
     );
-    await fetchUsers();
-  };
-
-  const handleDelete = async (user: IdentityUser) => {
-    if (user.isDeleted) return;
-    if (!window.confirm(`Xóa tài khoản "${user.fullName}" (${user.email})? Thao tác này không thể hoàn tác.`)) return;
-    setError(null);
-    setNotice(null);
-    setTogglingId(user.userId);
-    const result = await identityService.softDelete(user.userId, currentUserId);
-    setTogglingId(null);
-    if (!result.success) {
-      setError(result.error);
-      return;
-    }
     await fetchUsers();
   };
 
   return (
     <div className="user-mgmt">
+      <Toast
+        message={toast.message}
+        type={toast.type}
+        visible={toast.visible}
+        onClose={() => setToast((current) => ({ ...current, visible: false }))}
+      />
+
       <div className="user-mgmt__header">
         <div>
           <h1>Quản Lý Người Dùng</h1>
@@ -411,7 +419,6 @@ export default function UserManagementPage() {
       <UserFilters filters={filters} onChange={handleFiltersChange} />
 
       {error && <div className="user-mgmt__error">{error}</div>}
-      {notice && <div className="user-mgmt__notice">{notice}</div>}
 
       {loading ? (
         <div className="user-mgmt__loading">Đang tải...</div>
@@ -422,7 +429,6 @@ export default function UserManagementPage() {
           onToggleStatus={handleToggleStatus}
           onEdit={handleOpenEdit}
           onChangeRole={handleOpenRole}
-          onDelete={handleDelete}
         />
       )}
 

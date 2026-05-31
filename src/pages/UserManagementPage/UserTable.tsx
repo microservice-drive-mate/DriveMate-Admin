@@ -9,7 +9,6 @@ interface Props {
   onToggleStatus: (user: IdentityUser) => void;
   onEdit: (user: IdentityUser) => void;
   onChangeRole: (user: IdentityUser) => void;
-  onDelete: (user: IdentityUser) => void;
 }
 
 export default function UserTable({
@@ -18,7 +17,6 @@ export default function UserTable({
   onToggleStatus,
   onEdit,
   onChangeRole,
-  onDelete,
 }: Props) {
   if (users.length === 0) {
     return (
@@ -91,13 +89,6 @@ export default function UserTable({
                       disabled={disabled}
                       onClick={() => onChangeRole(user)}>
                       ◆
-                    </button>
-                    <button
-                      className="action-btn action-btn--delete"
-                      title="Xóa tài khoản"
-                      disabled={disabled}
-                      onClick={() => onDelete(user)}>
-                      ×
                     </button>
                   </div>
                 </td>

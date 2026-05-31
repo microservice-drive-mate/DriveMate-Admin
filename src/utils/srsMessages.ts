@@ -313,3 +313,21 @@ export function getUpdateCourseSuccessMessage() {
 export function getDeleteCourseSuccessMessage() {
   return SRS_MESSAGES.MSG35;
 }
+
+// Compound helpers — outside SRS spec, same convention
+export function getPartialSaveErrorMessage(detail: string): string {
+  return `Partial save: ${detail}`;
+}
+
+export function getCreateAccountProfileSyncMessage(): string {
+  return `${SRS_MESSAGES.MSG11} Profile is still syncing. Please refresh the list later.`;
+}
+
+export function getCreateAccountPartialErrorMessage(
+  step: "profile" | "license",
+  detail: string,
+): string {
+  return step === "profile"
+    ? `${SRS_MESSAGES.MSG11} Profile update failed: ${detail}`
+    : `${SRS_MESSAGES.MSG11} License assignment failed: ${detail}`;
+}

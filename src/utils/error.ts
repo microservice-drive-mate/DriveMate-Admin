@@ -33,8 +33,15 @@ export const parseError = (error: unknown): ApiError => {
   const errorMessage =
     data?.error?.message || data?.message || data?.error || ERROR_MESSAGES.GENERIC_ERROR;
 
-  const finalMessage =
-    errorMessage && errorMessage !== ERROR_MESSAGES.GENERIC_ERROR
+  const errors: unknown = data?.errors;
+  const firstDetail =
+    Array.isArray(errors) && errors.length > 0 && typeof errors[0] === "string"
+      ? errors[0]
+      : null;
+
+  const finalMessage = firstDetail
+    ? firstDetail
+    : errorMessage && errorMessage !== ERROR_MESSAGES.GENERIC_ERROR
       ? errorMessage
       : ERROR_MESSAGES[errorCode as keyof typeof ERROR_MESSAGES] || errorMessage;
 
