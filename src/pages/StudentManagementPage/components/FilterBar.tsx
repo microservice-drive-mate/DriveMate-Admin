@@ -4,6 +4,7 @@ import {
 	STUDENT_STATUS_OPTIONS,
 	type StudentFilters,
 } from "@/types/student.types";
+import { FilterSelect } from "@/components/ui/FilterSelect";
 
 interface FilterBarProps {
 	filters: StudentFilters;
@@ -25,42 +26,30 @@ export function FilterBar({ filters, onChange }: FilterBarProps) {
 				/>
 			</div>
 
-			<select
+			<FilterSelect
 				value={filters.licenseTier}
-				onChange={(e) =>
-					update({
-						licenseTier: e.target.value as LicenseTier | "",
-					})
-				}>
-				<option value="">Hạng bằng</option>
-				{STUDENT_LICENSE_TIERS.map((tier) => (
-					<option
-						key={tier}
-						value={tier}>
-						{tier}
-					</option>
-				))}
-			</select>
+				onChange={(v) => update({ licenseTier: v as LicenseTier | "" })}
+				placeholder="Hạng bằng"
+				options={STUDENT_LICENSE_TIERS.map((tier) => ({
+					value: tier,
+					label: tier,
+				}))}
+			/>
 
-			<select
+			<FilterSelect
 				value={filters.status}
-				onChange={(e) =>
-					update({
-						status: e.target.value as StudentFilters["status"],
-					})
-				}>
-				<option value="">Trạng thái</option>
-				{STUDENT_STATUS_OPTIONS.map((item) => (
-					<option
-						key={item.value}
-						value={item.value}
-						disabled={item.value === "warning" || item.value === "completed"}>
-						{item.value === "warning" || item.value === "completed"
-							? `${item.label} (chưa hỗ trợ)`
-							: item.label}
-					</option>
-				))}
-			</select>
+				onChange={(v) => update({ status: v as StudentFilters["status"] })}
+				placeholder="Trạng thái"
+				options={STUDENT_STATUS_OPTIONS.map((item) => {
+					const unsupported =
+						item.value === "warning" || item.value === "completed";
+					return {
+						value: item.value,
+						label: unsupported ? `${item.label} (chưa hỗ trợ)` : item.label,
+						disabled: unsupported,
+					};
+				})}
+			/>
 
 			<button
 				className="student-filters__clear"

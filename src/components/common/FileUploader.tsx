@@ -1,16 +1,11 @@
-import { useRef, useState } from "react";
-import type { DragEvent } from "react";
-
 import {
 	ALLOWED_AUDIO_MIMES,
 	ALLOWED_DOCUMENT_MIMES,
 	ALLOWED_VIDEO_MIMES,
 	MAX_FILE_SIZE_BYTES,
 	formatFileSize,
-	validateFile,
 } from "@/constants/media";
-import { invalidateMediaUrl } from "@/lib";
-import { mediaService } from "@/services/media.service";
+import { useFileUpload } from "@/hooks/useFileUpload";
 import type { MediaReference, UploadResult } from "@/types/media.types";
 
 import "./FileUploader.css";
@@ -44,71 +39,26 @@ export function FileUploader({
 	accept = DEFAULT_ACCEPT,
 	label = "Chọn tệp",
 }: FileUploaderProps) {
-	const inputRef = useRef<HTMLInputElement | null>(null);
-	const [uploading, setUploading] = useState(false);
-	const [error, setError] = useState<string | null>(null);
-	const [dragging, setDragging] = useState(false);
-
-	const handlePickFile = () => {
-		if (disabled || uploading) return;
-		inputRef.current?.click();
-	};
-
-	const handleFiles = async (files: FileList | null) => {
-		if (!files || files.length === 0) return;
-		const file = files[0];
-
-		const validationError = validateFile(file, accept, maxSize);
-		if (validationError) {
-			setError(validationError.message);
-			return;
-		}
-
-		setError(null);
-		setUploading(true);
-
-		const result = await mediaService.uploadViaDirect(file);
-
-		setUploading(false);
-
-		if (!result.success) {
-			setError(result.error);
-			return;
-		}
-
-		invalidateMediaUrl(value?.mediaFileId);
-		onChange({
-			mediaFileId: result.data.mediaFileId,
-			publicUrl: result.data.publicUrl,
-			originalName: result.data.originalName,
-			mimeType: result.data.mimeType,
-			fileSize: result.data.fileSize,
-		});
-	};
-
-	const handleRemove = () => {
-		if (disabled || uploading) return;
-		invalidateMediaUrl(value?.mediaFileId);
-		onChange(null);
-		setError(null);
-	};
-
-	const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
-		e.preventDefault();
-		if (disabled || uploading) return;
-		setDragging(true);
-	};
-
-	const handleDragLeave = () => setDragging(false);
-
-	const handleDrop = (e: DragEvent<HTMLDivElement>) => {
-		e.preventDefault();
-		setDragging(false);
-		if (disabled || uploading) return;
-		void handleFiles(e.dataTransfer.files);
-	};
-
-	const acceptAttr = accept.join(",");
+	const {
+		inputRef,
+		uploading,
+		error,
+		dragging,
+		acceptAttr,
+		pickFile: handlePickFile,
+		remove: handleRemove,
+		handleDragOver,
+		handleDragLeave,
+		handleDrop,
+		handleInputChange,
+	} = useFileUpload({
+		accept,
+		maxSize,
+		disabled,
+		currentMediaFileId: value?.mediaFileId,
+		onUploaded: (result) => onChange(result),
+		onCleared: () => onChange(null),
+	});
 
 	return (
 		<div className="file-uploader">
@@ -215,10 +165,7 @@ export function FileUploader({
 				accept={acceptAttr}
 				style={{ display: "none" }}
 				disabled={disabled || uploading}
-				onChange={(e) => {
-					void handleFiles(e.target.files);
-					e.target.value = "";
-				}}
+				onChange={handleInputChange}
 			/>
 
 			{error && <p className="file-uploader__error">{error}</p>}

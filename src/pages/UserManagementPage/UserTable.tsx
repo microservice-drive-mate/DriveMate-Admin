@@ -1,7 +1,8 @@
 import type { IdentityUser } from "@/types/identity.types";
+import { getInitials } from "@/utils/format";
 import { RoleBadge } from "./components/RoleBadge";
 import { StatusCell } from "./components/StatusCell";
-import { formatDate, getAvatarColor, getInitials } from "./userTableUtils";
+import { formatDate, getAvatarColor } from "./userTableUtils";
 
 interface Props {
   users: IdentityUser[];

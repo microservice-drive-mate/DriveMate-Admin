@@ -7,13 +7,6 @@ const AVATAR_PALETTE = [
 	"#16A085",
 ];
 
-export function getInitials(fullName: string) {
-	const parts = fullName.trim().split(/\s+/);
-	if (parts.length === 0) return "?";
-	if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
-	return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-}
-
 export function getAvatarColor(userId: string) {
 	let hash = 0;
 	for (let i = 0; i < userId.length; i++) {

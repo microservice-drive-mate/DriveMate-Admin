@@ -1,71 +1,33 @@
 import { useCallback, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { analyticsService, examService, identityService, notificationService, userService } from "@/services";
+import { analyticsService, examService, identityService, userService } from "@/services";
 import { useAsyncData } from "@/hooks/useAsyncData";
-import type { Gender, LicenseTier } from "@/types/user-profile.types";
 import { GENDER_LABELS } from "@/types/user-profile.types";
-import { ImageUploader } from "@/components/common/ImageUploader";
-import type { MediaReference } from "@/types/media.types";
 import type { AdminExamSession } from "@/types/exam-session.types";
-import type { AcademicWarningSeverity } from "@/types/notification.types";
-import { SEVERITY_LABELS } from "@/types/notification.types";
 import type { ProgressDashboard } from "@/types/analytics.types";
 import {
-	getLicenseAssignmentErrorMessage,
-	getLicenseAssignmentSuccessMessage,
 	getLockAccountErrorMessage,
 	getLockAccountSuccessMessage,
-	getUpdateAccountErrorMessage,
-	getUpdateAccountSuccessMessage,
 } from "@/utils/srsMessages";
 import Toast from "../../components/ui/Toast";
-import {
-	STUDENT_ALERT_TEMPLATES,
-	STUDENT_RANK_OPTIONS,
-	studentFromProfile,
-	studentStatus,
-} from "../../types/student.types";
+import { studentFromProfile, studentStatus } from "../../types/student.types";
 import type { Student } from "../../types/student.types";
 import { Badge } from "./components/Badge";
 import { DetailAvatar } from "./components/DetailAvatar";
 import { ExamSessionTable } from "./components/ExamSessionTable";
 import { InlineButton } from "./components/InlineButton";
-import { Modal } from "./components/Modal";
+import { EditProfileModal } from "./components/EditProfileModal";
+import { RankChangeModal } from "./components/RankChangeModal";
+import { AlertModal } from "./components/AlertModal";
+import { LockAccountModal } from "./components/LockAccountModal";
 import "./StudentDetailPage.css";
 
 type ModalType = "edit" | "rank" | "alert" | "lock" | null;
-
-interface ProfileForm {
-	phoneNumber: string;
-	dateOfBirth: string;
-	gender: Gender | "";
-	address: string;
-	notes: string;
-}
-
-const EMPTY_PROFILE_FORM: ProfileForm = {
-	phoneNumber: "",
-	dateOfBirth: "",
-	gender: "",
-	address: "",
-	notes: "",
-};
-
-function toDateInput(value: string | null | undefined) {
-	return value ? value.slice(0, 10) : "";
-}
 
 export default function StudentDetailPage() {
 	const navigate = useNavigate();
 	const { studentId } = useParams();
 	const [modal, setModal] = useState<ModalType>(null);
-	const [profileForm, setProfileForm] =
-		useState<ProfileForm>(EMPTY_PROFILE_FORM);
-	const [profileAvatar, setProfileAvatar] = useState<MediaReference | null>(null);
-	const [rank, setRank] = useState<LicenseTier>("B1");
-	const [alertTemplate, setAlertTemplate] = useState(STUDENT_ALERT_TEMPLATES[0]);
-	const [alertContent, setAlertContent] = useState("");
-	const [alertSeverity, setAlertSeverity] = useState<AcademicWarningSeverity>("MEDIUM");
 	const [toastMessage, setToastMessage] = useState("");
 	const [toastType, setToastType] = useState<"success" | "error">("success");
 	const [toastVisible, setToastVisible] = useState(false);
@@ -140,118 +102,8 @@ export default function StudentDetailPage() {
 	}
 
 	const status = studentStatus(student);
-
-	const openEditModal = () => {
-		setProfileForm({
-			phoneNumber: student.phoneNumber ?? "",
-			dateOfBirth: toDateInput(student.dateOfBirth),
-			gender: student.gender ?? "",
-			address: student.address ?? "",
-			notes: student.notes ?? "",
-		});
-		setProfileAvatar(
-			student.mediaFileId
-				? {
-						mediaFileId: student.mediaFileId,
-						publicUrl: student.avatarUrl ?? "",
-					}
-				: null,
-		);
-		setModal("edit");
-	};
-
-	const openRankModal = () => {
-		setRank(student.licenseTier ?? "B1");
-		setModal("rank");
-	};
-
-	const openAlertModal = () => {
-		setAlertTemplate(STUDENT_ALERT_TEMPLATES[0]);
-		setAlertContent("");
-		setAlertSeverity("MEDIUM");
-		setModal("alert");
-	};
-
-	const openLockModal = () => {
-		setModal("lock");
-	};
-
-	const confirmRank = async () => {
-		setSubmitting(true);
-		const res = await userService.assignLicenseTier(student.id, rank);
-		setSubmitting(false);
-		if (res.success) {
-			studentQuery.setData({ ...student, licenseTier: rank });
-			studentQuery.refetch();
-			showToast(getLicenseAssignmentSuccessMessage(), "success");
-			setModal(null);
-		} else {
-			showToast(getLicenseAssignmentErrorMessage(res), "error");
-		}
-	};
-
-	const confirmEditProfile = async () => {
-		const normalizedPhone = profileForm.phoneNumber.replace(/\s+/g, "");
-		if (normalizedPhone && !/^[0-9]{9,11}$/.test(normalizedPhone)) {
-			showToast("Số điện thoại không hợp lệ.", "error");
-			return;
-		}
-
-		setSubmitting(true);
-		const res = await userService.update(student.id, {
-			phoneNumber: profileForm.phoneNumber.trim() || undefined,
-			dateOfBirth: profileForm.dateOfBirth || undefined,
-			gender: profileForm.gender || undefined,
-			address: profileForm.address.trim() || undefined,
-			notes: profileForm.notes.trim() || undefined,
-			avatarUrl: profileAvatar?.publicUrl,
-			mediaFileId: profileAvatar?.mediaFileId,
-		});
-		setSubmitting(false);
-
-		if (res.success) {
-			studentQuery.setData(studentFromProfile(res.data));
-			showToast(getUpdateAccountSuccessMessage(), "success");
-			setModal(null);
-		} else {
-			showToast(getUpdateAccountErrorMessage(res), "error");
-		}
-	};
-
-	const confirmAlert = async () => {
-		if (!alertContent.trim()) {
-			showToast("Vui lòng nhập nội dung cảnh báo.", "error");
-			return;
-		}
-		setSubmitting(true);
-		const res = await notificationService.sendAcademicWarning({
-			studentId: student.id,
-			reason: alertTemplate,
-			severity: alertSeverity,
-			message: alertContent.trim(),
-		});
-		setSubmitting(false);
-		if (res.success) {
-			showToast("Đã gửi cảnh báo học tập đến học viên.", "success");
-			setModal(null);
-		} else {
-			showToast(`Gửi cảnh báo lỗi: ${res.error}`, "error");
-		}
-	};
-
-	const confirmLock = async () => {
-		setSubmitting(true);
-		const res = await identityService.setLock(student.id, true);
-		setSubmitting(false);
-		if (res.success) {
-			studentQuery.setData({ ...student, isActive: false });
-			studentQuery.refetch();
-			showToast(getLockAccountSuccessMessage(true), "success");
-			setModal(null);
-		} else {
-			showToast(getLockAccountErrorMessage(res), "error");
-		}
-	};
+	const closeModal = () => setModal(null);
+	const handleStudentChange = (next: Student) => studentQuery.setData(next);
 
 	const handleUnlock = async () => {
 		if (!window.confirm("Mở khóa tài khoản học viên này?")) return;
@@ -289,26 +141,26 @@ export default function StudentDetailPage() {
 				<div className="student-detail__actions">
 					<InlineButton
 						tone="green"
-						onClick={openEditModal}
+						onClick={() => setModal("edit")}
 						disabled={submitting}>
 						Sửa Hồ Sơ
 					</InlineButton>
 					<InlineButton
 						tone="yellow"
-						onClick={openRankModal}
+						onClick={() => setModal("rank")}
 						disabled={submitting}>
 						Phân Hạng Bằng
 					</InlineButton>
 					<InlineButton
 						tone="green"
-						onClick={openAlertModal}
+						onClick={() => setModal("alert")}
 						disabled={submitting}>
 						Gửi Cảnh Báo
 					</InlineButton>
 					{student.isActive ? (
 						<InlineButton
 							tone="red"
-							onClick={openLockModal}
+							onClick={() => setModal("lock")}
 							disabled={submitting}>
 							Khóa TK
 						</InlineButton>
@@ -407,213 +259,40 @@ export default function StudentDetailPage() {
 			</div>
 
 			{modal === "edit" && (
-				<Modal
-					title="Sửa hồ sơ học viên"
-					onClose={() => setModal(null)}
-					footer={
-						<div className="detail-modal__footer">
-							<button onClick={() => setModal(null)}>Hủy</button>
-							<button
-								className="detail-modal__confirm detail-modal__confirm--green"
-								onClick={confirmEditProfile}
-								disabled={submitting}>
-								{submitting ? "Đang lưu..." : "Lưu hồ sơ"}
-							</button>
-						</div>
-					}>
-					<div className="detail-modal__avatar-edit">
-						<ImageUploader
-							value={profileAvatar}
-							onChange={setProfileAvatar}
-							shape="circle"
-							helpText="Tùy chọn - JPG, PNG, WebP"
-							disabled={submitting}
-						/>
-					</div>
-					<div className="detail-modal__grid">
-						<div className="detail-modal__field">
-							<label>Số điện thoại</label>
-							<input
-								value={profileForm.phoneNumber}
-								onChange={(e) =>
-									setProfileForm((current) => ({
-										...current,
-										phoneNumber: e.target.value,
-									}))
-								}
-								placeholder="0901234567"
-							/>
-						</div>
-						<div className="detail-modal__field">
-							<label>Ngày sinh</label>
-							<input
-								type="date"
-								value={profileForm.dateOfBirth}
-								onChange={(e) =>
-									setProfileForm((current) => ({
-										...current,
-										dateOfBirth: e.target.value,
-									}))
-								}
-							/>
-						</div>
-						<div className="detail-modal__field">
-							<label>Giới tính</label>
-							<select
-								value={profileForm.gender}
-								onChange={(e) =>
-									setProfileForm((current) => ({
-										...current,
-										gender: e.target.value as Gender | "",
-									}))
-								}>
-								<option value="">Chọn giới tính</option>
-								<option value="MALE">Nam</option>
-								<option value="FEMALE">Nữ</option>
-								<option value="OTHER">Khác</option>
-							</select>
-						</div>
-						<div className="detail-modal__field">
-							<label>Địa chỉ</label>
-							<input
-								value={profileForm.address}
-								onChange={(e) =>
-									setProfileForm((current) => ({
-										...current,
-										address: e.target.value,
-									}))
-								}
-								placeholder="TP.HCM"
-							/>
-						</div>
-					</div>
-					<div className="detail-modal__field">
-						<label>Ghi chú</label>
-						<textarea
-							value={profileForm.notes}
-							onChange={(e) =>
-								setProfileForm((current) => ({
-									...current,
-									notes: e.target.value,
-								}))
-							}
-							placeholder="Ghi chú nội bộ về học viên..."
-						/>
-					</div>
-				</Modal>
+				<EditProfileModal
+					student={student}
+					onClose={closeModal}
+					onToast={showToast}
+					onStudentChange={handleStudentChange}
+				/>
 			)}
 
 			{modal === "rank" && (
-				<Modal
-					title="Phân hạng bằng lái"
-					onClose={() => setModal(null)}
-					footer={
-						<div className="detail-modal__footer">
-							<button onClick={() => setModal(null)}>Hủy</button>
-							<button
-								className="detail-modal__confirm detail-modal__confirm--yellow"
-								onClick={confirmRank}
-								disabled={submitting}>
-								{submitting ? "Đang lưu..." : "Xác nhận phân hạng"}
-							</button>
-						</div>
-					}>
-					<p className="detail-modal__hint">
-						Hạng hiện tại:{" "}
-						<strong>{student.licenseTier ?? "Chưa phân"}</strong>
-					</p>
-					<div className="detail-modal__rank-list">
-						{STUDENT_RANK_OPTIONS.map((option) => (
-							<button
-								key={option}
-								className={
-									option === rank
-										? "detail-modal__rank detail-modal__rank--active"
-										: "detail-modal__rank"
-								}
-								onClick={() => setRank(option)}>
-								{option}
-							</button>
-						))}
-					</div>
-				</Modal>
+				<RankChangeModal
+					student={student}
+					onClose={closeModal}
+					onToast={showToast}
+					onStudentChange={handleStudentChange}
+					onRefetch={studentQuery.refetch}
+				/>
 			)}
 
 			{modal === "alert" && (
-				<Modal
-					title="Gửi cảnh báo học tập"
-					onClose={() => setModal(null)}
-					footer={
-						<div className="detail-modal__footer">
-							<button onClick={() => setModal(null)}>Hủy</button>
-							<button
-								className="detail-modal__confirm detail-modal__confirm--green"
-								onClick={confirmAlert}
-								disabled={submitting}>
-								{submitting ? "Đang gửi..." : "Gửi cảnh báo"}
-							</button>
-						</div>
-					}>
-					<div className="detail-modal__field">
-						<label>Lý do cảnh báo</label>
-						<div className="detail-modal__template-list">
-							{STUDENT_ALERT_TEMPLATES.map((template) => (
-								<button
-									key={template}
-									className={
-										template === alertTemplate
-											? "detail-modal__template detail-modal__template--active"
-											: "detail-modal__template"
-									}
-									onClick={() => setAlertTemplate(template)}>
-									{template}
-								</button>
-							))}
-						</div>
-					</div>
-					<div className="detail-modal__field">
-						<label>Mức độ nghiêm trọng</label>
-						<select
-							value={alertSeverity}
-							onChange={(e) => setAlertSeverity(e.target.value as AcademicWarningSeverity)}
-							style={{ width: "100%", padding: "8px 10px", background: "#2a2a2a", color: "#f0f0f0", border: "1px solid #3a3a3a", borderRadius: 8, fontSize: 14 }}
-						>
-							{(Object.keys(SEVERITY_LABELS) as AcademicWarningSeverity[]).map((s) => (
-								<option key={s} value={s}>{SEVERITY_LABELS[s]}</option>
-							))}
-						</select>
-					</div>
-					<div className="detail-modal__field">
-						<label>Nội dung cảnh báo *</label>
-						<textarea
-							value={alertContent}
-							onChange={(e) => setAlertContent(e.target.value)}
-							placeholder="Nhập nội dung cảnh báo cho học viên..."
-						/>
-					</div>
-				</Modal>
+				<AlertModal
+					student={student}
+					onClose={closeModal}
+					onToast={showToast}
+				/>
 			)}
 
 			{modal === "lock" && (
-				<Modal
-					title="Khóa tài khoản học viên"
-					onClose={() => setModal(null)}
-					footer={
-						<div className="detail-modal__footer">
-							<button onClick={() => setModal(null)}>Hủy</button>
-							<button
-								className="detail-modal__confirm detail-modal__confirm--red"
-								onClick={confirmLock}
-								disabled={submitting}>
-								{submitting ? "Đang khóa..." : "Xác nhận khóa"}
-							</button>
-						</div>
-					}>
-					<p className="detail-modal__hint">
-						<strong>{student.fullName}</strong> sẽ không thể đăng nhập
-						sau khi bị khóa.
-					</p>
-				</Modal>
+				<LockAccountModal
+					student={student}
+					onClose={closeModal}
+					onToast={showToast}
+					onStudentChange={handleStudentChange}
+					onRefetch={studentQuery.refetch}
+				/>
 			)}
 		</div>
 	);

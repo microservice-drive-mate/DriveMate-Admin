@@ -3,6 +3,7 @@ import {
 	COURSE_LICENSE_CATEGORIES,
 	COURSE_STATUS_OPTIONS,
 } from "@/types/course.types";
+import { FilterSelect } from "@/components/ui/FilterSelect";
 
 interface FilterBarProps {
 	filters: CourseFilters;
@@ -32,22 +33,20 @@ export function FilterBar({
 				/>
 			</div>
 
-			<select
+			<FilterSelect
 				value={licenseValue}
 				disabled={Boolean(lockedLicenseCategory)}
-				onChange={(e) => update({ licenseCategory: e.target.value as LicenseCategory | "" })}>
-				<option value="">Tất cả hạng</option>
-				{COURSE_LICENSE_CATEGORIES.map((cls) => (
-					<option key={cls} value={cls}>{cls}</option>
-				))}
-			</select>
+				onChange={(v) => update({ licenseCategory: v as LicenseCategory | "" })}
+				placeholder="Tất cả hạng"
+				options={COURSE_LICENSE_CATEGORIES.map((cls) => ({ value: cls, label: cls }))}
+			/>
 
-			<select value={filters.status} onChange={(e) => update({ status: e.target.value as CourseStatus | "" })}>
-				<option value="">Tất cả</option>
-				{COURSE_STATUS_OPTIONS.map((opt) => (
-					<option key={opt.value} value={opt.value}>{opt.label}</option>
-				))}
-			</select>
+			<FilterSelect
+				value={filters.status}
+				onChange={(v) => update({ status: v as CourseStatus | "" })}
+				placeholder="Tất cả"
+				options={COURSE_STATUS_OPTIONS.map((opt) => ({ value: opt.value, label: opt.label }))}
+			/>
 
 			<button
 				className="course-filters__reset"

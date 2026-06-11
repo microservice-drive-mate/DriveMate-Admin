@@ -3,6 +3,7 @@ import { useLocation } from "react-router-dom";
 import { NotificationBell } from "@/components/common/NotificationBell";
 import { userService } from "@/services";
 import { useAuthStore } from "@/store/authStore";
+import { getInitials } from "@/utils/format";
 import "./Header.css";
 
 const ROUTE_LABELS: Record<string, string> = {
@@ -15,16 +16,6 @@ const ROUTE_LABELS: Record<string, string> = {
 	"/exam-config": "Exam Configuration",
 	"/system-health": "System Health",
 };
-
-function getInitials(name: string): string {
-	return name
-		.split(" ")
-		.filter(Boolean)
-		.slice(-2)
-		.map((part) => part[0])
-		.join("")
-		.toUpperCase();
-}
 
 export function Header() {
 	const { pathname } = useLocation();
@@ -49,7 +40,7 @@ export function Header() {
 
 	return (
 		<header className="header">
-			<span className="header__title"></span>
+			<span className="header__title">{title}</span>
 			<div className="header__user">
 				<NotificationBell />
 				<span>{displayName}</span>

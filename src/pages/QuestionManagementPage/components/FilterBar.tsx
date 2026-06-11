@@ -4,6 +4,7 @@ import {
 	LICENSE_CATEGORY_OPTIONS,
 	QUESTION_TYPE_OPTIONS,
 } from "@/types/question.types";
+import { FilterSelect } from "@/components/ui/FilterSelect";
 
 interface FilterBarProps {
 	filters: QuestionFilters;
@@ -28,33 +29,33 @@ export function FilterBar({ filters, topics, onChange }: FilterBarProps) {
 				/>
 			</div>
 
-			<select value={filters.licenseCategory} onChange={(e) => update({ licenseCategory: e.target.value as QuestionFilters["licenseCategory"] })}>
-				<option value="">Hạng bằng</option>
-				{LICENSE_CATEGORY_OPTIONS.map((cls) => (
-					<option key={cls} value={cls}>{cls}</option>
-				))}
-			</select>
+			<FilterSelect
+				value={filters.licenseCategory}
+				onChange={(v) => update({ licenseCategory: v as QuestionFilters["licenseCategory"] })}
+				placeholder="Hạng bằng"
+				options={LICENSE_CATEGORY_OPTIONS.map((cls) => ({ value: cls, label: cls }))}
+			/>
 
-			<select value={filters.type} onChange={(e) => update({ type: e.target.value as QuestionFilters["type"] })}>
-				<option value="">Loại câu hỏi</option>
-				{QUESTION_TYPE_OPTIONS.map((t) => (
-					<option key={t.value} value={t.value}>{t.label}</option>
-				))}
-			</select>
+			<FilterSelect
+				value={filters.type}
+				onChange={(v) => update({ type: v as QuestionFilters["type"] })}
+				placeholder="Loại câu hỏi"
+				options={QUESTION_TYPE_OPTIONS.map((t) => ({ value: t.value, label: t.label }))}
+			/>
 
-			<select value={filters.topicId} onChange={(e) => update({ topicId: e.target.value })}>
-				<option value="">Chủ đề</option>
-				{topics.map((t) => (
-					<option key={t.id} value={t.id}>{t.name}</option>
-				))}
-			</select>
+			<FilterSelect
+				value={filters.topicId}
+				onChange={(v) => update({ topicId: v })}
+				placeholder="Chủ đề"
+				options={topics.map((t) => ({ value: t.id, label: t.name }))}
+			/>
 
-			<select value={filters.difficulty} onChange={(e) => update({ difficulty: e.target.value as QuestionFilters["difficulty"] })}>
-				<option value="">Độ khó</option>
-				{DIFFICULTY_OPTIONS.map((d) => (
-					<option key={d.value} value={d.value}>{d.label}</option>
-				))}
-			</select>
+			<FilterSelect
+				value={filters.difficulty}
+				onChange={(v) => update({ difficulty: v as QuestionFilters["difficulty"] })}
+				placeholder="Độ khó"
+				options={DIFFICULTY_OPTIONS.map((d) => ({ value: d.value, label: d.label }))}
+			/>
 
 			<label className="q-filters__deleted-toggle">
 				<input

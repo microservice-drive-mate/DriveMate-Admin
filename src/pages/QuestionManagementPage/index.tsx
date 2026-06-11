@@ -1,6 +1,8 @@
 import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAsyncData } from '@/hooks/useAsyncData';
+import { usePaginatedList } from '@/hooks/usePaginatedList';
+import type { PaginatedLoaderParams } from '@/hooks/usePaginatedList';
 import { questionService, topicService } from '@/services';
 import type {
   QuestionFilters,
@@ -12,6 +14,7 @@ import { DEFAULT_PAGE_SIZE } from '../../constants/pagination';
 import { FilterBar } from './components/FilterBar';
 import { QuestionTable } from './components/QuestionTable';
 import { SummaryCard } from './components/SummaryCard';
+import { TopicModal } from './components/TopicModal';
 import './index.css';
 
 const DEFAULT_FILTERS: QuestionFilters = {
@@ -23,13 +26,6 @@ const DEFAULT_FILTERS: QuestionFilters = {
   includeDeleted: false,
 };
 
-const EMPTY_QUESTION_PAGE = {
-  items: [] as QuestionResponse[],
-  total: 0,
-  page: 1,
-  size: DEFAULT_PAGE_SIZE,
-};
-
 const EMPTY_TOPICS: TopicResponse[] = [];
 
 const EMPTY_QUESTION_STATS = {
@@ -37,37 +33,29 @@ const EMPTY_QUESTION_STATS = {
   totalCritical: 0,
 };
 
-const EMPTY_TOPIC_FORM = { name: '', description: '', parentId: '' };
-
 export default function QuestionManagementPage() {
   const navigate = useNavigate();
-  const [filters, setFilters] = useState<QuestionFilters>(DEFAULT_FILTERS);
-  const [currentPage, setCurrentPage] = useState(1);
-
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [topicModalOpen, setTopicModalOpen] = useState(false);
-  const [topicForm, setTopicForm] = useState(EMPTY_TOPIC_FORM);
-  const [editingTopicId, setEditingTopicId] = useState<string | null>(null);
-  const [topicModalLoading, setTopicModalLoading] = useState(false);
-  const [topicModalError, setTopicModalError] = useState<string | null>(null);
 
-  const loadQuestions = useCallback(() => {
-    const params = {
-      page: currentPage,
-      size: DEFAULT_PAGE_SIZE,
-      ...(filters.keyword ? { keyword: filters.keyword } : {}),
-      ...(filters.licenseCategory ? { licenseCategory: filters.licenseCategory } : {}),
-      ...(filters.type ? { type: filters.type } : {}),
-      ...(filters.difficulty ? { difficulty: filters.difficulty } : {}),
-      ...(filters.topicId ? { topicId: filters.topicId } : {}),
-      ...(filters.includeDeleted ? { includeDeleted: true } : {}),
-    };
-    return questionService.list(params);
-  }, [currentPage, filters]);
-  const questionsQuery = useAsyncData(loadQuestions, {
-    initialData: EMPTY_QUESTION_PAGE,
-    retainPreviousData: false,
-  });
+  const loadQuestions = useCallback(
+    ({ page, pageSize, filters }: PaginatedLoaderParams<QuestionFilters>) =>
+      questionService.list({
+        page,
+        size: pageSize,
+        ...(filters.keyword ? { keyword: filters.keyword } : {}),
+        ...(filters.licenseCategory ? { licenseCategory: filters.licenseCategory } : {}),
+        ...(filters.type ? { type: filters.type } : {}),
+        ...(filters.difficulty ? { difficulty: filters.difficulty } : {}),
+        ...(filters.topicId ? { topicId: filters.topicId } : {}),
+        ...(filters.includeDeleted ? { includeDeleted: true } : {}),
+      }),
+    [],
+  );
+  const questionsList = usePaginatedList<QuestionResponse, QuestionFilters>(
+    loadQuestions,
+    { initialFilters: DEFAULT_FILTERS },
+  );
 
   const loadTopics = useCallback(async () => {
     const result = await topicService.list({ size: 100 });
@@ -94,64 +82,22 @@ export default function QuestionManagementPage() {
     initialData: EMPTY_QUESTION_STATS,
   });
 
-  const handleOpenEditTopic = (topic: TopicResponse) => {
-    setEditingTopicId(topic.id);
-    setTopicForm({ name: topic.name, description: topic.description ?? '', parentId: topic.parentId ?? '' });
-    setTopicModalError(null);
-  };
-
-  const handleTopicFormReset = () => {
-    setEditingTopicId(null);
-    setTopicForm(EMPTY_TOPIC_FORM);
-    setTopicModalError(null);
-  };
-
-  const handleTopicSave = async () => {
-    if (!topicForm.name.trim()) {
-      setTopicModalError('Tên topic không được để trống.');
-      return;
-    }
-    setTopicModalLoading(true);
-    setTopicModalError(null);
-    const payload = {
-      name: topicForm.name.trim(),
-      description: topicForm.description.trim() || undefined,
-      parentId: topicForm.parentId || null,
-    };
-    const result = editingTopicId
-      ? await topicService.update(editingTopicId, payload)
-      : await topicService.create(payload);
-    setTopicModalLoading(false);
-    if (!result.success) {
-      setTopicModalError(result.error);
-      return;
-    }
-    handleTopicFormReset();
-    topicsQuery.refetch();
-  };
-
-  const handleFilters = (next: QuestionFilters) => {
-    setFilters(next);
-    setCurrentPage(1);
-  };
-
   const handleDelete = async (id: string, version: number) => {
     if (!window.confirm('Xác nhận xóa câu hỏi này?')) return;
     setDeleteError(null);
     const result = await questionService.delete(id, version);
     if (result.success) {
-      questionsQuery.refetch();
+      questionsList.refetch();
       statsQuery.refetch();
     } else {
       setDeleteError(result.error);
     }
   };
 
-  const questions = questionsQuery.data.items;
+  const questions = questionsList.items;
   const topics = topicsQuery.data;
-  const total = questionsQuery.data.total;
+  const total = questionsList.total;
   const { totalActive, totalCritical } = statsQuery.data;
-  const totalPages = Math.max(1, Math.ceil(total / DEFAULT_PAGE_SIZE));
 
   return (
     <div className="q-management">
@@ -161,7 +107,7 @@ export default function QuestionManagementPage() {
           <p>Quản lý câu hỏi thi lý thuyết và lịch sử chỉnh sửa</p>
         </div>
         <div className="q-management__header-actions">
-          <button className="q-topic-btn" onClick={() => { handleTopicFormReset(); setTopicModalOpen(true); }}>
+          <button className="q-topic-btn" onClick={() => setTopicModalOpen(true)}>
             📚 Quản Lý Topic
           </button>
           <button className="q-management__add" onClick={() => navigate('/questions/new')}>
@@ -176,112 +122,34 @@ export default function QuestionManagementPage() {
         <SummaryCard title="Câu liệt" value={totalCritical} accent="#ff5a5f" />
       </div>
 
-      {questionsQuery.error && <div className="q-error">{questionsQuery.error}</div>}
+      {questionsList.error && <div className="q-error">{questionsList.error}</div>}
       {deleteError && <div className="q-error">{deleteError}</div>}
 
-      <FilterBar filters={filters} topics={topics} onChange={handleFilters} />
+      <FilterBar filters={questionsList.filters} topics={topics} onChange={questionsList.setFilters} />
 
       <QuestionTable
         questions={questions}
         topics={topics}
-        loading={questionsQuery.loading}
+        loading={questionsList.loading}
         onEdit={(id) => navigate(`/questions/${id}/edit`)}
         onDelete={handleDelete}
       />
 
       <Pagination
-        currentPage={currentPage}
-        totalPages={totalPages}
+        currentPage={questionsList.page}
+        totalPages={questionsList.totalPages}
         totalItems={total}
         pageSize={DEFAULT_PAGE_SIZE}
         label="câu hỏi"
-        onChange={setCurrentPage}
+        onChange={questionsList.setPage}
       />
 
       {topicModalOpen && (
-        <div className="q-topic-modal">
-          <div className="q-topic-modal__box">
-            <div className="q-topic-modal__header">
-              <span>{editingTopicId ? 'Sửa Topic' : 'Quản Lý Topic'}</span>
-              <button className="q-topic-modal__close" onClick={() => { setTopicModalOpen(false); handleTopicFormReset(); }}>×</button>
-            </div>
-
-            <div className="q-topic-modal__form">
-              <p className="q-topic-modal__form-title">
-                {editingTopicId ? 'Cập nhật topic' : 'Thêm topic mới'}
-              </p>
-              {topicModalError && <div className="q-topic-modal__error">{topicModalError}</div>}
-              <div className="q-topic-modal__field">
-                <label>Tên topic *</label>
-                <input
-                  value={topicForm.name}
-                  onChange={(e) => setTopicForm((f) => ({ ...f, name: e.target.value }))}
-                  placeholder="VD: BiỒn báo giao thông"
-                />
-              </div>
-              <div className="q-topic-modal__field">
-                <label>Mô tả</label>
-                <input
-                  value={topicForm.description}
-                  onChange={(e) => setTopicForm((f) => ({ ...f, description: e.target.value }))}
-                  placeholder="Mô tả ngắn (tùy chọn)"
-                />
-              </div>
-              <div className="q-topic-modal__field">
-                <label>Topic cha</label>
-                <select
-                  value={topicForm.parentId}
-                  onChange={(e) => setTopicForm((f) => ({ ...f, parentId: e.target.value }))}>
-                  <option value="">Không có</option>
-                  {topics
-                    .filter((t) => t.id !== editingTopicId)
-                    .map((t) => (
-                      <option key={t.id} value={t.id}>{t.name}</option>
-                    ))}
-                </select>
-              </div>
-              <div className="q-topic-modal__form-actions">
-                <button
-                  className="q-topic-modal__btn q-topic-modal__btn--primary"
-                  onClick={handleTopicSave}
-                  disabled={topicModalLoading}>
-                  {topicModalLoading ? 'Đang lưu...' : editingTopicId ? 'Cập nhật' : 'Thêm'}
-                </button>
-                {editingTopicId && (
-                  <button className="q-topic-modal__btn" onClick={handleTopicFormReset} disabled={topicModalLoading}>
-                    Hủy sửa
-                  </button>
-                )}
-              </div>
-            </div>
-
-            <div className="q-topic-modal__list">
-              <p className="q-topic-modal__list-title">Danh sách topic ({topics.length})</p>
-              {topics.length === 0 ? (
-                <p className="q-topic-modal__empty">Chưa có topic nào.</p>
-              ) : (
-                topics.map((t) => (
-                  <div
-                    key={t.id}
-                    className={`q-topic-modal__row${editingTopicId === t.id ? ' q-topic-modal__row--editing' : ''}`}>
-                    <div className="q-topic-modal__row-info">
-                      <span className="q-topic-modal__row-name">{t.name}</span>
-                      {t.description && (
-                        <span className="q-topic-modal__row-desc">{t.description}</span>
-                      )}
-                    </div>
-                    <button
-                      className="q-topic-modal__edit-btn"
-                      onClick={() => handleOpenEditTopic(t)}
-                      disabled={topicModalLoading}>
-                      Sửa
-                    </button>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-        </div>
+        <TopicModal
+          topics={topics}
+          onClose={() => setTopicModalOpen(false)}
+          onTopicsChanged={topicsQuery.refetch}
+        />
       )}
     </div>
   );
