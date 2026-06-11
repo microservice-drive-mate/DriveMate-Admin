@@ -11,10 +11,7 @@ import { apiService } from "@/lib";
 import { withErrorHandling } from "@/utils";
 
 const uploadInitRaw = withErrorHandling((payload: UploadInitPayload) =>
-	apiService.post<ApiResponse<UploadInitResponse>>(
-		"/media/files/init",
-		payload,
-	),
+	apiService.post<ApiResponse<UploadInitResponse>>("/media/init", payload),
 );
 
 async function uploadViaDirect(
@@ -36,20 +33,19 @@ async function uploadViaDirect(
 	const { mediaFileId, uploadUrl, publicUrl } = init.data;
 
 	try {
-		const azureResponse = await fetch(uploadUrl, {
+		const uploadResponse = await fetch(uploadUrl, {
 			method: "PUT",
 			headers: {
 				"Content-Type": file.type,
-				"x-ms-blob-type": "BlockBlob",
 			},
 			body: file,
 		});
 
-		if (!azureResponse.ok) {
+		if (!uploadResponse.ok) {
 			return {
 				success: false,
-				error: `Tải lên Azure thất bại (${azureResponse.status}).`,
-				code: "AZURE_UPLOAD_FAILED",
+				error: `Upload to the presigned URL failed (${uploadResponse.status}).`,
+				code: "PRESIGNED_UPLOAD_FAILED",
 			};
 		}
 	} catch (err) {
@@ -58,8 +54,8 @@ async function uploadViaDirect(
 			error:
 				err instanceof Error
 					? err.message
-					: "Không thể kết nối tới Azure Blob Storage.",
-			code: "AZURE_UPLOAD_FAILED",
+					: "Unable to upload file to the presigned URL.",
+			code: "PRESIGNED_UPLOAD_FAILED",
 		};
 	}
 
@@ -81,30 +77,27 @@ export const mediaService = {
 	uploadViaDirect,
 
 	getMetadata: withErrorHandling((id: string) =>
-		apiService.get<ApiResponse<FileObject>>(`/media/files/${id}`),
+		apiService.get<ApiResponse<FileObject>>(`/media/${id}`),
 	),
 
 	getDownloadUrl: withErrorHandling((id: string) =>
-		apiService.get<ApiResponse<PresignedDownloadResponse>>(
-			`/media/files/${id}/url`,
-		),
+		apiService.get<ApiResponse<PresignedDownloadResponse>>(`/media/${id}/url`),
 	),
 
 	list: withErrorHandling((params?: MediaFileListParams) =>
-		apiService.get<ApiResponse<PaginatedResponse<FileObject>>>(
-			"/admin/media/files",
-			{ params },
-		),
+		apiService.get<ApiResponse<PaginatedResponse<FileObject>>>("/admin/media", {
+			params,
+		}),
 	),
 
 	delete: withErrorHandling((id: string) =>
-		apiService.delete<ApiResponse<null>>(`/admin/media/files/${id}`),
+		apiService.delete<ApiResponse<null>>(`/admin/media/${id}`),
 	),
 
 	serverUpload: withErrorHandling((file: File) => {
 		const formData = new FormData();
 		formData.append("file", file);
-		return apiService.post<ApiResponse<FileObject>>("/media/files", formData, {
+		return apiService.post<ApiResponse<FileObject>>("/media", formData, {
 			headers: { "Content-Type": "multipart/form-data" },
 		});
 	}),

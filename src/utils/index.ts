@@ -1,5 +1,6 @@
 export * from "./storage";
 export * from "./error";
 export * from "./authUtils";
+export * from "./authResponse";
 export * from "./format";
 export * from "./srsMessages";

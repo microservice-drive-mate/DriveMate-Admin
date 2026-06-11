@@ -1,9 +1,10 @@
 import { API_CONFIG, AUTH_CONFIG, ROUTES } from "@/constants";
-import type { ApiResponse, LoginResponseData } from "@/types";
+import type { ApiResponse, LoginResponseWireData } from "@/types";
 import {
   getAuthToken,
   getStorageItem,
   logError,
+  normalizeLoginApiResponse,
   parseError,
   removeAuthToken,
   removeStorageItem,
@@ -173,10 +174,12 @@ class ApiService {
   }
 
   private async _performTokenRefresh(refreshToken: string) {
-    return axios.post<ApiResponse<LoginResponseData>>(
-      `${this.baseUrl}/auth/refresh`,
-      { refreshToken },
-    );
+    return axios
+      .post<ApiResponse<LoginResponseWireData>>(
+        `${this.baseUrl}/auth/refresh`,
+        { refreshToken },
+      )
+      .then(normalizeLoginApiResponse);
   }
 
   private async _handleLogout() {

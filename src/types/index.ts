@@ -80,6 +80,20 @@ export interface LoginResponseData {
 	scope: string;
 }
 
+export interface LoginResponseWireData {
+	access_token?: string;
+	refresh_token?: string;
+	expires_in?: number;
+	refresh_expires_in?: number;
+	token_type?: string;
+	accessToken?: string;
+	refreshToken?: string;
+	expiresIn?: number;
+	refreshExpiresIn?: number;
+	tokenType?: string;
+	scope?: string;
+}
+
 export interface LogoutResponseData {
 	success: boolean;
 	message: string;

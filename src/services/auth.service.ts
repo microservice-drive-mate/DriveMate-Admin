@@ -1,10 +1,10 @@
 import type {
   ApiResponse,
   LoginCredentials,
-  LoginResponseData,
+  LoginResponseWireData,
   LogoutResponseData,
 } from "@/types";
-import { withErrorHandling } from "@/utils";
+import { normalizeLoginApiResponse, withErrorHandling } from "@/utils";
 import { apiService } from "@/lib";
 
 interface ForgotPasswordPayload {
@@ -13,10 +13,12 @@ interface ForgotPasswordPayload {
 
 export const authService = {
   login: withErrorHandling((credentials: LoginCredentials) =>
-    apiService.post<ApiResponse<LoginResponseData>>("/auth/login", {
-      username: credentials.email,
-      password: credentials.password,
-    }),
+    apiService
+      .post<ApiResponse<LoginResponseWireData>>("/auth/login", {
+        username: credentials.email,
+        password: credentials.password,
+      })
+      .then(normalizeLoginApiResponse),
   ),
 
   logout: withErrorHandling((refreshToken: string) =>
@@ -24,7 +26,9 @@ export const authService = {
   ),
 
   refreshToken: withErrorHandling((refreshToken: string) =>
-    apiService.post<ApiResponse<LoginResponseData>>("/auth/refresh", { refreshToken }),
+    apiService
+      .post<ApiResponse<LoginResponseWireData>>("/auth/refresh", { refreshToken })
+      .then(normalizeLoginApiResponse),
   ),
 
   forgotPassword: withErrorHandling((payload: ForgotPasswordPayload) =>
