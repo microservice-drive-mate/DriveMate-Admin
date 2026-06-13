@@ -55,8 +55,33 @@ export function QuestionTable({
 					{questions.map((q) => (
 						<tr key={q.id} className={q.isDeleted ? "q-table__row--deleted" : ""}>
 							<td className="q-table__content">
-								<span title={q.content}>{q.content}</span>
-								{q.isCritical && <span className="q-type-badge q-type-badge--critical">Liệt</span>}
+								<div className="q-table__content-main">
+									<span className="q-table__content-text" title={q.content}>
+										{q.content}
+									</span>
+									{q.isCritical && (
+										<span
+											className="q-critical-icon"
+											role="img"
+											aria-label="Câu điểm liệt"
+											title="Câu điểm liệt">
+											<svg
+												width="14"
+												height="14"
+												viewBox="0 0 24 24"
+												fill="none"
+												stroke="currentColor"
+												strokeWidth="2.25"
+												strokeLinecap="round"
+												strokeLinejoin="round"
+												aria-hidden="true">
+												<path d="M12 9v4" />
+												<path d="M12 17h.01" />
+												<path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+											</svg>
+										</span>
+									)}
+								</div>
 							</td>
 							<td>
 								<span className="q-type-badge">{QUESTION_TYPE_LABELS[q.type]}</span>

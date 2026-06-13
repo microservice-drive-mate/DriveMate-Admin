@@ -17,6 +17,9 @@ export function CourseBanner({ course }: CourseBannerProps) {
         <span className={`course-detail__status-badge course-detail__status-badge--${course.status.toLowerCase()}`}>
           {COURSE_STATUS_LABELS[course.status]}
         </span>
+        {course.courseCode && (
+          <div className="course-detail__code-badge">{course.courseCode}</div>
+        )}
       </div>
       <div className="course-detail__banner-right">
         {course.description && <p className="course-detail__desc">{course.description}</p>}

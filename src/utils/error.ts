@@ -13,6 +13,32 @@ export class ApiError extends Error {
   }
 }
 
+const toErrorMessage = (value: unknown): string | null => {
+  if (typeof value === "string") return value.trim() ? value : null;
+
+  if (Array.isArray(value)) {
+    for (const item of value) {
+      const message = toErrorMessage(item);
+      if (message) return message;
+    }
+    return null;
+  }
+
+  if (value && typeof value === "object") {
+    const objectValue = value as { message?: unknown; constraints?: unknown };
+    const nestedMessage = toErrorMessage(objectValue.message);
+    if (nestedMessage) return nestedMessage;
+
+    if (objectValue.constraints && typeof objectValue.constraints === "object") {
+      return toErrorMessage(
+        Object.values(objectValue.constraints as Record<string, unknown>),
+      );
+    }
+  }
+
+  return null;
+};
+
 export const parseError = (error: unknown): ApiError => {
   if (!isAxiosError(error) || !error.response) {
     return new ApiError(ERROR_MESSAGES.NETWORK_ERROR, 0, ERROR_CODES.NETWORK_ERROR);
@@ -31,13 +57,12 @@ export const parseError = (error: unknown): ApiError => {
   const rawCode = data?.error?.code || data?.code || ERROR_CODES.INTERNAL_ERROR;
   const errorCode = typeof rawCode === "string" ? rawCode : ERROR_CODES.INTERNAL_ERROR;
   const errorMessage =
-    data?.error?.message || data?.message || data?.error || ERROR_MESSAGES.GENERIC_ERROR;
+    toErrorMessage(data?.error?.message) ||
+    toErrorMessage(data?.message) ||
+    toErrorMessage(data?.error) ||
+    ERROR_MESSAGES.GENERIC_ERROR;
 
-  const errors: unknown = data?.errors;
-  const firstDetail =
-    Array.isArray(errors) && errors.length > 0 && typeof errors[0] === "string"
-      ? errors[0]
-      : null;
+  const firstDetail = toErrorMessage(data?.errors);
 
   const finalMessage = firstDetail
     ? firstDetail

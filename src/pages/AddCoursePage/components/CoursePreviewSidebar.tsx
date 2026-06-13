@@ -26,6 +26,12 @@ export function CoursePreviewSidebar({
 					{form.title || "Tên khóa học"}
 				</div>
 				<div className="add-course__preview-stats">
+					{form.courseCode.trim() && (
+						<div className="add-course__preview-stat">
+							<span>Mã khóa học:</span>
+							<span>{form.courseCode.trim()}</span>
+						</div>
+					)}
 					<div className="add-course__preview-stat">
 						<span>Thời lượng:</span>
 						<span>{form.duration || "—"}</span>

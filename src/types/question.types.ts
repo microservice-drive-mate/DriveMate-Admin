@@ -1,6 +1,7 @@
 export type QuestionType = 'THEORY' | 'TRAFFIC_SIGN' | 'SCENARIO_RELATED';
 export type QuestionDifficulty = 'EASY' | 'MEDIUM' | 'HARD';
 export type LicenseCategory = 'A1' | 'A2' | 'B1' | 'B2' | 'C' | 'D' | 'E' | 'F';
+export type CriticalStatus = '' | 'critical' | 'normal';
 
 export interface QuestionOption {
   id: string;
@@ -45,7 +46,21 @@ export interface QuestionFilters {
   type: QuestionType | '';
   difficulty: QuestionDifficulty | '';
   topicId: string;
+  criticalStatus: CriticalStatus;
   includeDeleted: boolean;
+}
+
+export interface QuestionFormOption {
+  id?: string;
+  content: string;
+  isCorrect: boolean;
+  displayOrder: number;
+}
+
+export interface QuestionPayloadOption {
+  content: string;
+  isCorrect: boolean;
+  displayOrder: number;
 }
 
 export interface QuestionFormData {
@@ -57,7 +72,7 @@ export interface QuestionFormData {
   isCritical: boolean;
   isActive: boolean;
   topicId: string;
-  options: { content: string; isCorrect: boolean; displayOrder: number }[];
+  options: QuestionFormOption[];
 }
 
 export interface CreateQuestionPayload {
@@ -69,7 +84,7 @@ export interface CreateQuestionPayload {
   isCritical: boolean;
   isActive: boolean;
   topicId: string;
-  options: { content: string; isCorrect: boolean; displayOrder: number }[];
+  options: QuestionPayloadOption[];
   imageUrl?: string | null;
   mediaFileId?: string | null;
 }

@@ -51,6 +51,28 @@ export interface UpdateUserProfilePayload {
   notes?: string;
 }
 
+export interface UserDocument {
+  id: string;
+  userId?: string;
+  documentType: string;
+  mediaFileId: string;
+  fileUrl?: string | null;
+  originalName?: string | null;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface CreateUserDocumentInput {
+  documentType: string;
+  mediaFileId: string;
+  fileUrl?: string;
+  originalName?: string;
+}
+
+export interface CreateUserDocumentsPayload {
+  documents: CreateUserDocumentInput[];
+}
+
 export interface UserListParams {
   page?: number;
   size?: number;

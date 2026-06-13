@@ -331,7 +331,7 @@
   border-radius: 16px;
   padding: 14px;
   display: grid;
-  grid-template-columns: minmax(0, 2fr) repeat(4, minmax(130px, 1fr)) auto;
+  grid-template-columns: minmax(0, 2fr) repeat(5, minmax(130px, 1fr)) auto;
   gap: 12px;
   align-items: center;
 }
@@ -481,12 +481,34 @@
   max-width: 340px;
 }
 
-.q-table__content span {
+.q-table__content-main {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.q-table__content-text {
   display: block;
+  flex: 1 1 auto;
+  min-width: 0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   font-size: 14px;
+}
+
+.q-critical-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 24px;
+  width: 24px;
+  height: 24px;
+  border: 1px solid rgba(255, 90, 95, 0.28);
+  border-radius: 6px;
+  background: rgba(255, 90, 95, 0.12);
+  color: #ff5a5f;
 }
 
 .q-table__topic {
@@ -506,11 +528,6 @@
   background: #2e2e2e;
   color: rgba(243, 244, 246, 0.8);
   white-space: nowrap;
-}
-
-.q-type-badge--critical {
-  background: #ff5a5f;
-  color: #fff;
 }
 
 /* License class badge */
@@ -782,7 +799,7 @@
 
 @media (max-width: 1400px) {
   .q-filters {
-    grid-template-columns: minmax(0, 2fr) repeat(2, minmax(130px, 1fr)) auto;
+    grid-template-columns: minmax(0, 2fr) repeat(3, minmax(130px, 1fr)) auto;
   }
 }
 

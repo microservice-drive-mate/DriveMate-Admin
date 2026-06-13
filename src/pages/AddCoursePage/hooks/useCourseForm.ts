@@ -13,6 +13,8 @@ import {
 import type { CourseFormData, LicenseCategory } from "@/types/course.types";
 
 const DEFAULT_FORM: CourseFormData = {
+	courseCode: "",
+	version: null,
 	title: "",
 	licenseCategory: "",
 	description: "",
@@ -52,6 +54,8 @@ export function useCourseForm() {
 			if (res.success) {
 				const c = res.data;
 				setForm({
+					courseCode: c.courseCode ?? "",
+					version: c.version,
 					title: c.title,
 					licenseCategory: c.licenseCategory,
 					description: c.description ?? "",
@@ -108,10 +112,12 @@ export function useCourseForm() {
 			minPassScore: form.requirement.minPassScore,
 			requiredExams: form.requirement.requiredExams,
 		};
+		const courseCode = form.courseCode.trim();
 
 		const result =
 			isEdit && courseId
 				? await courseService.update(courseId, {
+						version: form.version ?? undefined,
 						title: form.title.trim(),
 						description: form.description.trim() || undefined,
 						duration: form.duration.trim() || undefined,
@@ -121,6 +127,7 @@ export function useCourseForm() {
 					})
 				: await courseService.create({
 						title: form.title.trim(),
+						courseCode: courseCode || undefined,
 						licenseCategory: form.licenseCategory as LicenseCategory,
 						description: form.description.trim() || undefined,
 						duration: form.duration.trim() || undefined,

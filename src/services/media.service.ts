@@ -11,7 +11,7 @@ import { apiService } from "@/lib";
 import { withErrorHandling } from "@/utils";
 
 const uploadInitRaw = withErrorHandling((payload: UploadInitPayload) =>
-	apiService.post<ApiResponse<UploadInitResponse>>("/media/init", payload),
+	apiService.post<ApiResponse<UploadInitResponse>>("/media/files/init", payload),
 );
 
 async function uploadViaDirect(
@@ -37,6 +37,7 @@ async function uploadViaDirect(
 			method: "PUT",
 			headers: {
 				"Content-Type": file.type,
+				"x-ms-blob-type": "BlockBlob",
 			},
 			body: file,
 		});
@@ -77,27 +78,30 @@ export const mediaService = {
 	uploadViaDirect,
 
 	getMetadata: withErrorHandling((id: string) =>
-		apiService.get<ApiResponse<FileObject>>(`/media/${id}`),
+		apiService.get<ApiResponse<FileObject>>(`/media/files/${id}`),
 	),
 
 	getDownloadUrl: withErrorHandling((id: string) =>
-		apiService.get<ApiResponse<PresignedDownloadResponse>>(`/media/${id}/url`),
+		apiService.get<ApiResponse<PresignedDownloadResponse>>(
+			`/media/files/${id}/url`,
+		),
 	),
 
 	list: withErrorHandling((params?: MediaFileListParams) =>
-		apiService.get<ApiResponse<PaginatedResponse<FileObject>>>("/admin/media", {
-			params,
-		}),
+		apiService.get<ApiResponse<PaginatedResponse<FileObject>>>(
+			"/admin/media/files",
+			{ params },
+		),
 	),
 
 	delete: withErrorHandling((id: string) =>
-		apiService.delete<ApiResponse<null>>(`/admin/media/${id}`),
+		apiService.delete<ApiResponse<null>>(`/admin/media/files/${id}`),
 	),
 
 	serverUpload: withErrorHandling((file: File) => {
 		const formData = new FormData();
 		formData.append("file", file);
-		return apiService.post<ApiResponse<FileObject>>("/media", formData, {
+		return apiService.post<ApiResponse<FileObject>>("/media/files", formData, {
 			headers: { "Content-Type": "multipart/form-data" },
 		});
 	}),

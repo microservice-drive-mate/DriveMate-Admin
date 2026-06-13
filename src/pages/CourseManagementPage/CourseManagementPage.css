@@ -147,7 +147,7 @@
 .course-table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 960px;
+  min-width: 1040px;
 }
 
 .course-table th,
@@ -184,6 +184,14 @@
 
 .course-table__name {
   font-weight: 500;
+}
+
+.course-table__code {
+  color: rgba(243, 244, 246, 0.72);
+  font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
 }
 
 .course-table__icon-cell {

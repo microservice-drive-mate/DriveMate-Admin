@@ -141,6 +141,16 @@
   font-weight: 700;
 }
 
+.course-detail__code-badge {
+  max-width: 150px;
+  color: rgba(243, 244, 246, 0.72);
+  font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+  font-size: 13px;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+  text-align: center;
+}
+
 .course-detail__status-badge--active {
   background: #35d07f;
   color: #08260f;

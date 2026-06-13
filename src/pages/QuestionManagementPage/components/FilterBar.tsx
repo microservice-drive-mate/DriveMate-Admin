@@ -57,6 +57,16 @@ export function FilterBar({ filters, topics, onChange }: FilterBarProps) {
 				options={DIFFICULTY_OPTIONS.map((d) => ({ value: d.value, label: d.label }))}
 			/>
 
+			<FilterSelect
+				value={filters.criticalStatus}
+				onChange={(v) => update({ criticalStatus: v as QuestionFilters["criticalStatus"] })}
+				placeholder="Điểm liệt"
+				options={[
+					{ value: "critical", label: "Câu liệt" },
+					{ value: "normal", label: "Câu thường" },
+				]}
+			/>
+
 			<label className="q-filters__deleted-toggle">
 				<input
 					type="checkbox"

@@ -1,3 +1,5 @@
+import type { UserRole } from './identity.types';
+
 export type LicenseCategory = 'A1' | 'A2' | 'B1' | 'B2' | 'C' | 'D' | 'E' | 'F';
 export type CourseStatus = 'DRAFT' | 'ACTIVE' | 'ARCHIVED';
 
@@ -30,6 +32,7 @@ export interface CourseRequirement {
 
 export interface CourseResponse {
   id: string;
+  courseCode: string | null;
   title: string;
   description: string | null;
   licenseCategory: LicenseCategory;
@@ -38,6 +41,10 @@ export interface CourseResponse {
   tuitionFee: number;
   capacity: number | null;
   status: CourseStatus;
+  version: number;
+  isDeleted: boolean;
+  deletedAt: string | null;
+  deletedBy: string | null;
   createdById: string;
   createdAt: string;
   updatedAt: string;
@@ -55,6 +62,7 @@ export interface CourseFilters {
 
 export interface CreateCoursePayload {
   title: string;
+  courseCode?: string;
   licenseCategory: LicenseCategory;
   description?: string;
   duration?: string;
@@ -71,6 +79,7 @@ export interface CreateCoursePayload {
 }
 
 export interface UpdateCoursePayload {
+  version?: number;
   title?: string;
   description?: string;
   duration?: string;
@@ -91,6 +100,12 @@ export interface AddLessonPayload {
   content?: string;
 }
 
+export interface UpdateLessonPayload {
+  title?: string;
+  order?: number;
+  content?: string;
+}
+
 export interface AddMaterialPayload {
   title: string;
   fileUrl?: string;
@@ -98,7 +113,29 @@ export interface AddMaterialPayload {
   type?: string;
 }
 
+export interface CourseInstructor {
+  userId: string;
+  fullName: string;
+  email: string;
+  role?: UserRole;
+  isActive?: boolean;
+  assignedAt?: string;
+}
+
+export interface CourseInstructorListParams {
+  page?: number;
+  size?: number;
+  search?: string;
+  isActive?: boolean;
+}
+
+export interface AddCourseInstructorPayload {
+  userId: string;
+}
+
 export interface CourseFormData {
+  courseCode: string;
+  version: number | null;
   title: string;
   licenseCategory: LicenseCategory | '';
   description: string;

@@ -23,6 +23,7 @@ const DEFAULT_FILTERS: QuestionFilters = {
   type: '',
   difficulty: '',
   topicId: '',
+  criticalStatus: '',
   includeDeleted: false,
 };
 
@@ -48,6 +49,8 @@ export default function QuestionManagementPage() {
         ...(filters.type ? { type: filters.type } : {}),
         ...(filters.difficulty ? { difficulty: filters.difficulty } : {}),
         ...(filters.topicId ? { topicId: filters.topicId } : {}),
+        ...(filters.criticalStatus === 'critical' ? { isCritical: true } : {}),
+        ...(filters.criticalStatus === 'normal' ? { isCritical: false } : {}),
         ...(filters.includeDeleted ? { includeDeleted: true } : {}),
       }),
     [],

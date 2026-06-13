@@ -109,7 +109,7 @@ export function useCourseDetail() {
     setActionError("");
     const res = await courseService.archive(courseId);
     if (res.success) {
-      setCourse((prev) => (prev ? { ...prev, status: "ARCHIVED" } : prev));
+      setCourse(res.data);
       setNotice(getDeleteCourseSuccessMessage());
     } else {
       setActionError(getDeleteCourseErrorMessage(res));

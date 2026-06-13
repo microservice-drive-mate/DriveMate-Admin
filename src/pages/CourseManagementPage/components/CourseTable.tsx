@@ -36,6 +36,7 @@ export function CourseTable({
 				<thead>
 					<tr>
 						<th>#</th>
+						<th>Mã</th>
 						<th>Tên khóa học</th>
 						<th>Hạng bằng</th>
 						<th>Thời lượng</th>
@@ -49,6 +50,7 @@ export function CourseTable({
 					{courses.map((course, index) => (
 						<tr key={course.id}>
 							<td className="course-table__num">{index + 1}</td>
+							<td className="course-table__code">{course.courseCode || "—"}</td>
 							<td className="course-table__name">{course.title}</td>
 							<td>
 								<span className="course-badge">{course.licenseCategory}</span>

@@ -24,3 +24,10 @@ export interface ProgressDashboard {
   weakTopics: WeakTopic[];
   lastActivityAt: string | null;
 }
+
+export interface AdminAnalyticsOverview {
+  monthlyActiveUsers: number;
+  passRate: number;
+  activeCourses: number;
+  [key: string]: unknown;
+}

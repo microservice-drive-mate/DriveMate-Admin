@@ -4,7 +4,13 @@ import type {
   CreateCoursePayload,
   UpdateCoursePayload,
   AddLessonPayload,
+  UpdateLessonPayload,
   AddMaterialPayload,
+  CourseLesson,
+  CourseMaterial,
+  CourseInstructor,
+  CourseInstructorListParams,
+  AddCourseInstructorPayload,
 } from '@/types/course.types';
 
 import { apiService } from '@/lib';
@@ -71,6 +77,20 @@ export const courseService = {
     ),
   ),
 
+  listLessons: withErrorHandling((id: string) =>
+    apiService.get<ApiResponse<CourseLesson[]>>(
+      `/admin/courses/${id}/lessons`,
+    ),
+  ),
+
+  updateLesson: withErrorHandling(
+    (id: string, lessonId: string, payload: UpdateLessonPayload) =>
+      apiService.patch<ApiResponse<CourseLesson>>(
+        `/admin/courses/${id}/lessons/${lessonId}`,
+        payload,
+      ),
+  ),
+
   deleteLesson: withErrorHandling((id: string, lessonId: string) =>
     apiService.delete<ApiResponse<CourseResponse>>(
       `/admin/courses/${id}/lessons/${lessonId}`,
@@ -81,6 +101,33 @@ export const courseService = {
     apiService.post<ApiResponse<CourseResponse>>(
       `/admin/courses/${id}/materials`,
       payload,
+    ),
+  ),
+
+  listMaterials: withErrorHandling((id: string) =>
+    apiService.get<ApiResponse<CourseMaterial[]>>(
+      `/admin/courses/${id}/materials`,
+    ),
+  ),
+
+  listInstructors: withErrorHandling((params?: CourseInstructorListParams) =>
+    apiService.get<ApiResponse<PaginatedResponse<CourseInstructor>>>(
+      '/admin/instructors',
+      { params },
+    ),
+  ),
+
+  addInstructor: withErrorHandling(
+    (id: string, payload: AddCourseInstructorPayload) =>
+      apiService.post<ApiResponse<CourseInstructor>>(
+        `/admin/courses/${id}/instructors`,
+        payload,
+      ),
+  ),
+
+  removeInstructor: withErrorHandling((id: string, userId: string) =>
+    apiService.delete<ApiResponse<null>>(
+      `/admin/courses/${id}/instructors/${userId}`,
     ),
   ),
 

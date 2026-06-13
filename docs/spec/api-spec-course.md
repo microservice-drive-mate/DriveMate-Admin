@@ -34,7 +34,7 @@ Course-service validate JWT/RBAC tại service bằng Keycloak guard. Frontend g
 | `GET /enrollments` | `STUDENT` |
 | `GET /enrollments/:id` | `STUDENT`, `ADMIN`, `CENTER_MANAGER` |
 | `POST /enrollments/:id/lessons/:lessonId/complete` | `STUDENT` |
-| `POST /enrollments/:id/reset-progress` | `STUDENT`, owner only |
+| `POST /enrollments/:id/reset-progress` | `STUDENT` (owner), `ADMIN`, `CENTER_MANAGER` |
 
 ---
 
@@ -88,8 +88,8 @@ Lỗi domain:
 
 ## Enums
 
-`LicenseCategory`: `A1` | `A2` | `B1` | `B2` | `C` | `D` | `E` | `F`  
-`CourseStatus`: `DRAFT` | `ACTIVE` | `ARCHIVED`  
+`LicenseCategory`: `A1` | `A2` | `B1` | `B2` | `C` | `D` | `E` | `F`
+`CourseStatus`: `DRAFT` | `ACTIVE` | `ARCHIVED`
 `EnrollmentStatus`: `ACTIVE` | `COMPLETED` | `DROPPED`
 
 ---
@@ -914,7 +914,7 @@ Same `Course` shape as `GET /admin/courses/:id`, with `status = "ARCHIVED"`.
 
 ### POST `/enrollments/{id}/reset-progress`
 
-Role: `STUDENT`.
+Role: `STUDENT`, `ADMIN`, `CENTER_MANAGER`.
 
 Resets only the current student's enrollment progress to baseline:
 
@@ -927,3 +927,12 @@ Resets only the current student's enrollment progress to baseline:
 **Response `200`**
 
 Same `Enrollment` shape as `GET /enrollments/:id`, with `progress = 0`, `status = "ACTIVE"`, and `completedAt = null`.
+## SRS Alignment Additions: Course Code, Version, Soft Delete
+
+`POST /admin/courses` accepts optional `courseCode`. If provided, it must be unique; duplicates return `COURSE_CODE_ALREADY_EXISTS` with HTTP 409.
+
+`PATCH /admin/courses/:id` accepts optional `version`. When supplied, the service compares it with the current aggregate version and returns `COURSE_VERSION_CONFLICT` with HTTP 409 on mismatch.
+
+`DELETE /admin/courses/:id` keeps the existing archive behavior for API compatibility and also records soft-delete metadata: `isDeleted`, `deletedAt`, `deletedBy`. Courses with active/non-dropped enrollments return `COURSE_HAS_ACTIVE_ENROLLMENTS` with HTTP 409.
+
+Course responses include `courseCode`, `version`, `isDeleted`, `deletedAt`, and `deletedBy`.

@@ -46,6 +46,21 @@ export function CourseBasicInfoSection({
 					)}
 				</div>
 
+				<div className="add-course__form-group">
+					<label>Mã khóa học</label>
+					<input
+						value={form.courseCode}
+						onChange={(e) => onUpdate({ courseCode: e.target.value })}
+						placeholder="VD: B2-CB-2026"
+						readOnly={isEdit}
+					/>
+					{isEdit && (
+						<span className="add-course__hint">
+							Mã khóa học không thay đổi sau khi tạo
+						</span>
+					)}
+				</div>
+
 				<div className="add-course__form-row">
 					<div className="add-course__form-group">
 						<label>Hạng bằng *</label>
