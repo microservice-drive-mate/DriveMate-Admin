@@ -25,9 +25,64 @@ export interface ProgressDashboard {
   lastActivityAt: string | null;
 }
 
-export interface AdminAnalyticsOverview {
-  monthlyActiveUsers: number;
+export interface DashboardPeriod {
+  month: string;
+  currentFrom: string;
+  currentTo: string;
+  previousFrom: string;
+  previousTo: string;
+}
+
+export interface DashboardDelta {
+  value: number;
+  percentage: number | null;
+  direction: 'up' | 'down' | 'flat';
+}
+
+export interface DashboardCard {
+  key: 'students' | 'courses' | 'instructors' | 'completedExams';
+  label: string;
+  value: number;
+  previousValue: number;
+  delta: DashboardDelta;
+}
+
+export interface MonthlyTrendPoint {
+  month: string;
+  students: number;
+  completedExams: number;
+  passedExams: number;
+}
+
+export interface LicenseDistributionItem {
+  licenseCategory: string;
+  students: number;
+  percentage: number;
+}
+
+export interface PassRateByLicenseItem {
+  licenseCategory: string;
+  completedExams: number;
+  passedExams: number;
   passRate: number;
-  activeCourses: number;
-  [key: string]: unknown;
+}
+
+export interface AdminRecentActivity {
+  id: string;
+  type: 'student' | 'course' | 'exam' | 'audit';
+  title: string;
+  description: string;
+  resourceType: string;
+  resourceId: string;
+  licenseCategory?: string;
+  occurredAt: string;
+}
+
+export interface AdminDashboard {
+  period: DashboardPeriod;
+  cards: DashboardCard[];
+  monthlyTrend: MonthlyTrendPoint[];
+  licenseDistribution: LicenseDistributionItem[];
+  passRateByLicense: PassRateByLicenseItem[];
+  recentActivities: AdminRecentActivity[];
 }

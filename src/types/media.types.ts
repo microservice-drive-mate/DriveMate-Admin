@@ -1,4 +1,4 @@
-export type FileStatus = "LINKED" | "UNLINKED";
+export type FileStatus = "LINKED" | "UNLINKED" | "UPLOADED";
 
 export type AllowedMimeCategory = "image" | "document" | "video" | "audio";
 
@@ -11,6 +11,7 @@ export interface FileObject {
 	bucketName: string;
 	uploadedById: string;
 	isPublic: boolean;
+	status?: FileStatus;
 	createdAt: string;
 }
 

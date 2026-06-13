@@ -14,12 +14,12 @@ import {
   Bar,
 } from 'recharts';
 import { ChartCard } from '../../components/ui/ChartCard';
-import type { MonthlyTrend, LicenseDistribution, PassRate } from '../../types';
+import type { LicenseDistributionItem, MonthlyTrendPoint, PassRateByLicenseItem } from '@/types/analytics.types';
 
 interface ChartsSectionProps {
-  monthlyTrend: MonthlyTrend[];
-  licenseDistribution: LicenseDistribution[];
-  passRates: PassRate[];
+  monthlyTrend: MonthlyTrendPoint[];
+  licenseDistribution: LicenseDistributionItem[];
+  passRateByLicense: PassRateByLicenseItem[];
   pieColors: string[];
 }
 
@@ -32,7 +32,7 @@ const darkTooltipStyle = {
 
 const darkAxisTick = { fontSize: 12, fill: '#94a3b8' };
 
-export function ChartsSection({ monthlyTrend, licenseDistribution, passRates, pieColors }: ChartsSectionProps) {
+export function ChartsSection({ monthlyTrend, licenseDistribution, passRateByLicense, pieColors }: ChartsSectionProps) {
   return (
     <>
       <div className="charts-row">
@@ -44,9 +44,9 @@ export function ChartsSection({ monthlyTrend, licenseDistribution, passRates, pi
               <YAxis tick={darkAxisTick} />
               <Tooltip contentStyle={darkTooltipStyle} />
               <Legend />
-              <Line type="monotone" dataKey="hocVien" name="Học viên" stroke="#2563eb" strokeWidth={2} dot={{ r: 4 }} />
-              <Line type="monotone" dataKey="baiThi" name="Bài thi" stroke="#f59e0b" strokeWidth={2} dot={{ r: 4 }} />
-              <Line type="monotone" dataKey="dat" name="Đạt" stroke="#10b981" strokeWidth={2} dot={{ r: 4 }} />
+              <Line type="monotone" dataKey="students" name="Học viên" stroke="#2563eb" strokeWidth={2} dot={{ r: 4 }} />
+              <Line type="monotone" dataKey="completedExams" name="Bài thi" stroke="#f59e0b" strokeWidth={2} dot={{ r: 4 }} />
+              <Line type="monotone" dataKey="passedExams" name="Đạt" stroke="#10b981" strokeWidth={2} dot={{ r: 4 }} />
             </LineChart>
           </ResponsiveContainer>
         </ChartCard>
@@ -59,16 +59,16 @@ export function ChartsSection({ monthlyTrend, licenseDistribution, passRates, pi
                 cx="50%"
                 cy="50%"
                 outerRadius={90}
-                dataKey="value"
-                nameKey="name"
-                label={({ name, value }) => `${name} ${value}%`}
+                dataKey="students"
+                nameKey="licenseCategory"
+                label={({ licenseCategory, percentage }) => `${licenseCategory} ${percentage}%`}
                 labelLine={false}
               >
                 {licenseDistribution.map((_, index) => (
                   <Cell key={index} fill={pieColors[index % pieColors.length]} />
                 ))}
               </Pie>
-              <Tooltip formatter={(v) => `${v}%`} contentStyle={darkTooltipStyle} />
+              <Tooltip formatter={(v) => `${v}`} contentStyle={darkTooltipStyle} />
             </PieChart>
           </ResponsiveContainer>
         </ChartCard>
@@ -76,12 +76,12 @@ export function ChartsSection({ monthlyTrend, licenseDistribution, passRates, pi
 
       <ChartCard title="Tỷ Lệ Đỗ Theo Hạng Bằng" variant="dark">
         <ResponsiveContainer width="100%" height={240}>
-          <BarChart data={passRates} margin={{ top: 4, right: 16, left: -10, bottom: 0 }}>
+          <BarChart data={passRateByLicense} margin={{ top: 4, right: 16, left: -10, bottom: 0 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" vertical={false} />
-            <XAxis dataKey="hang" tick={darkAxisTick} />
+            <XAxis dataKey="licenseCategory" tick={darkAxisTick} />
             <YAxis domain={[0, 100]} tick={darkAxisTick} tickFormatter={(v) => `${v}`} />
             <Tooltip formatter={(v) => `${v}%`} contentStyle={darkTooltipStyle} />
-            <Bar dataKey="rate" name="Tỷ lệ đỗ" fill="#fdb913" radius={[4, 4, 0, 0]} />
+            <Bar dataKey="passRate" name="Tỷ lệ đỗ" fill="#fdb913" radius={[4, 4, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
       </ChartCard>

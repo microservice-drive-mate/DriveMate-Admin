@@ -14,6 +14,10 @@ const uploadInitRaw = withErrorHandling((payload: UploadInitPayload) =>
 	apiService.post<ApiResponse<UploadInitResponse>>("/media/files/init", payload),
 );
 
+const confirmUploadRaw = withErrorHandling((id: string) =>
+	apiService.post<ApiResponse<FileObject>>(`/media/files/${id}/complete`),
+);
+
 async function uploadViaDirect(
 	file: File,
 ): Promise<
@@ -60,6 +64,11 @@ async function uploadViaDirect(
 		};
 	}
 
+	const completeResult = await confirmUploadRaw(mediaFileId);
+	if (!completeResult.success) {
+		return { success: false, error: completeResult.error, code: completeResult.code };
+	}
+
 	return {
 		success: true,
 		data: {
@@ -76,6 +85,8 @@ export const mediaService = {
 	uploadInit: uploadInitRaw,
 
 	uploadViaDirect,
+
+	confirmUpload: confirmUploadRaw,
 
 	getMetadata: withErrorHandling((id: string) =>
 		apiService.get<ApiResponse<FileObject>>(`/media/files/${id}`),
