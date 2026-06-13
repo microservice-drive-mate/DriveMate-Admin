@@ -1,10 +1,8 @@
 import type { ApiResponse, PaginatedResponse } from "@/types";
 import type {
-  CreateUserDocumentsPayload,
   CreateUserProfilePayload,
   LicenseTier,
   UpdateUserProfilePayload,
-  UserDocument,
   UserListParams,
   UserProfile,
 } from "@/types/user-profile.types";
@@ -73,20 +71,6 @@ export const userService = {
         `/admin/users/${id}/license-tier`,
         { licenseTier },
       ),
-  ),
-
-  uploadDocuments: withErrorHandling(
-    (id: string, payload: CreateUserDocumentsPayload) =>
-      apiService.post<ApiResponse<UserDocument[]>>(
-        `/admin/users/${id}/documents`,
-        payload,
-      ),
-  ),
-
-  listDocuments: withErrorHandling((id: string) =>
-    apiService.get<ApiResponse<UserDocument[]>>(
-      `/admin/users/${id}/documents`,
-    ),
   ),
 
   getMe: withErrorHandling(() =>

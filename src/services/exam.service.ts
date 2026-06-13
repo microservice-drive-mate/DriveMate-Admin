@@ -9,7 +9,6 @@ import type {
 	AdminExamSession,
 	AdminExamSessionListParams,
 } from "@/types/exam-session.types";
-import type { QuestionResponse } from "@/types/question.types";
 import { apiService } from "@/lib";
 import { withErrorHandling } from "@/utils";
 
@@ -46,12 +45,6 @@ export const examService = {
 		apiService.delete<ApiResponse<ExamTemplate>>(
 			`/admin/exams/templates/${id}`,
 			{ data: { version } },
-		),
-	),
-
-	getTemplateQuestions: withErrorHandling((id: string) =>
-		apiService.get<ApiResponse<QuestionResponse[]>>(
-			`/admin/exams/templates/${id}/questions`,
 		),
 	),
 

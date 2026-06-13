@@ -1,7 +1,8 @@
 import { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import type { IdentityUser, UserRole } from "@/types/identity.types";
-import { identityService } from "@/services";
+import { identityService, userService } from "@/services";
+import { useAuthStore } from "@/store/authStore";
 import { usePaginatedList } from "@/hooks/usePaginatedList";
 import type { PaginatedLoaderParams } from "@/hooks/usePaginatedList";
 import {
@@ -43,7 +44,9 @@ export default function UserManagementPage() {
     type: "success",
     visible: false,
   });
+  const currentUserId = useAuthStore((state) => state.user?.id ?? "");
   const [togglingId, setTogglingId] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
   const [editUser, setEditUser] = useState<IdentityUser | null>(null);
   const [roleUser, setRoleUser] = useState<IdentityUser | null>(null);
@@ -89,12 +92,30 @@ export default function UserManagementPage() {
     hideToast();
     setTogglingId(user.userId);
     const result = await identityService.setLock(user.userId, user.isActive);
-    setTogglingId(null);
     if (!result.success) {
+      setTogglingId(null);
       setActionError(getLockAccountErrorMessage(result));
       return;
     }
+    // best-effort: sync user-service profile lock; Keycloak lock is the primary gate
+    await userService.setLock(user.userId, user.isActive);
+    setTogglingId(null);
     showToast(getLockAccountSuccessMessage(user.isActive), "success");
+    list.refetch();
+  };
+
+  const handleDelete = async (user: IdentityUser) => {
+    if (!window.confirm(`Xóa người dùng "${user.fullName}"? Thao tác này soft delete.`)) return;
+    setActionError(null);
+    hideToast();
+    setDeletingId(user.userId);
+    const result = await identityService.softDelete(user.userId, currentUserId);
+    setDeletingId(null);
+    if (!result.success) {
+      setActionError(result.error);
+      return;
+    }
+    showToast("Đã xóa người dùng.", "success");
     list.refetch();
   };
 
@@ -138,9 +159,11 @@ export default function UserManagementPage() {
         <UserTable
           users={list.items}
           togglingId={togglingId}
+          deletingId={deletingId}
           onToggleStatus={handleToggleStatus}
           onEdit={setEditUser}
           onChangeRole={setRoleUser}
+          onDelete={handleDelete}
         />
       )}
 

@@ -39,6 +39,7 @@ export default function AuditLogPage() {
   const [page, setPage] = useState(1);
   const [filters, setFilters] = useState<Filters>(DEFAULT_FILTERS);
   const [selected, setSelected] = useState<AuditLog | null>(null);
+  const [detailLoading, setDetailLoading] = useState(false);
 
   const loadLogs = useCallback(() => {
     const params: AuditLogListParams = {
@@ -61,6 +62,15 @@ export default function AuditLogPage() {
   const handleFilter = (patch: Partial<Filters>) => {
     setFilters((f) => ({ ...f, ...patch }));
     setPage(1);
+  };
+
+  const handleRowClick = (log: AuditLog) => {
+    setSelected(log);
+    setDetailLoading(true);
+    auditService.getById(log.id).then((res) => {
+      if (res.success) setSelected(res.data);
+      setDetailLoading(false);
+    });
   };
 
   const logs = logsQuery.data.items;
@@ -144,7 +154,7 @@ export default function AuditLogPage() {
               <tr><td colSpan={6} className="audit-table__loading">Không có dữ liệu.</td></tr>
             ) : (
               logs.map((log) => (
-                <tr key={log.id} className="audit-table__row" onClick={() => setSelected(log)}>
+                <tr key={log.id} className="audit-table__row" onClick={() => handleRowClick(log)}>
                   <td>{formatDate(log.occurredAt)}</td>
                   <td><span className="audit-chip">{log.serviceName}</span></td>
                   <td className="audit-table__action">{log.action}</td>
@@ -172,11 +182,11 @@ export default function AuditLogPage() {
       />
 
       {selected && (
-        <div className="audit-detail__overlay" onClick={() => setSelected(null)}>
+        <div className="audit-detail__overlay" onClick={() => { setSelected(null); setDetailLoading(false); }}>
           <div className="audit-detail" onClick={(e) => e.stopPropagation()}>
             <div className="audit-detail__header">
-              <span>Chi tiết Audit Log</span>
-              <button onClick={() => setSelected(null)}>×</button>
+              <span>Chi tiết Audit Log {detailLoading && '...'}</span>
+              <button onClick={() => { setSelected(null); setDetailLoading(false); }}>×</button>
             </div>
             <div className="audit-detail__body">
               {[

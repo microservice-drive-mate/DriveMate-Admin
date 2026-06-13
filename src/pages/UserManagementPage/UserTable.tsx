@@ -7,17 +7,21 @@ import { formatDate, getAvatarColor } from "./userTableUtils";
 interface Props {
   users: IdentityUser[];
   togglingId: string | null;
+  deletingId: string | null;
   onToggleStatus: (user: IdentityUser) => void;
   onEdit: (user: IdentityUser) => void;
   onChangeRole: (user: IdentityUser) => void;
+  onDelete: (user: IdentityUser) => void;
 }
 
 export default function UserTable({
   users,
   togglingId,
+  deletingId,
   onToggleStatus,
   onEdit,
   onChangeRole,
+  onDelete,
 }: Props) {
   if (users.length === 0) {
     return (
@@ -43,6 +47,7 @@ export default function UserTable({
         <tbody>
           {users.map((user) => {
             const busy = togglingId === user.userId;
+            const deleting = deletingId === user.userId;
             const disabled = busy || user.isDeleted;
             return (
               <tr key={user.userId} className={user.isDeleted ? "user-table__row--deleted" : ""}>
@@ -90,6 +95,13 @@ export default function UserTable({
                       disabled={disabled}
                       onClick={() => onChangeRole(user)}>
                       ◆
+                    </button>
+                    <button
+                      className="action-btn action-btn--delete"
+                      title="Xóa người dùng"
+                      disabled={disabled || deleting}
+                      onClick={() => onDelete(user)}>
+                      {deleting ? "..." : "🗑"}
                     </button>
                   </div>
                 </td>

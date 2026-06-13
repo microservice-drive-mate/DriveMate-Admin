@@ -26,7 +26,7 @@ export function AlertModal({ student, onClose, onToast }: AlertModalProps) {
 		}
 		setSubmitting(true);
 		const res = await notificationService.sendAcademicWarning({
-			studentId: student.id,
+			studentIds: [student.id],
 			reason: alertTemplate,
 			severity: alertSeverity,
 			message: alertContent.trim(),
