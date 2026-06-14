@@ -665,6 +665,106 @@
   font-weight: 700;
 }
 
+/* Schedule Tab */
+.course-detail__schedule-table-wrap {
+  overflow-x: auto;
+  padding: 0 20px 20px;
+}
+
+.course-detail__schedule-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.course-detail__schedule-table th {
+  text-align: left;
+  padding: 10px 12px;
+  color: rgba(243, 244, 246, 0.5);
+  font-weight: 600;
+  border-bottom: 1px solid #2a2a2a;
+  white-space: nowrap;
+}
+
+.course-detail__schedule-table td {
+  padding: 12px;
+  border-bottom: 1px solid #1e1e1e;
+  color: rgba(243, 244, 246, 0.85);
+  vertical-align: middle;
+}
+
+.course-detail__schedule-table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.course-detail__schedule-actions {
+  display: flex;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+.course-detail__schedule-edit {
+  background: none;
+  border: 1px solid #444;
+  border-radius: 6px;
+  padding: 5px;
+  cursor: pointer;
+  color: rgba(243, 244, 246, 0.6);
+  display: flex;
+  align-items: center;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.course-detail__schedule-edit:hover {
+  color: #60a5fa;
+  border-color: #60a5fa;
+}
+
+.course-detail__badge--active {
+  background: rgba(74, 222, 128, 0.12);
+  color: #4ade80;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.course-detail__badge--inactive {
+  background: rgba(156, 163, 175, 0.12);
+  color: #9ca3af;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* Form utilities */
+.course-detail__form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.course-detail__form-group--checkbox {
+  display: flex;
+  align-items: center;
+}
+
+.course-detail__form-group--checkbox label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  color: rgba(243, 244, 246, 0.85);
+}
+
+.course-detail__form-group--checkbox input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
 @media (max-width: 900px) {
   .course-detail__banner {
     flex-direction: column;

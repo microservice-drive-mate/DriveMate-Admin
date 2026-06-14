@@ -86,3 +86,57 @@ export interface AdminDashboard {
   passRateByLicense: PassRateByLicenseItem[];
   recentActivities: AdminRecentActivity[];
 }
+
+export interface InstructorDashboardPeriod {
+  month: string;
+  week: { from: string; to: string };
+  date: string;
+  timezone: string;
+}
+
+export interface InstructorDashboardSummary {
+  activeClassCount: number;
+  totalStudents: number;
+  passRate: number;
+  teachingHoursThisMonth: number;
+}
+
+export interface WeeklyTeachingTrendPoint {
+  date: string;
+  teachingHours: number;
+  studentCount: number;
+}
+
+export interface TopicAverage {
+  topicId: string;
+  topicName: string;
+  correctAnswers: number;
+  answeredQuestions: number;
+  accuracy: number;
+}
+
+export interface ClassProgressItem {
+  courseId: string;
+  courseName: string;
+  studentCount: number;
+  completionRate: number;
+}
+
+export interface TodayScheduleItem {
+  scheduleId: string;
+  courseId: string;
+  courseName: string;
+  startTime: string;
+  endTime: string;
+  room: string;
+  studentCount: number;
+}
+
+export interface InstructorDashboard {
+  period: InstructorDashboardPeriod;
+  summary: InstructorDashboardSummary;
+  weeklyTeachingTrend: WeeklyTeachingTrendPoint[];
+  topicAverages: TopicAverage[];
+  classProgress: ClassProgressItem[];
+  todaySchedule: TodayScheduleItem[];
+}

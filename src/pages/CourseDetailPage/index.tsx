@@ -6,9 +6,10 @@ import { LessonsTab } from "./components/LessonsTab";
 import { MaterialsTab } from "./components/MaterialsTab";
 import { AddLessonModal } from "./components/AddLessonModal";
 import { AddMaterialModal } from "./components/AddMaterialModal";
+import { SchedulesTab } from "./components/SchedulesTab";
 import "./CourseDetailPage.css";
 
-type DetailTab = "lessons" | "materials";
+type DetailTab = "lessons" | "materials" | "schedules";
 
 export default function CourseDetailPage() {
   const {
@@ -125,6 +126,12 @@ export default function CourseDetailPage() {
         >
           Tài Liệu
         </button>
+        <button
+          className={activeTab === "schedules" ? "course-detail__tab--active" : ""}
+          onClick={() => setActiveTab("schedules")}
+        >
+          Lịch Học
+        </button>
       </div>
 
       {activeTab === "lessons" && (
@@ -143,6 +150,10 @@ export default function CourseDetailPage() {
           canManage={canManageCourses}
           onAdd={() => setShowMaterialModal(true)}
         />
+      )}
+
+      {activeTab === "schedules" && courseId && (
+        <SchedulesTab courseId={courseId} canManage={canManageCourses} />
       )}
 
       {showLessonModal && courseId && (

@@ -1,5 +1,5 @@
 import type { ApiResponse } from '@/types';
-import type { AdminDashboard, ProgressDashboard } from '@/types/analytics.types';
+import type { AdminDashboard, InstructorDashboard, ProgressDashboard } from '@/types/analytics.types';
 import { apiService } from '@/lib';
 import { withErrorHandling } from '@/utils';
 
@@ -14,6 +14,13 @@ export const analyticsService = {
     apiService.get<ApiResponse<AdminDashboard>>(
       '/admin/analytics/dashboard',
       { params: month ? { month } : undefined },
+    ),
+  ),
+
+  getInstructorDashboard: withErrorHandling((params?: { month?: string; date?: string }) =>
+    apiService.get<ApiResponse<InstructorDashboard>>(
+      '/analytics/instructor/dashboard',
+      { params },
     ),
   ),
 };

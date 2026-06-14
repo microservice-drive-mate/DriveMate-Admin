@@ -152,6 +152,52 @@ export interface CourseFormData {
   };
 }
 
+export type CourseScheduleDayOfWeek = 1 | 2 | 3 | 4 | 5 | 6 | 7;
+
+export interface CourseSchedule {
+  id: string;
+  courseId: string;
+  dayOfWeek: CourseScheduleDayOfWeek;
+  startTime: string;
+  endTime: string;
+  room: string;
+  effectiveFrom: string;
+  effectiveTo?: string | null;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateSchedulePayload {
+  dayOfWeek: CourseScheduleDayOfWeek;
+  startTime: string;
+  endTime: string;
+  room: string;
+  effectiveFrom: string;
+  effectiveTo?: string | null;
+  isActive?: boolean;
+}
+
+export interface UpdateSchedulePayload {
+  dayOfWeek?: CourseScheduleDayOfWeek;
+  startTime?: string;
+  endTime?: string;
+  room?: string;
+  effectiveFrom?: string;
+  effectiveTo?: string | null;
+  isActive?: boolean;
+}
+
+export const DAY_OF_WEEK_LABELS: Record<CourseScheduleDayOfWeek, string> = {
+  1: 'Thứ Hai',
+  2: 'Thứ Ba',
+  3: 'Thứ Tư',
+  4: 'Thứ Năm',
+  5: 'Thứ Sáu',
+  6: 'Thứ Bảy',
+  7: 'Chủ Nhật',
+};
+
 export const COURSE_STATUS_LABELS: Record<CourseStatus, string> = {
   DRAFT: 'Bản nháp',
   ACTIVE: 'Đang hoạt động',

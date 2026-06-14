@@ -5,6 +5,9 @@ import type {
   UpdateCoursePayload,
   AddLessonPayload,
   AddMaterialPayload,
+  CourseSchedule,
+  CreateSchedulePayload,
+  UpdateSchedulePayload,
 } from '@/types/course.types';
 
 import { apiService } from '@/lib';
@@ -87,6 +90,32 @@ export const courseService = {
   archive: withErrorHandling((id: string) =>
     apiService.delete<ApiResponse<CourseResponse>>(
       `/admin/courses/${id}`,
+    ),
+  ),
+
+  listSchedules: withErrorHandling((courseId: string) =>
+    apiService.get<ApiResponse<CourseSchedule[]>>(
+      `/admin/courses/${courseId}/schedules`,
+    ),
+  ),
+
+  createSchedule: withErrorHandling((courseId: string, payload: CreateSchedulePayload) =>
+    apiService.post<ApiResponse<CourseSchedule>>(
+      `/admin/courses/${courseId}/schedules`,
+      payload,
+    ),
+  ),
+
+  updateSchedule: withErrorHandling((courseId: string, scheduleId: string, payload: UpdateSchedulePayload) =>
+    apiService.patch<ApiResponse<CourseSchedule>>(
+      `/admin/courses/${courseId}/schedules/${scheduleId}`,
+      payload,
+    ),
+  ),
+
+  deleteSchedule: withErrorHandling((courseId: string, scheduleId: string) =>
+    apiService.delete<ApiResponse<void>>(
+      `/admin/courses/${courseId}/schedules/${scheduleId}`,
     ),
   ),
 };

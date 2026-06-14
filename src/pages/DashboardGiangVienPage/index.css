@@ -158,6 +158,19 @@
   .gv-dashboard__header { flex-direction: column; gap: 12px; }
 }
 
+.gv-loading,
+.gv-error {
+  margin-top: 40px;
+  text-align: center;
+  font-size: 15px;
+  color: rgba(243, 244, 246, 0.5);
+  padding: 24px;
+}
+
+.gv-error {
+  color: #f87171;
+}
+
 @media (max-width: 600px) {
   .gv-stats-grid { grid-template-columns: 1fr; }
   .gv-schedule-item { flex-wrap: wrap; gap: 10px; }
