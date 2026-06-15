@@ -1,7 +1,13 @@
 import { useCallback, useState } from "react";
 import { userService } from "@/services";
 import { useAsyncData } from "@/hooks/useAsyncData";
+import { FileUploader } from "@/components/common/FileUploader";
+import { getRenderableMediaUrl } from "@/lib";
+import { ALLOWED_IMAGE_MIMES, ALLOWED_DOCUMENT_MIMES } from "@/constants/media";
+import type { MediaReference } from "@/types/media.types";
 import type { UserDocument, UserDocumentType, AddDocumentPayload } from "@/types/user-profile.types";
+
+const DOC_ACCEPT = [...ALLOWED_IMAGE_MIMES, ...ALLOWED_DOCUMENT_MIMES];
 
 const DOC_TYPE_LABELS: Record<UserDocumentType, string> = {
   ID_CARD_FRONT: "CCCD mặt trước",
@@ -29,17 +35,19 @@ interface Props {
 
 interface AddForm {
   type: UserDocumentType;
-  mediaFileId: string;
+  file: MediaReference | null;
   title: string;
 }
 
-const INITIAL_FORM: AddForm = { type: "ID_CARD_FRONT", mediaFileId: "", title: "" };
+const INITIAL_FORM: AddForm = { type: "ID_CARD_FRONT", file: null, title: "" };
 
 export function DocumentsTab({ userId }: Props) {
   const [showAdd, setShowAdd] = useState(false);
   const [form, setForm] = useState<AddForm>(INITIAL_FORM);
   const [formError, setFormError] = useState("");
   const [saving, setSaving] = useState(false);
+  const [openingId, setOpeningId] = useState<string | null>(null);
+  const [viewError, setViewError] = useState("");
 
   const load = useCallback(
     () => userService.getDocuments(userId),
@@ -52,12 +60,12 @@ export function DocumentsTab({ userId }: Props) {
   });
 
   const handleAdd = async () => {
-    if (!form.mediaFileId.trim()) { setFormError("Vui lòng nhập Media File ID"); return; }
+    if (!form.file) { setFormError("Vui lòng tải lên tệp tài liệu"); return; }
     setSaving(true);
     setFormError("");
     const payload: AddDocumentPayload = {
       type: form.type,
-      mediaFileId: form.mediaFileId.trim(),
+      mediaFileId: form.file.mediaFileId,
       title: form.title.trim() || undefined,
     };
     const res = await userService.addDocument(userId, payload);
@@ -68,6 +76,19 @@ export function DocumentsTab({ userId }: Props) {
       refetch();
     } else {
       setFormError(res.error);
+    }
+  };
+
+  const handleView = async (doc: UserDocument) => {
+    setOpeningId(doc.id);
+    setViewError("");
+    try {
+      const url = await getRenderableMediaUrl(doc.mediaFileId);
+      window.open(url, "_blank", "noopener");
+    } catch {
+      setViewError("Không mở được tệp. Vui lòng thử lại.");
+    } finally {
+      setOpeningId(null);
     }
   };
 
@@ -86,7 +107,7 @@ export function DocumentsTab({ userId }: Props) {
       {showAdd && (
         <div style={{ background: "rgba(255,255,255,0.04)", borderRadius: 8, padding: "12px 14px", marginBottom: 14 }}>
           {formError && <div style={{ color: "#f87171", fontSize: 12, marginBottom: 8 }}>{formError}</div>}
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 10 }}>
+          <div style={{ display: "grid", gap: 10, marginBottom: 10 }}>
             <div>
               <div style={{ fontSize: 11, color: "rgba(255,255,255,0.45)", marginBottom: 4 }}>Loại tài liệu *</div>
               <select
@@ -101,14 +122,13 @@ export function DocumentsTab({ userId }: Props) {
               </select>
             </div>
             <div>
-              <div style={{ fontSize: 11, color: "rgba(255,255,255,0.45)", marginBottom: 4 }}>Media File ID *</div>
-              <input
-                type="text"
-                value={form.mediaFileId}
-                onChange={(e) => setForm((f) => ({ ...f, mediaFileId: e.target.value }))}
+              <div style={{ fontSize: 11, color: "rgba(255,255,255,0.45)", marginBottom: 4 }}>Tệp tài liệu *</div>
+              <FileUploader
+                value={form.file}
+                onChange={(next) => setForm((f) => ({ ...f, file: next }))}
                 disabled={saving}
-                placeholder="UUID của file đã upload"
-                style={{ width: "100%", background: "#1a1a1a", border: "1px solid #333", borderRadius: 6, color: "#f0f0f0", padding: "6px 8px", fontSize: 13, boxSizing: "border-box" }}
+                accept={DOC_ACCEPT}
+                label="Bấm hoặc kéo thả tệp vào đây"
               />
             </div>
           </div>
@@ -135,6 +155,7 @@ export function DocumentsTab({ userId }: Props) {
 
       {loading && <p style={{ color: "rgba(255,255,255,0.4)", padding: "12px 0" }}>Đang tải...</p>}
       {error && <p style={{ color: "#f87171", fontSize: 13 }}>{error}</p>}
+      {viewError && <p style={{ color: "#f87171", fontSize: 13 }}>{viewError}</p>}
       {!loading && docs.length === 0 && (
         <p style={{ color: "rgba(255,255,255,0.35)", fontSize: 13, padding: "10px 0" }}>Chưa có tài liệu nào.</p>
       )}
@@ -161,13 +182,14 @@ export function DocumentsTab({ userId }: Props) {
                   ) : "—"}
                 </td>
                 <td style={{ padding: "8px" }}>
-                  {doc.fileUrl ? (
-                    <a href={doc.fileUrl} target="_blank" rel="noreferrer" style={{ color: "#a5b4fc", fontSize: 12 }}>
-                      Xem file
-                    </a>
-                  ) : (
-                    <span style={{ color: "rgba(255,255,255,0.3)", fontSize: 12 }}>{doc.mediaFileId}</span>
-                  )}
+                  <button
+                    type="button"
+                    onClick={() => handleView(doc)}
+                    disabled={openingId === doc.id}
+                    style={{ background: "none", border: "none", color: "#a5b4fc", fontSize: 12, cursor: "pointer", padding: 0 }}
+                  >
+                    {openingId === doc.id ? "Đang mở..." : "Xem file"}
+                  </button>
                 </td>
               </tr>
             ))}
