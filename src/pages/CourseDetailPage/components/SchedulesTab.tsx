@@ -1,16 +1,24 @@
 import { useState, useCallback, useEffect } from "react";
-import { courseService } from "@/services";
+import { courseService, userService } from "@/services";
 import type { CourseSchedule } from "@/types/course.types";
 import { DAY_OF_WEEK_LABELS } from "@/types/course.types";
 import { ScheduleFormModal } from "./ScheduleFormModal";
 
+interface Instructor {
+  id: string;
+  name: string;
+}
+
 interface SchedulesTabProps {
   courseId: string;
+  instructorIds: string[];
   canManage: boolean;
 }
 
-export function SchedulesTab({ courseId, canManage }: SchedulesTabProps) {
+export function SchedulesTab({ courseId, instructorIds, canManage }: SchedulesTabProps) {
   const [schedules, setSchedules] = useState<CourseSchedule[]>([]);
+  const [instructors, setInstructors] = useState<Instructor[]>([]);
+  const [instructorMap, setInstructorMap] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [showModal, setShowModal] = useState(false);
@@ -32,6 +40,21 @@ export function SchedulesTab({ courseId, canManage }: SchedulesTabProps) {
   useEffect(() => {
     loadSchedules();
   }, [loadSchedules]);
+
+  useEffect(() => {
+    if (instructorIds.length === 0) return;
+    Promise.all(instructorIds.map((id) => userService.getById(id))).then((results) => {
+      const resolved: Instructor[] = [];
+      const map: Record<string, string> = {};
+      results.forEach((res, i) => {
+        const name = res.success ? res.data?.fullName ?? instructorIds[i] : instructorIds[i];
+        resolved.push({ id: instructorIds[i], name });
+        map[instructorIds[i]] = name;
+      });
+      setInstructors(resolved);
+      setInstructorMap(map);
+    });
+  }, [instructorIds]);
 
   const handleSaved = (saved: CourseSchedule) => {
     setSchedules((prev) => {
@@ -93,6 +116,7 @@ export function SchedulesTab({ courseId, canManage }: SchedulesTabProps) {
           <table className="course-detail__schedule-table">
             <thead>
               <tr>
+                <th>Giảng viên</th>
                 <th>Thứ</th>
                 <th>Giờ</th>
                 <th>Phòng</th>
@@ -108,6 +132,7 @@ export function SchedulesTab({ courseId, canManage }: SchedulesTabProps) {
                 .sort((a, b) => a.dayOfWeek - b.dayOfWeek || a.startTime.localeCompare(b.startTime))
                 .map((s) => (
                   <tr key={s.id}>
+                    <td>{instructorMap[s.instructorId] ?? s.instructorId}</td>
                     <td>{DAY_OF_WEEK_LABELS[s.dayOfWeek]}</td>
                     <td>{s.startTime}–{s.endTime}</td>
                     <td>{s.room}</td>
@@ -155,6 +180,7 @@ export function SchedulesTab({ courseId, canManage }: SchedulesTabProps) {
       {showModal && (
         <ScheduleFormModal
           courseId={courseId}
+          instructors={instructors}
           schedule={editingSchedule ?? undefined}
           onClose={() => { setShowModal(false); setEditingSchedule(null); }}
           onSaved={handleSaved}

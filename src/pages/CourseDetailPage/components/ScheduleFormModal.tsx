@@ -3,12 +3,17 @@ import { courseService } from "@/services";
 import type {
   CourseSchedule,
   CourseScheduleDayOfWeek,
-  CreateSchedulePayload,
 } from "@/types/course.types";
 import { DAY_OF_WEEK_LABELS } from "@/types/course.types";
 
+interface Instructor {
+  id: string;
+  name: string;
+}
+
 interface ScheduleFormModalProps {
   courseId: string;
+  instructors: Instructor[];
   schedule?: CourseSchedule;
   onClose: () => void;
   onSaved: (schedule: CourseSchedule) => void;
@@ -18,22 +23,24 @@ const DAY_OPTIONS: { value: CourseScheduleDayOfWeek; label: string }[] = [1, 2, 
   (d) => ({ value: d as CourseScheduleDayOfWeek, label: DAY_OF_WEEK_LABELS[d as CourseScheduleDayOfWeek] }),
 );
 
-const defaultForm: CreateSchedulePayload & { isActive: boolean } = {
-  dayOfWeek: 2,
-  startTime: "07:00",
-  endTime: "09:00",
-  room: "",
-  effectiveFrom: "",
-  effectiveTo: null,
-  isActive: true,
-};
+interface FormState {
+  instructorId: string;
+  dayOfWeek: CourseScheduleDayOfWeek;
+  startTime: string;
+  endTime: string;
+  room: string;
+  effectiveFrom: string;
+  effectiveTo: string | null;
+  isActive: boolean;
+}
 
-export function ScheduleFormModal({ courseId, schedule, onClose, onSaved }: ScheduleFormModalProps) {
+export function ScheduleFormModal({ courseId, instructors, schedule, onClose, onSaved }: ScheduleFormModalProps) {
   const isEdit = !!schedule;
 
-  const [form, setForm] = useState<CreateSchedulePayload & { isActive: boolean }>(
+  const [form, setForm] = useState<FormState>(
     schedule
       ? {
+          instructorId: schedule.instructorId,
           dayOfWeek: schedule.dayOfWeek,
           startTime: schedule.startTime,
           endTime: schedule.endTime,
@@ -42,12 +49,22 @@ export function ScheduleFormModal({ courseId, schedule, onClose, onSaved }: Sche
           effectiveTo: schedule.effectiveTo ?? null,
           isActive: schedule.isActive,
         }
-      : defaultForm,
+      : {
+          instructorId: instructors[0]?.id ?? "",
+          dayOfWeek: 2,
+          startTime: "07:00",
+          endTime: "09:00",
+          room: "",
+          effectiveFrom: "",
+          effectiveTo: null,
+          isActive: true,
+        },
   );
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
 
   const validate = (): string => {
+    if (!form.instructorId) return "Vui lòng chọn giảng viên";
     if (!form.room.trim()) return "Vui lòng nhập phòng học";
     if (!form.effectiveFrom) return "Vui lòng chọn ngày bắt đầu hiệu lực";
     if (form.startTime >= form.endTime) return "Giờ kết thúc phải sau giờ bắt đầu";
@@ -66,6 +83,7 @@ export function ScheduleFormModal({ courseId, schedule, onClose, onSaved }: Sche
     setError("");
 
     const payload = {
+      instructorId: form.instructorId,
       dayOfWeek: form.dayOfWeek,
       startTime: form.startTime,
       endTime: form.endTime,
@@ -94,6 +112,21 @@ export function ScheduleFormModal({ courseId, schedule, onClose, onSaved }: Sche
           {isEdit ? "Chỉnh sửa lịch học" : "Thêm lịch học mới"}
         </div>
         <div className="course-detail__modal-body">
+          <div className="course-detail__form-group">
+            <label>Giảng viên *</label>
+            <select
+              value={form.instructorId}
+              onChange={(e) => setForm((f) => ({ ...f, instructorId: e.target.value }))}
+              disabled={saving}
+            >
+              {instructors.length === 0 && (
+                <option value="">— Chưa có giảng viên nào —</option>
+              )}
+              {instructors.map((inst) => (
+                <option key={inst.id} value={inst.id}>{inst.name}</option>
+              ))}
+            </select>
+          </div>
           <div className="course-detail__form-group">
             <label>Thứ *</label>
             <select

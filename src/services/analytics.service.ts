@@ -17,9 +17,16 @@ export const analyticsService = {
     ),
   ),
 
-  getInstructorDashboard: withErrorHandling((params?: { month?: string; date?: string }) =>
+  getInstructorDashboard: withErrorHandling((params?: { month?: string; weekStart?: string; date?: string }) =>
     apiService.get<ApiResponse<InstructorDashboard>>(
       '/analytics/instructor/dashboard',
+      { params },
+    ),
+  ),
+
+  getInstructorDashboardForAdmin: withErrorHandling((instructorId: string, params?: { month?: string; weekStart?: string; date?: string }) =>
+    apiService.get<ApiResponse<InstructorDashboard>>(
+      `/admin/analytics/instructors/${instructorId}/dashboard`,
       { params },
     ),
   ),

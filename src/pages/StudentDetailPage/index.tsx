@@ -20,6 +20,7 @@ import { EditProfileModal } from "./components/EditProfileModal";
 import { RankChangeModal } from "./components/RankChangeModal";
 import { AlertModal } from "./components/AlertModal";
 import { LockAccountModal } from "./components/LockAccountModal";
+import { DocumentsTab } from "./components/DocumentsTab";
 import "./StudentDetailPage.css";
 
 type ModalType = "edit" | "rank" | "alert" | "lock" | null;
@@ -255,6 +256,7 @@ export default function StudentDetailPage() {
 							<ExamSessionTable sessions={examSessions} />
 						)}
 					</div>
+				<DocumentsTab userId={student.id} />
 				</section>
 			</div>
 

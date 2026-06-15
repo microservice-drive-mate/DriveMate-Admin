@@ -1,15 +1,17 @@
 import { useState } from "react";
-import type { CourseResponse } from "@/types/course.types";
+import type { CourseLesson, CourseResponse } from "@/types/course.types";
 import { useCourseDetail } from "./hooks/useCourseDetail";
 import { CourseBanner } from "./components/CourseBanner";
 import { LessonsTab } from "./components/LessonsTab";
 import { MaterialsTab } from "./components/MaterialsTab";
 import { AddLessonModal } from "./components/AddLessonModal";
+import { LessonEditModal } from "./components/LessonEditModal";
 import { AddMaterialModal } from "./components/AddMaterialModal";
 import { SchedulesTab } from "./components/SchedulesTab";
+import { InstructorsTab } from "./components/InstructorsTab";
 import "./CourseDetailPage.css";
 
-type DetailTab = "lessons" | "materials" | "schedules";
+type DetailTab = "lessons" | "materials" | "schedules" | "instructors";
 
 export default function CourseDetailPage() {
   const {
@@ -34,6 +36,7 @@ export default function CourseDetailPage() {
 
   const [activeTab, setActiveTab] = useState<DetailTab>("lessons");
   const [showLessonModal, setShowLessonModal] = useState(false);
+  const [editingLesson, setEditingLesson] = useState<CourseLesson | null>(null);
   const [showMaterialModal, setShowMaterialModal] = useState(false);
 
   if (loading) {
@@ -132,6 +135,12 @@ export default function CourseDetailPage() {
         >
           Lịch Học
         </button>
+        <button
+          className={activeTab === "instructors" ? "course-detail__tab--active" : ""}
+          onClick={() => setActiveTab("instructors")}
+        >
+          Giảng Viên
+        </button>
       </div>
 
       {activeTab === "lessons" && (
@@ -141,6 +150,7 @@ export default function CourseDetailPage() {
           deletingLesson={deletingLesson}
           onAdd={() => setShowLessonModal(true)}
           onDelete={handleDeleteLesson}
+          onEdit={setEditingLesson}
         />
       )}
 
@@ -153,7 +163,7 @@ export default function CourseDetailPage() {
       )}
 
       {activeTab === "schedules" && courseId && (
-        <SchedulesTab courseId={courseId} canManage={canManageCourses} />
+        <SchedulesTab courseId={courseId} instructorIds={course.instructorIds} canManage={canManageCourses} />
       )}
 
       {showLessonModal && courseId && (
@@ -162,6 +172,24 @@ export default function CourseDetailPage() {
           initialOrder={course.lessons.length + 1}
           onClose={() => setShowLessonModal(false)}
           onSaved={handleCourseSaved}
+        />
+      )}
+
+      {activeTab === "instructors" && courseId && (
+        <InstructorsTab
+          courseId={courseId}
+          instructorIds={course.instructorIds}
+          canManage={canManageCourses}
+          onCourseUpdated={setCourse}
+        />
+      )}
+
+      {editingLesson && courseId && (
+        <LessonEditModal
+          courseId={courseId}
+          lesson={editingLesson}
+          onClose={() => setEditingLesson(null)}
+          onSaved={(next) => { handleCourseSaved(next); setEditingLesson(null); }}
         />
       )}
 

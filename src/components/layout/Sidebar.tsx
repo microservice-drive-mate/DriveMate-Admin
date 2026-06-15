@@ -11,7 +11,7 @@ const NAV_ITEMS: Array<{ label: string; path: string; icon: SidebarIconId }> = [
 		icon: "user",
 	},
 	{ label: "Quản Lý Người Dùng", path: "/users", icon: "users" },
-	// { label: 'Quản Lý Học Viên', path: '/students', icon: 'graduation' },
+	{ label: "Quản Lý Học Viên", path: "/students", icon: "graduation" },
 	{ label: "Quản Lý Khóa Học", path: "/courses", icon: "book" },
 	{ label: "Ngân Hàng Câu Hỏi", path: "/questions", icon: "document" },
 	{ label: "Cấu Hình Đề Thi", path: "/exam-config", icon: "settings" },

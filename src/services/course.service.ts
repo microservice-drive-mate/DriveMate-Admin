@@ -1,13 +1,16 @@
 import type { ApiResponse, PaginatedResponse } from '@/types';
 import type {
+  CourseLesson,
   CourseResponse,
   CreateCoursePayload,
   UpdateCoursePayload,
   AddLessonPayload,
+  UpdateLessonPayload,
   AddMaterialPayload,
   CourseSchedule,
   CreateSchedulePayload,
   UpdateSchedulePayload,
+  AddCourseInstructorPayload,
 } from '@/types/course.types';
 
 import { apiService } from '@/lib';
@@ -116,6 +119,32 @@ export const courseService = {
   deleteSchedule: withErrorHandling((courseId: string, scheduleId: string) =>
     apiService.delete<ApiResponse<void>>(
       `/admin/courses/${courseId}/schedules/${scheduleId}`,
+    ),
+  ),
+
+  getLesson: withErrorHandling((courseId: string, lessonId: string) =>
+    apiService.get<ApiResponse<CourseLesson>>(
+      `/courses/${courseId}/lessons/${lessonId}`,
+    ),
+  ),
+
+  updateLesson: withErrorHandling((courseId: string, lessonId: string, payload: UpdateLessonPayload) =>
+    apiService.patch<ApiResponse<CourseResponse>>(
+      `/admin/courses/${courseId}/lessons/${lessonId}`,
+      payload,
+    ),
+  ),
+
+  assignInstructor: withErrorHandling((courseId: string, payload: AddCourseInstructorPayload) =>
+    apiService.post<ApiResponse<CourseResponse>>(
+      `/admin/courses/${courseId}/instructors`,
+      payload,
+    ),
+  ),
+
+  removeInstructor: withErrorHandling((courseId: string, userId: string) =>
+    apiService.delete<ApiResponse<CourseResponse>>(
+      `/admin/courses/${courseId}/instructors/${userId}`,
     ),
   ),
 };

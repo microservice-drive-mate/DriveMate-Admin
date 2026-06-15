@@ -59,4 +59,18 @@ export const identityService = {
       { data: { deletedById } },
     ),
   ),
+
+  changePassword: withErrorHandling((currentPassword: string, newPassword: string) =>
+    apiService.post<ApiResponse<null>>(
+      '/auth/change-password',
+      { currentPassword, newPassword },
+    ),
+  ),
+
+  resetPassword: withErrorHandling((userId: string, newPassword: string) =>
+    apiService.post<ApiResponse<null>>(
+      '/auth/reset-password',
+      { userId, newPassword },
+    ),
+  ),
 };

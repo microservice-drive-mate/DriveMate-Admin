@@ -19,7 +19,7 @@ import { TodayScheduleSection } from './TodayScheduleSection';
 import './index.css';
 
 const EMPTY_DASHBOARD: InstructorDashboard = {
-  period: { month: '', week: { from: '', to: '' }, date: '', timezone: '' },
+  period: { month: '', weekStart: '', date: '', timezone: '' },
   summary: { activeClassCount: 0, totalStudents: 0, passRate: 0, teachingHoursThisMonth: 0 },
   weeklyTeachingTrend: [],
   topicAverages: [],
@@ -31,14 +31,14 @@ function toStatCards(summary: InstructorDashboard['summary']): InstructorStatCar
   return [
     { title: 'Lớp đang dạy', value: String(summary.activeClassCount), icon: '📖', iconBg: '#f97316' },
     { title: 'Tổng học viên', value: String(summary.totalStudents), icon: '👤', iconBg: '#10b981' },
-    { title: 'Tỷ lệ đậu', value: `${Math.round(summary.passRate * 100)}%`, icon: '✅', iconBg: '#3b82f6' },
+    { title: 'Tỷ lệ đậu', value: `${Math.round(summary.passRate)}%`, icon: '✅', iconBg: '#3b82f6' },
     { title: 'Giờ dạy tháng này', value: `${summary.teachingHoursThisMonth}h`, icon: '🕐', iconBg: '#8b5cf6' },
   ];
 }
 
 function toWeeklyData(trend: InstructorDashboard['weeklyTeachingTrend']): WeeklyTeachingData[] {
   return trend.map((pt) => ({
-    day: new Date(pt.date).toLocaleDateString('vi-VN', { weekday: 'short' }),
+    day: pt.label,
     gioDay: pt.teachingHours,
     hocVien: pt.studentCount,
   }));
@@ -47,17 +47,17 @@ function toWeeklyData(trend: InstructorDashboard['weeklyTeachingTrend']): Weekly
 function toTopicScores(avgs: InstructorDashboard['topicAverages']): TopicScore[] {
   return avgs.map((t) => ({
     topic: t.topicName,
-    score: Math.round(t.accuracy * 100),
+    score: Math.round(t.averageScore),
   }));
 }
 
 function toClassProgress(progress: InstructorDashboard['classProgress']): ClassProgress[] {
   return progress.map((c) => ({
     id: c.courseId,
-    name: c.courseName,
-    completed: Math.round(c.completionRate * c.studentCount),
-    total: c.studentCount,
-    percent: Math.round(c.completionRate * 100),
+    name: c.title,
+    completed: c.completedStudents,
+    total: c.totalStudents,
+    percent: Math.round(c.progressPct),
   }));
 }
 
@@ -65,7 +65,7 @@ function toTodaySessions(schedule: InstructorDashboard['todaySchedule']): TodayS
   return schedule.map((s) => ({
     id: s.scheduleId,
     timeRange: `${s.startTime}–${s.endTime}`,
-    className: s.courseName,
+    className: s.title,
     room: s.room,
     studentCount: s.studentCount,
   }));

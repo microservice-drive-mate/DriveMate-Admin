@@ -15,6 +15,7 @@ import UserFilters from "./UserFilters";
 import UserTable from "./UserTable";
 import { EditUserModal } from "./components/EditUserModal";
 import { ChangeRoleModal } from "./components/ChangeRoleModal";
+import { ResetPasswordModal } from "@/components/common/ResetPasswordModal";
 import "./UserManagementPage.css";
 
 export interface UserManagementFilters {
@@ -50,6 +51,7 @@ export default function UserManagementPage() {
   const [actionError, setActionError] = useState<string | null>(null);
   const [editUser, setEditUser] = useState<IdentityUser | null>(null);
   const [roleUser, setRoleUser] = useState<IdentityUser | null>(null);
+  const [resetPasswordUser, setResetPasswordUser] = useState<IdentityUser | null>(null);
 
   const loadUsers = useCallback(
     ({ page, pageSize, filters }: PaginatedLoaderParams<UserManagementFilters>) =>
@@ -126,6 +128,11 @@ export default function UserManagementPage() {
     list.refetch();
   };
 
+  const handleResetPasswordSuccess = () => {
+    setResetPasswordUser(null);
+    showToast("Đã đặt lại mật khẩu thành công.", "success");
+  };
+
   const displayError = list.error ?? actionError;
 
   return (
@@ -164,6 +171,7 @@ export default function UserManagementPage() {
           onEdit={setEditUser}
           onChangeRole={setRoleUser}
           onDelete={handleDelete}
+          onResetPassword={setResetPasswordUser}
         />
       )}
 
@@ -188,6 +196,15 @@ export default function UserManagementPage() {
           onClose={() => setRoleUser(null)}
           onSaved={handleSaved}
           onListChanged={list.refetch}
+        />
+      )}
+
+      {resetPasswordUser && (
+        <ResetPasswordModal
+          userId={resetPasswordUser.userId}
+          userFullName={resetPasswordUser.fullName}
+          onClose={() => setResetPasswordUser(null)}
+          onSuccess={handleResetPasswordSuccess}
         />
       )}
     </div>

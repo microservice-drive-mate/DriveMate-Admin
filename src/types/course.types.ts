@@ -130,7 +130,7 @@ export interface CourseInstructorListParams {
 }
 
 export interface AddCourseInstructorPayload {
-  userId: string;
+  instructorId: string;
 }
 
 export interface CourseFormData {
@@ -157,6 +157,7 @@ export type CourseScheduleDayOfWeek = 1 | 2 | 3 | 4 | 5 | 6 | 7;
 export interface CourseSchedule {
   id: string;
   courseId: string;
+  instructorId: string;
   dayOfWeek: CourseScheduleDayOfWeek;
   startTime: string;
   endTime: string;
@@ -169,6 +170,7 @@ export interface CourseSchedule {
 }
 
 export interface CreateSchedulePayload {
+  instructorId: string;
   dayOfWeek: CourseScheduleDayOfWeek;
   startTime: string;
   endTime: string;

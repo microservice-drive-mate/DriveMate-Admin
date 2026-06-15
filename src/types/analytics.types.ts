@@ -89,7 +89,7 @@ export interface AdminDashboard {
 
 export interface InstructorDashboardPeriod {
   month: string;
-  week: { from: string; to: string };
+  weekStart: string;
   date: string;
   timezone: string;
 }
@@ -103,6 +103,7 @@ export interface InstructorDashboardSummary {
 
 export interface WeeklyTeachingTrendPoint {
   date: string;
+  label: string;
   teachingHours: number;
   studentCount: number;
 }
@@ -110,22 +111,23 @@ export interface WeeklyTeachingTrendPoint {
 export interface TopicAverage {
   topicId: string;
   topicName: string;
-  correctAnswers: number;
+  averageScore: number;
   answeredQuestions: number;
-  accuracy: number;
 }
 
 export interface ClassProgressItem {
   courseId: string;
-  courseName: string;
-  studentCount: number;
-  completionRate: number;
+  title: string;
+  licenseCategory: string;
+  totalStudents: number;
+  completedStudents: number;
+  progressPct: number;
 }
 
 export interface TodayScheduleItem {
   scheduleId: string;
   courseId: string;
-  courseName: string;
+  title: string;
   startTime: string;
   endTime: string;
   room: string;

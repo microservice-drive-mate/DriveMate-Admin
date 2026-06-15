@@ -12,6 +12,7 @@ interface Props {
   onEdit: (user: IdentityUser) => void;
   onChangeRole: (user: IdentityUser) => void;
   onDelete: (user: IdentityUser) => void;
+  onResetPassword: (user: IdentityUser) => void;
 }
 
 export default function UserTable({
@@ -22,6 +23,7 @@ export default function UserTable({
   onEdit,
   onChangeRole,
   onDelete,
+  onResetPassword,
 }: Props) {
   if (users.length === 0) {
     return (
@@ -95,6 +97,13 @@ export default function UserTable({
                       disabled={disabled}
                       onClick={() => onChangeRole(user)}>
                       ◆
+                    </button>
+                    <button
+                      className="action-btn action-btn--reset-password"
+                      title="Đặt lại mật khẩu"
+                      disabled={disabled}
+                      onClick={() => onResetPassword(user)}>
+                      🔑
                     </button>
                     <button
                       className="action-btn action-btn--delete"

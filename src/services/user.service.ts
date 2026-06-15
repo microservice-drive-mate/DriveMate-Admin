@@ -1,8 +1,10 @@
 import type { ApiResponse, PaginatedResponse } from "@/types";
 import type {
+  AddDocumentPayload,
   CreateUserProfilePayload,
   LicenseTier,
   UpdateUserProfilePayload,
+  UserDocument,
   UserListParams,
   UserProfile,
 } from "@/types/user-profile.types";
@@ -79,5 +81,13 @@ export const userService = {
 
   updateMe: withErrorHandling((payload: UpdateUserProfilePayload) =>
     apiService.patch<ApiResponse<UserProfile>>("/users/me", payload),
+  ),
+
+  getDocuments: withErrorHandling((userId: string) =>
+    apiService.get<ApiResponse<UserDocument[]>>(`/admin/users/${userId}/documents`),
+  ),
+
+  addDocument: withErrorHandling((userId: string, payload: AddDocumentPayload) =>
+    apiService.post<ApiResponse<UserDocument>>(`/admin/users/${userId}/documents`, payload),
   ),
 };

@@ -51,19 +51,31 @@ export interface UpdateUserProfilePayload {
   notes?: string;
 }
 
+export type UserDocumentType = 'ID_CARD_FRONT' | 'ID_CARD_BACK' | 'PORTRAIT' | 'HEALTH_CERTIFICATE' | 'OTHER';
+export type UserDocumentStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
+
 export interface UserDocument {
   id: string;
   userId?: string;
-  documentType: string;
+  type: UserDocumentType;
   mediaFileId: string;
+  title?: string | null;
+  status?: UserDocumentStatus;
   fileUrl?: string | null;
   originalName?: string | null;
   createdAt?: string;
   updatedAt?: string;
 }
 
+export interface AddDocumentPayload {
+  type: UserDocumentType;
+  mediaFileId: string;
+  title?: string;
+  status?: UserDocumentStatus;
+}
+
 export interface CreateUserDocumentInput {
-  documentType: string;
+  type: UserDocumentType;
   mediaFileId: string;
   fileUrl?: string;
   originalName?: string;
