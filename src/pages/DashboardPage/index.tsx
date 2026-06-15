@@ -2,11 +2,12 @@ import { useEffect, useState } from 'react';
 import { analyticsService } from '@/services';
 import type { AdminDashboard, DashboardCard } from '@/types/analytics.types';
 import type { AdminStatCard } from '../../types';
-import { PIE_COLORS } from '../../data/dashboardData';
 import { StatCardsSection } from './StatCardsSection';
 import { ChartsSection } from './ChartsSection';
 import { ActivitySection } from './ActivitySection';
 import './index.css';
+
+const PIE_COLORS = ['#f59e0b', '#2563eb', '#10b981', '#8b5cf6', '#ef4444'];
 
 const CARD_CONFIG: Record<DashboardCard['key'], { title: string; icon: string; iconBg: string }> = {
   students:      { title: 'Tổng Học Viên',       icon: '👥', iconBg: '#f97316' },
