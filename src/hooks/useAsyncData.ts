@@ -26,6 +26,8 @@ export function useAsyncData<T>(
 ) {
 	const [reloadKey, setReloadKey] = useState(0);
 	const requestRef = useRef(0);
+	// Capture initialData in a ref so array/object literals don't cause infinite re-renders
+	const initialDataRef = useRef(initialData);
 	const [state, setState] = useState<AsyncDataState<T>>({
 		data: initialData,
 		loading: enabled,
@@ -43,7 +45,7 @@ export function useAsyncData<T>(
 			.then(() => {
 				if (!active || requestRef.current !== requestId) return undefined;
 				setState((current) => ({
-					data: retainPreviousData ? current.data : initialData,
+					data: retainPreviousData ? current.data : initialDataRef.current,
 					loading: true,
 					error: null,
 				}));
@@ -62,7 +64,7 @@ export function useAsyncData<T>(
 				}
 
 				setState((current) => ({
-					data: retainPreviousData ? current.data : initialData,
+					data: retainPreviousData ? current.data : initialDataRef.current,
 					loading: false,
 					error: result.error,
 				}));
@@ -70,7 +72,7 @@ export function useAsyncData<T>(
 			.catch((error: unknown) => {
 				if (!active || requestRef.current !== requestId) return;
 				setState((current) => ({
-					data: retainPreviousData ? current.data : initialData,
+					data: retainPreviousData ? current.data : initialDataRef.current,
 					loading: false,
 					error: error instanceof Error ? error.message : "Unexpected error",
 				}));
@@ -79,7 +81,7 @@ export function useAsyncData<T>(
 		return () => {
 			active = false;
 		};
-	}, [enabled, initialData, load, reloadKey, retainPreviousData]);
+	}, [enabled, load, reloadKey, retainPreviousData]);
 
 	const refetch = useCallback(() => {
 		setReloadKey((current) => current + 1);
