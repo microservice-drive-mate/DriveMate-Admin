@@ -1,3 +1,5 @@
+import type { EnrollmentStatus } from "./course.types"
+
 export interface ProgressTrend {
 	date: string
 	attempts: number
@@ -115,6 +117,17 @@ export interface TopicAverage {
 	answeredQuestions: number
 }
 
+export interface ClassStudentProgress {
+	studentId: string
+	fullName: string
+	email: string
+	licenseTier: string
+	status: EnrollmentStatus
+	progress: number
+	enrolledAt: string
+	completedAt: string | null
+}
+
 export interface ClassProgressItem {
 	courseId: string
 	title: string
@@ -122,6 +135,7 @@ export interface ClassProgressItem {
 	totalStudents: number
 	completedStudents: number
 	progressPct: number
+	students: ClassStudentProgress[]
 }
 
 export interface TodayScheduleItem {

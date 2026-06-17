@@ -32,10 +32,10 @@ Identity-service owns Keycloak account lifecycle. The public admin resource is n
 
 Trong hệ thống này, tạo người dùng được tách thành 2 bounded context:
 
-| Service            | Chịu trách nhiệm                                                                                  |
-| ------------------ | ------------------------------------------------------------------------------------------------- |
-| `identity-service` | Tạo account Keycloak, password, login token, role, lock/unlock/delete account.                    |
-| `user-service`     | Lưu profile hiển thị, avatar, số điện thoại, ngày sinh, địa chỉ, `StudentDetail`, hạng giấy phép. |
+| Service | Chịu trách nhiệm |
+| ------- | ---------------- |
+| `identity-service` | Tạo account Keycloak, password, login token, role, lock/unlock/delete account. |
+| `user-service` | Lưu profile hiển thị, avatar, số điện thoại, ngày sinh, địa chỉ, `StudentDetail`, hạng giấy phép. |
 
 Flow tạo user bình thường cho admin dashboard:
 
@@ -65,22 +65,22 @@ Role, lock, delete:
 
 Identity-service tích hợp Keycloak.
 
-| Endpoint                               | Auth hiện tại                                        |
-| -------------------------------------- | ---------------------------------------------------- |
-| `POST /login`                          | Public                                               |
-| `POST /logout`                         | Public, nhưng cần access token trong `Authorization` |
-| `POST /refresh`                        | Public                                               |
-| `POST /forgot-password`                | Public                                               |
-| `POST /admin/identity-users`           | `ADMIN`, `CENTER_MANAGER`                            |
-| `GET /admin/identity-users`            | `ADMIN`, `CENTER_MANAGER`                            |
-| `GET /admin/identity-users/:id`        | `ADMIN`, `CENTER_MANAGER`                            |
-| `PATCH /admin/identity-users/:id`      | `ADMIN`                                              |
-| `PATCH /admin/identity-users/:id/role` | `ADMIN`                                              |
-| `PATCH /admin/identity-users/:id/lock` | `ADMIN`, `CENTER_MANAGER`                            |
-| `DELETE /admin/identity-users/:id`     | `ADMIN`                                              |
-| `GET /public`                          | Public, endpoint demo                                |
-| `GET /private`                         | JWT hợp lệ, endpoint demo                            |
-| `GET /admin-check`                     | `ADMIN`, endpoint demo                               |
+| Endpoint                               | Auth hiện tại                                             |
+| -------------------------------------- | --------------------------------------------------------- |
+| `POST /login`                          | Public                                                    |
+| `POST /logout`                         | Public, nhưng cần access token trong `Authorization`      |
+| `POST /refresh`                        | Public                                                    |
+| `POST /forgot-password`                | Public                                                    |
+| `POST /admin/identity-users`           | `ADMIN`, `CENTER_MANAGER`                                 |
+| `GET /admin/identity-users`            | `ADMIN`, `CENTER_MANAGER`                                 |
+| `GET /admin/identity-users/:id`        | `ADMIN`, `CENTER_MANAGER`                                 |
+| `PATCH /admin/identity-users/:id`      | `ADMIN`                                                   |
+| `PATCH /admin/identity-users/:id/role` | `ADMIN`                                                   |
+| `PATCH /admin/identity-users/:id/lock` | `ADMIN`, `CENTER_MANAGER`                                 |
+| `DELETE /admin/identity-users/:id`     | `ADMIN`                                                   |
+| `GET /public`                          | Public, endpoint demo                                     |
+| `GET /private`                         | JWT hợp lệ, endpoint demo                                 |
+| `GET /admin-check`                     | `ADMIN`, endpoint demo                                    |
 
 ---
 
@@ -90,12 +90,12 @@ HTTP response được bọc bởi `ApiResponseInterceptor`.
 
 ```json
 {
-	"success": true,
-	"code": "SUCCESS",
-	"message": "OK",
-	"timestamp": "2026-05-14T10:00:00.000Z",
-	"path": "/login",
-	"data": {}
+  "success": true,
+  "code": "SUCCESS",
+  "message": "OK",
+  "timestamp": "2026-05-14T10:00:00.000Z",
+  "path": "/login",
+  "data": {}
 }
 ```
 
@@ -103,11 +103,11 @@ Lỗi:
 
 ```json
 {
-	"success": false,
-	"code": "UNAUTHORIZED",
-	"message": "Tài khoản hoặc mật khẩu không chính xác",
-	"timestamp": "2026-05-14T10:00:00.000Z",
-	"path": "/login"
+  "success": false,
+  "code": "UNAUTHORIZED",
+  "message": "Tài khoản hoặc mật khẩu không chính xác",
+  "timestamp": "2026-05-14T10:00:00.000Z",
+  "path": "/login"
 }
 ```
 
@@ -115,15 +115,15 @@ Lỗi:
 
 ## Error Codes
 
-| HTTP | Code                           | Nguyên nhân                                          |
-| ---: | ------------------------------ | ---------------------------------------------------- |
-|  400 | `VALIDATION_ERROR`             | Body không hợp lệ                                    |
-|  400 | `BAD_REQUEST`                  | Keycloak/Admin operation bị từ chối dạng bad request |
-|  401 | `UNAUTHORIZED`                 | Sai credentials, token thiếu/hết hạn/không hợp lệ    |
-|  403 | `FORBIDDEN`                    | Role không đủ quyền                                  |
-|  404 | `IDENTITY_USER_NOT_FOUND`      | Không tìm thấy identity user                         |
-|  409 | `IDENTITY_USER_ALREADY_EXISTS` | Identity user đã tồn tại                             |
-|  500 | `INTERNAL_ERROR`               | Lỗi Keycloak hoặc lỗi server                         |
+| HTTP | Code                           | Nguyên nhân                                           |
+| ---: | ------------------------------ | ----------------------------------------------------- |
+|  400 | `VALIDATION_ERROR`             | Body không hợp lệ                                     |
+|  400 | `BAD_REQUEST`                  | Keycloak/Admin operation bị từ chối dạng bad request  |
+|  401 | `UNAUTHORIZED`                 | Sai credentials, token thiếu/hết hạn/không hợp lệ     |
+|  403 | `FORBIDDEN`                    | Role không đủ quyền                                   |
+|  404 | `IDENTITY_USER_NOT_FOUND`      | Không tìm thấy identity user                          |
+|  409 | `IDENTITY_USER_ALREADY_EXISTS` | Identity user đã tồn tại                              |
+|  500 | `INTERNAL_ERROR`               | Lỗi Keycloak hoặc lỗi server                          |
 
 ---
 
@@ -145,8 +145,8 @@ Lỗi:
 
 ```json
 {
-	"username": "admin@gm.uit.edu.vn",
-	"password": "Password@123"
+  "username": "admin@gm.uit.edu.vn",
+  "password": "Password@123"
 }
 ```
 
@@ -159,17 +159,17 @@ Lỗi:
 
 ```json
 {
-	"success": true,
-	"code": "SUCCESS",
-	"message": "OK",
-	"data": {
-		"accessToken": "eyJhbGciOi...",
-		"refreshToken": "eyJhbGciOi...",
-		"expiresIn": 300,
-		"refreshExpiresIn": 1800,
-		"tokenType": "Bearer",
-		"scope": "openid profile email"
-	}
+  "success": true,
+  "code": "SUCCESS",
+  "message": "OK",
+  "data": {
+    "accessToken": "eyJhbGciOi...",
+    "refreshToken": "eyJhbGciOi...",
+    "expiresIn": 300,
+    "refreshExpiresIn": 1800,
+    "tokenType": "Bearer",
+    "scope": "openid profile email"
+  }
 }
 ```
 
@@ -189,7 +189,7 @@ Authorization: Bearer <access_token>
 
 ```json
 {
-	"refreshToken": "eyJhbGciOi..."
+  "refreshToken": "eyJhbGciOi..."
 }
 ```
 
@@ -197,14 +197,14 @@ Authorization: Bearer <access_token>
 
 ```json
 {
-	"success": true,
-	"code": "SUCCESS",
-	"message": "OK",
-	"data": {
-		"success": true,
-		"message": "You have been logged out successfully. (MSG130)",
-		"instruction": "Please delete your token from LocalStorage or Cookie"
-	}
+  "success": true,
+  "code": "SUCCESS",
+  "message": "OK",
+  "data": {
+    "success": true,
+    "message": "You have been logged out successfully. (MSG130)",
+    "instruction": "Please delete your token from LocalStorage or Cookie"
+  }
 }
 ```
 
@@ -218,7 +218,7 @@ Lấy token mới bằng refresh token.
 
 ```json
 {
-	"refreshToken": "eyJhbGciOi..."
+  "refreshToken": "eyJhbGciOi..."
 }
 ```
 
@@ -226,17 +226,17 @@ Lấy token mới bằng refresh token.
 
 ```json
 {
-	"success": true,
-	"code": "SUCCESS",
-	"message": "OK",
-	"data": {
-		"accessToken": "eyJhbGciOi...",
-		"refreshToken": "eyJhbGciOi...",
-		"expiresIn": 300,
-		"refreshExpiresIn": 1800,
-		"tokenType": "Bearer",
-		"scope": "openid profile email"
-	}
+  "success": true,
+  "code": "SUCCESS",
+  "message": "OK",
+  "data": {
+    "accessToken": "eyJhbGciOi...",
+    "refreshToken": "eyJhbGciOi...",
+    "expiresIn": 300,
+    "refreshExpiresIn": 1800,
+    "tokenType": "Bearer",
+    "scope": "openid profile email"
+  }
 }
 ```
 
@@ -244,9 +244,9 @@ Lấy token mới bằng refresh token.
 
 ```json
 {
-	"success": false,
-	"code": "UNAUTHORIZED",
-	"message": "Refresh token không hợp lệ hoặc đã hết hạn"
+  "success": false,
+  "code": "UNAUTHORIZED",
+  "message": "Refresh token không hợp lệ hoặc đã hết hạn"
 }
 ```
 
@@ -262,7 +262,7 @@ Endpoint luôn trả response generic để tránh leak email có tồn tại ha
 
 ```json
 {
-	"email": "student1@gm.uit.edu.vn"
+  "email": "student1@gm.uit.edu.vn"
 }
 ```
 
@@ -274,13 +274,13 @@ Endpoint luôn trả response generic để tránh leak email có tồn tại ha
 
 ```json
 {
-	"success": true,
-	"code": "SUCCESS",
-	"message": "OK",
-	"data": {
-		"success": true,
-		"message": "If this email exists, password reset instructions have been sent."
-	}
+  "success": true,
+  "code": "SUCCESS",
+  "message": "OK",
+  "data": {
+    "success": true,
+    "message": "If this email exists, password reset instructions have been sent."
+  }
 }
 ```
 
@@ -298,10 +298,10 @@ Account Keycloak được tạo với password permanent, `enabled=true`, `email
 
 ```json
 {
-	"email": "nguyenvana@gm.uit.edu.vn",
-	"fullName": "Nguyễn Văn A",
-	"role": "STUDENT",
-	"temporaryPassword": "Temp@1234"
+  "email": "nguyenvana@gm.uit.edu.vn",
+  "fullName": "Nguyễn Văn A",
+  "role": "STUDENT",
+  "temporaryPassword": "Temp@1234"
 }
 ```
 
@@ -316,15 +316,15 @@ Account Keycloak được tạo với password permanent, `enabled=true`, `email
 
 ```json
 {
-	"success": true,
-	"code": "SUCCESS",
-	"message": "Created",
-	"data": {
-		"userId": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
-		"email": "nguyenvana@gm.uit.edu.vn",
-		"fullName": "Nguyễn Văn A",
-		"role": "STUDENT"
-	}
+  "success": true,
+  "code": "SUCCESS",
+  "message": "Created",
+  "data": {
+    "userId": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+    "email": "nguyenvana@gm.uit.edu.vn",
+    "fullName": "Nguyễn Văn A",
+    "role": "STUDENT"
+  }
 }
 ```
 
@@ -340,40 +340,40 @@ List identity users trong `identity_db`.
 
 **Query**
 
-| Param            | Type     | Default | Validation        | Description                     |
-| ---------------- | -------- | ------: | ----------------- | ------------------------------- |
-| `page`           | number   |       1 | integer, `>= 1`   | Page index                      |
-| `size`           | number   |      20 | integer, `1..100` | Items per page                  |
-| `role`           | UserRole |       - | optional enum     | Filter by realm role            |
-| `isActive`       | boolean  |       - | optional boolean  | Filter enabled/disabled records |
-| `includeDeleted` | boolean  |   false | optional boolean  | Include soft-deleted accounts   |
-| `search`         | string   |       - | optional          | Search by email/full name       |
+| Param            | Type     | Default | Validation        | Description                         |
+| ---------------- | -------- | ------: | ----------------- | ----------------------------------- |
+| `page`           | number   |       1 | integer, `>= 1`   | Page index                          |
+| `size`           | number   |      20 | integer, `1..100` | Items per page                      |
+| `role`           | UserRole |       - | optional enum     | Filter by realm role                |
+| `isActive`       | boolean  |       - | optional boolean  | Filter enabled/disabled records     |
+| `includeDeleted` | boolean  |   false | optional boolean  | Include soft-deleted accounts       |
+| `search`         | string   |       - | optional          | Search by email/full name           |
 
 **Response `200 OK`**
 
 ```json
 {
-	"success": true,
-	"code": "SUCCESS",
-	"message": "OK",
-	"data": {
-		"items": [
-			{
-				"userId": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
-				"email": "nguyenvana@gm.uit.edu.vn",
-				"fullName": "Nguyễn Văn A",
-				"role": "STUDENT",
-				"isActive": true,
-				"isDeleted": false,
-				"deletedAt": null,
-				"createdAt": "2026-05-14T10:00:00.000Z",
-				"updatedAt": "2026-05-14T10:00:00.000Z"
-			}
-		],
-		"total": 1,
-		"page": 1,
-		"size": 20
-	}
+  "success": true,
+  "code": "SUCCESS",
+  "message": "OK",
+  "data": {
+    "items": [
+      {
+        "userId": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+        "email": "nguyenvana@gm.uit.edu.vn",
+        "fullName": "Nguyễn Văn A",
+        "role": "STUDENT",
+        "isActive": true,
+        "isDeleted": false,
+        "deletedAt": null,
+        "createdAt": "2026-05-14T10:00:00.000Z",
+        "updatedAt": "2026-05-14T10:00:00.000Z"
+      }
+    ],
+    "total": 1,
+    "page": 1,
+    "size": 20
+  }
 }
 ```
 
@@ -387,28 +387,28 @@ Lấy chi tiết identity user.
 
 **Path params**
 
-| Param | Type | Required | Description               |
-| ----- | ---- | -------- | ------------------------- |
-| `id`  | UUID | Yes      | Keycloak/identity user id |
+| Param | Type | Required | Description                |
+| ----- | ---- | -------- | -------------------------- |
+| `id`  | UUID | Yes      | Keycloak/identity user id  |
 
 **Response `200 OK`**
 
 ```json
 {
-	"success": true,
-	"code": "SUCCESS",
-	"message": "OK",
-	"data": {
-		"userId": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
-		"email": "nguyenvana@gm.uit.edu.vn",
-		"fullName": "Nguyễn Văn A",
-		"role": "STUDENT",
-		"isActive": true,
-		"isDeleted": false,
-		"deletedAt": null,
-		"createdAt": "2026-05-14T10:00:00.000Z",
-		"updatedAt": "2026-05-14T10:00:00.000Z"
-	}
+  "success": true,
+  "code": "SUCCESS",
+  "message": "OK",
+  "data": {
+    "userId": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+    "email": "nguyenvana@gm.uit.edu.vn",
+    "fullName": "Nguyễn Văn A",
+    "role": "STUDENT",
+    "isActive": true,
+    "isDeleted": false,
+    "deletedAt": null,
+    "createdAt": "2026-05-14T10:00:00.000Z",
+    "updatedAt": "2026-05-14T10:00:00.000Z"
+  }
 }
 ```
 
@@ -422,16 +422,16 @@ Cập nhật identity user trên Keycloak và `identity_db`.
 
 **Path params**
 
-| Param | Type | Required | Description               |
-| ----- | ---- | -------- | ------------------------- |
-| `id`  | UUID | Yes      | Keycloak/identity user id |
+| Param | Type | Required | Description                |
+| ----- | ---- | -------- | -------------------------- |
+| `id`  | UUID | Yes      | Keycloak/identity user id  |
 
 **Body**
 
 ```json
 {
-	"email": "new-email@example.com",
-	"fullName": "Nguyễn Văn B"
+  "email": "new-email@example.com",
+  "fullName": "Nguyễn Văn B"
 }
 ```
 
@@ -439,20 +439,20 @@ Cập nhật identity user trên Keycloak và `identity_db`.
 
 ```json
 {
-	"success": true,
-	"code": "SUCCESS",
-	"message": "OK",
-	"data": {
-		"userId": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
-		"email": "new-email@example.com",
-		"fullName": "Nguyễn Văn B",
-		"role": "STUDENT",
-		"isActive": true,
-		"isDeleted": false,
-		"deletedAt": null,
-		"createdAt": "2026-05-14T10:00:00.000Z",
-		"updatedAt": "2026-05-14T10:05:00.000Z"
-	}
+  "success": true,
+  "code": "SUCCESS",
+  "message": "OK",
+  "data": {
+    "userId": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+    "email": "new-email@example.com",
+    "fullName": "Nguyễn Văn B",
+    "role": "STUDENT",
+    "isActive": true,
+    "isDeleted": false,
+    "deletedAt": null,
+    "createdAt": "2026-05-14T10:00:00.000Z",
+    "updatedAt": "2026-05-14T10:05:00.000Z"
+  }
 }
 ```
 
@@ -470,7 +470,7 @@ Cập nhật identity user trên Keycloak và `identity_db`.
 
 ```json
 {
-	"role": "INSTRUCTOR"
+  "role": "INSTRUCTOR"
 }
 ```
 
@@ -478,13 +478,13 @@ Cập nhật identity user trên Keycloak và `identity_db`.
 
 ```json
 {
-	"success": true,
-	"code": "SUCCESS",
-	"message": "OK",
-	"data": {
-		"userId": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
-		"role": "INSTRUCTOR"
-	}
+  "success": true,
+  "code": "SUCCESS",
+  "message": "OK",
+  "data": {
+    "userId": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+    "role": "INSTRUCTOR"
+  }
 }
 ```
 
@@ -502,7 +502,7 @@ Khóa/mở khóa tài khoản trong Keycloak bằng cách set `enabled = !locked
 
 ```json
 {
-	"locked": true
+  "locked": true
 }
 ```
 
@@ -514,13 +514,13 @@ Khóa/mở khóa tài khoản trong Keycloak bằng cách set `enabled = !locked
 
 ```json
 {
-	"success": true,
-	"code": "SUCCESS",
-	"message": "OK",
-	"data": {
-		"userId": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
-		"locked": true
-	}
+  "success": true,
+  "code": "SUCCESS",
+  "message": "OK",
+  "data": {
+    "userId": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+    "locked": true
+  }
 }
 ```
 
@@ -538,7 +538,7 @@ Soft delete identity user: disable account trên Keycloak, set `isDeleted=true`,
 
 ```json
 {
-	"deletedById": "admin-keycloak-user-id"
+  "deletedById": "admin-keycloak-user-id"
 }
 ```
 
@@ -546,20 +546,20 @@ Soft delete identity user: disable account trên Keycloak, set `isDeleted=true`,
 
 ```json
 {
-	"success": true,
-	"code": "SUCCESS",
-	"message": "OK",
-	"data": {
-		"userId": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
-		"email": "nguyenvana@gm.uit.edu.vn",
-		"fullName": "Nguyễn Văn A",
-		"role": "STUDENT",
-		"isActive": false,
-		"isDeleted": true,
-		"deletedAt": "2026-05-14T10:10:00.000Z",
-		"createdAt": "2026-05-14T10:00:00.000Z",
-		"updatedAt": "2026-05-14T10:10:00.000Z"
-	}
+  "success": true,
+  "code": "SUCCESS",
+  "message": "OK",
+  "data": {
+    "userId": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+    "email": "nguyenvana@gm.uit.edu.vn",
+    "fullName": "Nguyễn Văn A",
+    "role": "STUDENT",
+    "isActive": false,
+    "isDeleted": true,
+    "deletedAt": "2026-05-14T10:10:00.000Z",
+    "createdAt": "2026-05-14T10:00:00.000Z",
+    "updatedAt": "2026-05-14T10:10:00.000Z"
+  }
 }
 ```
 
@@ -583,23 +583,23 @@ Các endpoint sau đang tồn tại trong `AuthController`, chủ yếu dùng đ
 
 ### Published
 
-| Event                        | Destination                         | Trigger                                |
-| ---------------------------- | ----------------------------------- | -------------------------------------- |
-| `identity.user.created`      | user-service + notification-service | `POST /admin/identity-users`           |
-| `identity.user.updated`      | user-service                        | `PATCH /admin/identity-users/:id`      |
+| Event                        | Destination                         | Trigger                               |
+| ---------------------------- | ----------------------------------- | ------------------------------------- |
+| `identity.user.created`      | user-service + notification-service | `POST /admin/identity-users`          |
+| `identity.user.updated`      | user-service                        | `PATCH /admin/identity-users/:id`     |
 | `identity.user.role-changed` | user-service                        | `PATCH /admin/identity-users/:id/role` |
 | `identity.user.locked`       | user-service + notification-service | `PATCH /admin/identity-users/:id/lock` |
-| `identity.user.deleted`      | user-service                        | `DELETE /admin/identity-users/:id`     |
+| `identity.user.deleted`      | user-service                        | `DELETE /admin/identity-users/:id`    |
 
 #### `identity.user.created`
 
 ```json
 {
-	"eventName": "identity.user.created",
-	"userId": "keycloak-uuid",
-	"email": "a@example.com",
-	"fullName": "Nguyễn Văn A",
-	"role": "STUDENT"
+  "eventName": "identity.user.created",
+  "userId": "keycloak-uuid",
+  "email": "a@example.com",
+  "fullName": "Nguyễn Văn A",
+  "role": "STUDENT"
 }
 ```
 
@@ -607,9 +607,9 @@ Các endpoint sau đang tồn tại trong `AuthController`, chủ yếu dùng đ
 
 ```json
 {
-	"eventName": "identity.user.role-changed",
-	"userId": "keycloak-uuid",
-	"newRole": "INSTRUCTOR"
+  "eventName": "identity.user.role-changed",
+  "userId": "keycloak-uuid",
+  "newRole": "INSTRUCTOR"
 }
 ```
 
@@ -617,10 +617,10 @@ Các endpoint sau đang tồn tại trong `AuthController`, chủ yếu dùng đ
 
 ```json
 {
-	"eventName": "identity.user.updated",
-	"userId": "keycloak-uuid",
-	"email": "new-email@example.com",
-	"fullName": "New Name"
+  "eventName": "identity.user.updated",
+  "userId": "keycloak-uuid",
+  "email": "new-email@example.com",
+  "fullName": "New Name"
 }
 ```
 
@@ -628,9 +628,9 @@ Các endpoint sau đang tồn tại trong `AuthController`, chủ yếu dùng đ
 
 ```json
 {
-	"eventName": "identity.user.locked",
-	"userId": "keycloak-uuid",
-	"locked": true
+  "eventName": "identity.user.locked",
+  "userId": "keycloak-uuid",
+  "locked": true
 }
 ```
 
@@ -638,9 +638,9 @@ Các endpoint sau đang tồn tại trong `AuthController`, chủ yếu dùng đ
 
 ```json
 {
-	"eventName": "identity.user.deleted",
-	"userId": "keycloak-uuid",
-	"deletedById": "admin-keycloak-user-id"
+  "eventName": "identity.user.deleted",
+  "userId": "keycloak-uuid",
+  "deletedById": "admin-keycloak-user-id"
 }
 ```
 
@@ -655,13 +655,11 @@ Client backend cần có:
 | Service accounts       | Enabled                                            |
 | Realm management roles | `manage-users`, `view-realm`                       |
 | Realm roles            | `ADMIN`, `CENTER_MANAGER`, `INSTRUCTOR`, `STUDENT` |
-
 ## Logout Blacklist Enforcement
 
 `POST /logout` stores the access token `jti` in Redis until the JWT expires. `identity-service` has a global `TokenBlacklistGuard`, so protected identity/admin APIs reject a logged-out access token with `401`.
 
 Kong still validates JWT signature/expiry. Redis blacklist enforcement is service-side and must be enabled in each service that needs immediate revocation beyond identity APIs.
-
 ## Endpoint Gap Batch Additions
 
 ### POST `/auth/change-password`
@@ -672,8 +670,8 @@ Authenticated user changes their own password. Backend verifies the current pass
 
 ```json
 {
-	"currentPassword": "old-password",
-	"newPassword": "new-password"
+  "currentPassword": "old-password",
+  "newPassword": "new-password"
 }
 ```
 
@@ -687,8 +685,8 @@ Admin/center-manager credential reset wrapper over Keycloak. This is not the pub
 
 ```json
 {
-	"userId": "keycloak-user-id",
-	"newPassword": "new-password"
+  "userId": "keycloak-user-id",
+  "newPassword": "new-password"
 }
 ```
 
@@ -696,13 +694,13 @@ After a successful admin reset, identity-service logs out all Keycloak sessions 
 
 ## Session Revocation Semantics
 
-| Flow                                                      | Revocation behavior                                                                                                                                         |
-| --------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `POST /auth/logout`                                       | Revokes the submitted refresh token/session and blacklists the current access token until expiry. Other devices are not logged out.                         |
-| `POST /auth/change-password`                              | Logs out all sessions for the current user and rejects old access tokens through Redis `revoked-after`.                                                     |
-| `POST /auth/reset-password`                               | Logs out all sessions for the target user and rejects old access tokens through Redis `revoked-after`.                                                      |
-| `PATCH /admin/identity-users/:id/lock` with `locked=true` | Disables the user, logs out all sessions, and rejects old access tokens through Redis `revoked-after`.                                                      |
-| `POST /auth/forgot-password`                              | Sends the Keycloak reset email only. It does not revoke sessions at request time because the requester has not yet proven mailbox ownership to the backend. |
-| Unlock user                                               | Does not clear `revoked-after`; the user must login again and receive a new token.                                                                          |
+| Flow | Revocation behavior |
+| --- | --- |
+| `POST /auth/logout` | Revokes the submitted refresh token/session and blacklists the current access token until expiry. Other devices are not logged out. |
+| `POST /auth/change-password` | Logs out all sessions for the current user and rejects old access tokens through Redis `revoked-after`. |
+| `POST /auth/reset-password` | Logs out all sessions for the target user and rejects old access tokens through Redis `revoked-after`. |
+| `PATCH /admin/identity-users/:id/lock` with `locked=true` | Disables the user, logs out all sessions, and rejects old access tokens through Redis `revoked-after`. |
+| `POST /auth/forgot-password` | Sends the Keycloak reset email only. It does not revoke sessions at request time because the requester has not yet proven mailbox ownership to the backend. |
+| Unlock user | Does not clear `revoked-after`; the user must login again and receive a new token. |
 
 Access-token revocation is enforced in service code, not only Keycloak. The shared `TokenBlacklistGuard` checks both `bl:{jti}` for single-token logout and `auth:revoked-after:{sub}` for global user revocation.

@@ -3,6 +3,7 @@ import { analyticsService } from "@/services"
 import { useAsyncData } from "@/hooks/useAsyncData"
 import { useAuthStore } from "@/store/authStore"
 import type { InstructorDashboard } from "@/types/analytics.types"
+import { ENROLLMENT_STATUS_LABELS } from "@/types/course.types"
 import type {
 	InstructorProfile,
 	InstructorStatCard,
@@ -91,6 +92,12 @@ function toClassProgress(
 		completed: c.completedStudents,
 		total: c.totalStudents,
 		percent: Math.round(c.progressPct),
+		students: (c.students ?? []).map((s) => ({
+			id: s.studentId,
+			name: s.fullName,
+			progress: Math.round(s.progress),
+			status: ENROLLMENT_STATUS_LABELS[s.status],
+		})),
 	}))
 }
 

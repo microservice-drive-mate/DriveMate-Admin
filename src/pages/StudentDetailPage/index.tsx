@@ -2,6 +2,7 @@ import { useCallback, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import {
 	analyticsService,
+	courseService,
 	examService,
 	identityService,
 	userService,
@@ -9,6 +10,7 @@ import {
 import { useAsyncData } from "@/hooks/useAsyncData"
 import { GENDER_LABELS } from "@/types/user-profile.types"
 import type { AdminExamSession } from "@/types/exam-session.types"
+import type { AdminEnrollmentItem } from "@/types/course.types"
 import type { ProgressDashboard } from "@/types/analytics.types"
 import {
 	getLockAccountErrorMessage,
@@ -26,6 +28,7 @@ import { RankChangeModal } from "./components/RankChangeModal"
 import { AlertModal } from "./components/AlertModal"
 import { LockAccountModal } from "./components/LockAccountModal"
 import { DocumentsTab } from "./components/DocumentsTab"
+import { EnrollmentsTable } from "./components/EnrollmentsTable"
 import "./StudentDetailPage.css"
 
 type ModalType = "edit" | "rank" | "alert" | "lock" | null
@@ -67,6 +70,23 @@ export default function StudentDetailPage() {
 		retainPreviousData: false,
 	})
 
+	const loadEnrollments = useCallback(async () => {
+		if (!studentId) {
+			return { success: true as const, data: [] as AdminEnrollmentItem[] }
+		}
+		const res = await courseService.listStudentEnrollments({
+			studentId,
+			size: 100,
+		})
+		if (!res.success) return res
+		return { success: true as const, data: res.data.items }
+	}, [studentId])
+	const enrollmentsQuery = useAsyncData(loadEnrollments, {
+		initialData: [] as AdminEnrollmentItem[],
+		enabled: Boolean(studentId),
+		retainPreviousData: false,
+	})
+
 	const loadAnalytics = useCallback(async () => {
 		if (!studentId) {
 			return { success: true as const, data: null }
@@ -93,6 +113,7 @@ export default function StudentDetailPage() {
 	const student = studentQuery.data
 	const error = studentQuery.error ?? ""
 	const examSessions = examSessionsQuery.data
+	const enrollments = enrollmentsQuery.data
 	const analytics = analyticsQuery.data
 
 	if (studentQuery.loading) {
@@ -336,6 +357,24 @@ export default function StudentDetailPage() {
 							)}
 						</div>
 					)}
+					<div
+						className="card-surface student-detail__chart-card"
+						style={{ marginBottom: 16 }}
+					>
+						<h2>Khóa Học Đã Đăng Ký</h2>
+						{enrollmentsQuery.loading ? (
+							<p
+								style={{
+									color: "rgba(255,255,255,0.4)",
+									padding: "16px 0",
+								}}
+							>
+								Đang tải...
+							</p>
+						) : (
+							<EnrollmentsTable enrollments={enrollments} />
+						)}
+					</div>
 					<div className="card-surface student-detail__chart-card">
 						<h2>Lịch Sử Thi</h2>
 						{examSessionsQuery.loading ? (

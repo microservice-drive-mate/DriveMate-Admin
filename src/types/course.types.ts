@@ -2,6 +2,7 @@ import type { UserRole } from "./identity.types"
 
 export type LicenseCategory = "A1" | "A2" | "B1" | "B2" | "C" | "D" | "E" | "F"
 export type CourseStatus = "DRAFT" | "ACTIVE" | "ARCHIVED"
+export type EnrollmentStatus = "ACTIVE" | "COMPLETED" | "DROPPED"
 
 export interface CourseLesson {
 	id: string
@@ -190,6 +191,18 @@ export interface UpdateSchedulePayload {
 	isActive?: boolean
 }
 
+export interface AdminEnrollmentItem {
+	enrollmentId: string
+	courseId: string
+	courseCode: string | null
+	title: string
+	licenseCategory: LicenseCategory
+	status: EnrollmentStatus
+	progress: number
+	enrolledAt: string
+	completedAt: string | null
+}
+
 export const DAY_OF_WEEK_LABELS: Record<CourseScheduleDayOfWeek, string> = {
 	1: "Thứ Hai",
 	2: "Thứ Ba",
@@ -204,6 +217,12 @@ export const COURSE_STATUS_LABELS: Record<CourseStatus, string> = {
 	DRAFT: "Bản nháp",
 	ACTIVE: "Đang hoạt động",
 	ARCHIVED: "Đã lưu trữ",
+}
+
+export const ENROLLMENT_STATUS_LABELS: Record<EnrollmentStatus, string> = {
+	ACTIVE: "Đang học",
+	COMPLETED: "Hoàn thành",
+	DROPPED: "Đã hủy",
 }
 
 export const COURSE_LICENSE_CATEGORIES: LicenseCategory[] = [

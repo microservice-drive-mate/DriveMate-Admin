@@ -17,14 +17,14 @@ Maneuver error lists use Redis cache-aside. If Redis is unavailable, the service
 
 ## Authentication
 
-| Endpoint                                 | Role                                               |
-| ---------------------------------------- | -------------------------------------------------- |
-| `GET /simulation/maneuvers`              | `STUDENT`, `INSTRUCTOR`, `ADMIN`, `CENTER_MANAGER` |
-| `GET /simulation/maneuvers/:id`          | `STUDENT`, `INSTRUCTOR`, `ADMIN`, `CENTER_MANAGER` |
-| `GET /simulation/maneuver-errors`        | `STUDENT`, `INSTRUCTOR`, `ADMIN`, `CENTER_MANAGER` |
-| `POST /simulation/sessions`              | `STUDENT`                                          |
-| `PATCH /simulation/sessions/:id/answers` | `STUDENT`                                          |
-| `POST /simulation/sessions/:id/submit`   | `STUDENT`                                          |
+| Endpoint | Role |
+| --- | --- |
+| `GET /simulation/maneuvers` | `STUDENT`, `INSTRUCTOR`, `ADMIN`, `CENTER_MANAGER` |
+| `GET /simulation/maneuvers/:id` | `STUDENT`, `INSTRUCTOR`, `ADMIN`, `CENTER_MANAGER` |
+| `GET /simulation/maneuver-errors` | `STUDENT`, `INSTRUCTOR`, `ADMIN`, `CENTER_MANAGER` |
+| `POST /simulation/sessions` | `STUDENT` |
+| `PATCH /simulation/sessions/:id/answers` | `STUDENT` |
+| `POST /simulation/sessions/:id/submit` | `STUDENT` |
 
 ---
 
@@ -34,12 +34,12 @@ All successful responses are wrapped by the global `ApiResponseInterceptor`.
 
 ```json
 {
-	"success": true,
-	"code": "SUCCESS",
-	"message": "OK",
-	"timestamp": "2026-05-21T10:00:00.000Z",
-	"path": "/simulation/maneuvers?licenseCategory=B1",
-	"data": []
+  "success": true,
+  "code": "SUCCESS",
+  "message": "OK",
+  "timestamp": "2026-05-21T10:00:00.000Z",
+  "path": "/simulation/maneuvers?licenseCategory=B1",
+  "data": []
 }
 ```
 
@@ -47,11 +47,11 @@ Error responses:
 
 ```json
 {
-	"success": false,
-	"code": "VALIDATION_ERROR",
-	"message": "Validation failed",
-	"timestamp": "2026-05-21T10:00:00.000Z",
-	"path": "/simulation/sessions"
+  "success": false,
+  "code": "VALIDATION_ERROR",
+  "message": "Validation failed",
+  "timestamp": "2026-05-21T10:00:00.000Z",
+  "path": "/simulation/sessions"
 }
 ```
 
@@ -59,14 +59,14 @@ Error responses:
 
 ## Error Codes
 
-| HTTP | Code               | Cause                                                            |
-| ---: | ------------------ | ---------------------------------------------------------------- |
-|  400 | `VALIDATION_ERROR` | Invalid body/query/path parameter                                |
-|  400 | `BAD_REQUEST`      | Session is already finished                                      |
-|  401 | `UNAUTHORIZED`     | Missing or invalid access token                                  |
-|  403 | `FORBIDDEN`        | Token is valid but role is not allowed                           |
-|  404 | `NOT_FOUND`        | Maneuver/session not found, or session does not belong to caller |
-|  500 | `INTERNAL_ERROR`   | Database/cache error                                             |
+| HTTP | Code | Cause |
+| ---: | --- | --- |
+| 400 | `VALIDATION_ERROR` | Invalid body/query/path parameter |
+| 400 | `BAD_REQUEST` | Session is already finished |
+| 401 | `UNAUTHORIZED` | Missing or invalid access token |
+| 403 | `FORBIDDEN` | Token is valid but role is not allowed |
+| 404 | `NOT_FOUND` | Maneuver/session not found, or session does not belong to caller |
+| 500 | `INTERNAL_ERROR` | Database/cache error |
 
 ---
 
@@ -81,24 +81,24 @@ Error responses:
 
 ### `Maneuver`
 
-| Field             | Type                   | Description              |
-| ----------------- | ---------------------- | ------------------------ |
-| `id`              | `uuid`                 | Maneuver id              |
-| `title`           | `string`               | Maneuver title           |
-| `description`     | `string`               | Learning description     |
-| `licenseCategory` | `LicenseCategory`      | License category         |
-| `displayOrder`    | `number`               | Ordering within category |
-| `checkpoints`     | `ManeuverCheckpoint[]` | Ordered checkpoint list  |
+| Field | Type | Description |
+| --- | --- | --- |
+| `id` | `uuid` | Maneuver id |
+| `title` | `string` | Maneuver title |
+| `description` | `string` | Learning description |
+| `licenseCategory` | `LicenseCategory` | License category |
+| `displayOrder` | `number` | Ordering within category |
+| `checkpoints` | `ManeuverCheckpoint[]` | Ordered checkpoint list |
 
 ### `ManeuverCheckpoint`
 
 ```json
 {
-	"id": "20423b6d-00d7-4d23-a1d4-189c39185e9d",
-	"title": "Chuẩn bị trước vạch xuất phát",
-	"instruction": "Dừng xe đúng vị trí, kiểm tra gương và tín hiệu trước khi khởi hành.",
-	"penalty": "Trừ điểm nếu xe cán vạch hoặc không bật tín hiệu đúng thời điểm.",
-	"displayOrder": 1
+  "id": "20423b6d-00d7-4d23-a1d4-189c39185e9d",
+  "title": "Chuẩn bị trước vạch xuất phát",
+  "instruction": "Dừng xe đúng vị trí, kiểm tra gương và tín hiệu trước khi khởi hành.",
+  "penalty": "Trừ điểm nếu xe cán vạch hoặc không bật tín hiệu đúng thời điểm.",
+  "displayOrder": 1
 }
 ```
 
@@ -106,28 +106,28 @@ Error responses:
 
 ```json
 {
-	"id": "12f7d0e7-c010-4e49-bcda-036219772cce",
-	"licenseCategory": "B1",
-	"code": "B1-SA-HINH-001",
-	"description": "Không thắt dây an toàn trước khi xuất phát.",
-	"severity": "MAJOR"
+  "id": "12f7d0e7-c010-4e49-bcda-036219772cce",
+  "licenseCategory": "B1",
+  "code": "B1-SA-HINH-001",
+  "description": "Không thắt dây an toàn trước khi xuất phát.",
+  "severity": "MAJOR"
 }
 ```
 
 ### `SimulationSession`
 
-| Field             | Type                      | Description                                 |
-| ----------------- | ------------------------- | ------------------------------------------- | ------------------------------------- |
-| `id`              | `uuid`                    | Session id                                  |
-| `studentId`       | `uuid`                    | Student id from JWT `sub`                   |
-| `licenseCategory` | `LicenseCategory`         | Session category                            |
-| `status`          | `SimulationSessionStatus` | Current session state                       |
-| `totalScenarios`  | `number`                  | Number of answered scenarios at submit time |
-| `correctCount`    | `number`                  | Number of correct answers at submit time    |
-| `score`           | `number                   | null`                                       | Rounded percentage score after submit |
-| `isPassed`        | `boolean                  | null`                                       | `true` when score is at least 80      |
-| `startedAt`       | `string`                  | Start timestamp                             |
-| `completedAt`     | `string                   | null`                                       | Submit timestamp                      |
+| Field | Type | Description |
+| --- | --- | --- |
+| `id` | `uuid` | Session id |
+| `studentId` | `uuid` | Student id from JWT `sub` |
+| `licenseCategory` | `LicenseCategory` | Session category |
+| `status` | `SimulationSessionStatus` | Current session state |
+| `totalScenarios` | `number` | Number of answered scenarios at submit time |
+| `correctCount` | `number` | Number of correct answers at submit time |
+| `score` | `number | null` | Rounded percentage score after submit |
+| `isPassed` | `boolean | null` | `true` when score is at least 80 |
+| `startedAt` | `string` | Start timestamp |
+| `completedAt` | `string | null` | Submit timestamp |
 
 ---
 
@@ -141,37 +141,37 @@ Returns active maneuver checkpoint groups for a license category, ordered by `di
 
 **Query Parameters**
 
-| Name              | Type              | Required | Description              |
-| ----------------- | ----------------- | -------- | ------------------------ |
-| `licenseCategory` | `LicenseCategory` | yes      | License category to load |
+| Name | Type | Required | Description |
+| --- | --- | --- | --- |
+| `licenseCategory` | `LicenseCategory` | yes | License category to load |
 
 **Response `200`**
 
 ```json
 {
-	"success": true,
-	"code": "SUCCESS",
-	"message": "OK",
-	"timestamp": "2026-05-21T10:00:00.000Z",
-	"path": "/simulation/maneuvers?licenseCategory=B1",
-	"data": [
-		{
-			"id": "1e2fe09b-a746-42ce-b592-fb8800512d33",
-			"title": "Xuất phát",
-			"description": "Thực hành quy trình xuất phát đúng kỹ thuật trong bài sa hình.",
-			"licenseCategory": "B1",
-			"displayOrder": 1,
-			"checkpoints": [
-				{
-					"id": "20423b6d-00d7-4d23-a1d4-189c39185e9d",
-					"title": "Chuẩn bị trước vạch xuất phát",
-					"instruction": "Dừng xe đúng vị trí, kiểm tra gương và tín hiệu trước khi khởi hành.",
-					"penalty": "Trừ điểm nếu xe cán vạch hoặc không bật tín hiệu đúng thời điểm.",
-					"displayOrder": 1
-				}
-			]
-		}
-	]
+  "success": true,
+  "code": "SUCCESS",
+  "message": "OK",
+  "timestamp": "2026-05-21T10:00:00.000Z",
+  "path": "/simulation/maneuvers?licenseCategory=B1",
+  "data": [
+    {
+      "id": "1e2fe09b-a746-42ce-b592-fb8800512d33",
+      "title": "Xuất phát",
+      "description": "Thực hành quy trình xuất phát đúng kỹ thuật trong bài sa hình.",
+      "licenseCategory": "B1",
+      "displayOrder": 1,
+      "checkpoints": [
+        {
+          "id": "20423b6d-00d7-4d23-a1d4-189c39185e9d",
+          "title": "Chuẩn bị trước vạch xuất phát",
+          "instruction": "Dừng xe đúng vị trí, kiểm tra gương và tín hiệu trước khi khởi hành.",
+          "penalty": "Trừ điểm nếu xe cán vạch hoặc không bật tín hiệu đúng thời điểm.",
+          "displayOrder": 1
+        }
+      ]
+    }
+  ]
 }
 ```
 
@@ -187,9 +187,9 @@ Returns one active maneuver with ordered checkpoints.
 
 **Path Parameters**
 
-| Name | Type   | Required | Description |
-| ---- | ------ | -------- | ----------- |
-| `id` | `uuid` | yes      | Maneuver id |
+| Name | Type | Required | Description |
+| --- | --- | --- | --- |
+| `id` | `uuid` | yes | Maneuver id |
 
 **Response `200`**
 
@@ -197,19 +197,19 @@ Same `Maneuver` shape as list item.
 
 ```json
 {
-	"success": true,
-	"code": "SUCCESS",
-	"message": "OK",
-	"timestamp": "2026-05-21T10:00:00.000Z",
-	"path": "/simulation/maneuvers/1e2fe09b-a746-42ce-b592-fb8800512d33",
-	"data": {
-		"id": "1e2fe09b-a746-42ce-b592-fb8800512d33",
-		"title": "Xuất phát",
-		"description": "Thực hành quy trình xuất phát đúng kỹ thuật trong bài sa hình.",
-		"licenseCategory": "B1",
-		"displayOrder": 1,
-		"checkpoints": []
-	}
+  "success": true,
+  "code": "SUCCESS",
+  "message": "OK",
+  "timestamp": "2026-05-21T10:00:00.000Z",
+  "path": "/simulation/maneuvers/1e2fe09b-a746-42ce-b592-fb8800512d33",
+  "data": {
+    "id": "1e2fe09b-a746-42ce-b592-fb8800512d33",
+    "title": "Xuất phát",
+    "description": "Thực hành quy trình xuất phát đúng kỹ thuật trong bài sa hình.",
+    "licenseCategory": "B1",
+    "displayOrder": 1,
+    "checkpoints": []
+  }
 }
 ```
 
@@ -225,28 +225,28 @@ Returns general maneuver errors for a license category. The response is cached b
 
 **Query Parameters**
 
-| Name              | Type              | Required | Description              |
-| ----------------- | ----------------- | -------- | ------------------------ |
-| `licenseCategory` | `LicenseCategory` | yes      | License category to load |
+| Name | Type | Required | Description |
+| --- | --- | --- | --- |
+| `licenseCategory` | `LicenseCategory` | yes | License category to load |
 
 **Response `200`**
 
 ```json
 {
-	"success": true,
-	"code": "SUCCESS",
-	"message": "OK",
-	"timestamp": "2026-05-21T10:00:00.000Z",
-	"path": "/simulation/maneuver-errors?licenseCategory=B1",
-	"data": [
-		{
-			"id": "12f7d0e7-c010-4e49-bcda-036219772cce",
-			"licenseCategory": "B1",
-			"code": "B1-SA-HINH-001",
-			"description": "Không thắt dây an toàn trước khi xuất phát.",
-			"severity": "MAJOR"
-		}
-	]
+  "success": true,
+  "code": "SUCCESS",
+  "message": "OK",
+  "timestamp": "2026-05-21T10:00:00.000Z",
+  "path": "/simulation/maneuver-errors?licenseCategory=B1",
+  "data": [
+    {
+      "id": "12f7d0e7-c010-4e49-bcda-036219772cce",
+      "licenseCategory": "B1",
+      "code": "B1-SA-HINH-001",
+      "description": "Không thắt dây an toàn trước khi xuất phát.",
+      "severity": "MAJOR"
+    }
+  ]
 }
 ```
 
@@ -264,7 +264,7 @@ Starts a driving-practice simulation session for the current student. The new se
 
 ```json
 {
-	"licenseCategory": "B1"
+  "licenseCategory": "B1"
 }
 ```
 
@@ -272,23 +272,23 @@ Starts a driving-practice simulation session for the current student. The new se
 
 ```json
 {
-	"success": true,
-	"code": "SUCCESS",
-	"message": "OK",
-	"timestamp": "2026-05-21T10:00:00.000Z",
-	"path": "/simulation/sessions",
-	"data": {
-		"id": "62d03f43-6245-4bd1-bf6e-675e3695f6d9",
-		"studentId": "89ea9a17-1cce-4fff-855c-d32a081648cd",
-		"licenseCategory": "B1",
-		"status": "IN_PROGRESS",
-		"totalScenarios": 0,
-		"correctCount": 0,
-		"score": null,
-		"isPassed": null,
-		"startedAt": "2026-05-21T10:00:00.000Z",
-		"completedAt": null
-	}
+  "success": true,
+  "code": "SUCCESS",
+  "message": "OK",
+  "timestamp": "2026-05-21T10:00:00.000Z",
+  "path": "/simulation/sessions",
+  "data": {
+    "id": "62d03f43-6245-4bd1-bf6e-675e3695f6d9",
+    "studentId": "89ea9a17-1cce-4fff-855c-d32a081648cd",
+    "licenseCategory": "B1",
+    "status": "IN_PROGRESS",
+    "totalScenarios": 0,
+    "correctCount": 0,
+    "score": null,
+    "isPassed": null,
+    "startedAt": "2026-05-21T10:00:00.000Z",
+    "completedAt": null
+  }
 }
 ```
 
@@ -306,27 +306,27 @@ For the current demo scope, `isCorrect` is accepted from the caller and persiste
 
 **Path Parameters**
 
-| Name | Type   | Required | Description           |
-| ---- | ------ | -------- | --------------------- |
-| `id` | `uuid` | yes      | Simulation session id |
+| Name | Type | Required | Description |
+| --- | --- | --- | --- |
+| `id` | `uuid` | yes | Simulation session id |
 
 **Body**
 
 ```json
 {
-	"scenarioId": "83c1f15e-d15c-4ae8-a6c7-4d2207bbf422",
-	"selectedOptionId": "turn-signal-before-start",
-	"isCorrect": true
+  "scenarioId": "83c1f15e-d15c-4ae8-a6c7-4d2207bbf422",
+  "selectedOptionId": "turn-signal-before-start",
+  "isCorrect": true
 }
 ```
 
 **Validation**
 
-| Field              | Required | Rule            |
-| ------------------ | -------- | --------------- |
-| `scenarioId`       | yes      | UUID            |
-| `selectedOptionId` | no       | string or null  |
-| `isCorrect`        | no       | boolean or null |
+| Field | Required | Rule |
+| --- | --- | --- |
+| `scenarioId` | yes | UUID |
+| `selectedOptionId` | no | string or null |
+| `isCorrect` | no | boolean or null |
 
 **Response `200`**
 
@@ -334,23 +334,23 @@ Returns the current session state. Score fields remain unchanged until submit.
 
 ```json
 {
-	"success": true,
-	"code": "SUCCESS",
-	"message": "OK",
-	"timestamp": "2026-05-21T10:02:00.000Z",
-	"path": "/simulation/sessions/62d03f43-6245-4bd1-bf6e-675e3695f6d9/answers",
-	"data": {
-		"id": "62d03f43-6245-4bd1-bf6e-675e3695f6d9",
-		"studentId": "89ea9a17-1cce-4fff-855c-d32a081648cd",
-		"licenseCategory": "B1",
-		"status": "IN_PROGRESS",
-		"totalScenarios": 0,
-		"correctCount": 0,
-		"score": null,
-		"isPassed": null,
-		"startedAt": "2026-05-21T10:00:00.000Z",
-		"completedAt": null
-	}
+  "success": true,
+  "code": "SUCCESS",
+  "message": "OK",
+  "timestamp": "2026-05-21T10:02:00.000Z",
+  "path": "/simulation/sessions/62d03f43-6245-4bd1-bf6e-675e3695f6d9/answers",
+  "data": {
+    "id": "62d03f43-6245-4bd1-bf6e-675e3695f6d9",
+    "studentId": "89ea9a17-1cce-4fff-855c-d32a081648cd",
+    "licenseCategory": "B1",
+    "status": "IN_PROGRESS",
+    "totalScenarios": 0,
+    "correctCount": 0,
+    "score": null,
+    "isPassed": null,
+    "startedAt": "2026-05-21T10:00:00.000Z",
+    "completedAt": null
+  }
 }
 ```
 
@@ -366,31 +366,31 @@ Finalizes the session. The repository counts saved answers, calculates `score = 
 
 **Path Parameters**
 
-| Name | Type   | Required | Description           |
-| ---- | ------ | -------- | --------------------- |
-| `id` | `uuid` | yes      | Simulation session id |
+| Name | Type | Required | Description |
+| --- | --- | --- | --- |
+| `id` | `uuid` | yes | Simulation session id |
 
 **Response `200` or `201`**
 
 ```json
 {
-	"success": true,
-	"code": "SUCCESS",
-	"message": "OK",
-	"timestamp": "2026-05-21T10:05:00.000Z",
-	"path": "/simulation/sessions/62d03f43-6245-4bd1-bf6e-675e3695f6d9/submit",
-	"data": {
-		"id": "62d03f43-6245-4bd1-bf6e-675e3695f6d9",
-		"studentId": "89ea9a17-1cce-4fff-855c-d32a081648cd",
-		"licenseCategory": "B1",
-		"status": "COMPLETED",
-		"totalScenarios": 5,
-		"correctCount": 4,
-		"score": 80,
-		"isPassed": true,
-		"startedAt": "2026-05-21T10:00:00.000Z",
-		"completedAt": "2026-05-21T10:05:00.000Z"
-	}
+  "success": true,
+  "code": "SUCCESS",
+  "message": "OK",
+  "timestamp": "2026-05-21T10:05:00.000Z",
+  "path": "/simulation/sessions/62d03f43-6245-4bd1-bf6e-675e3695f6d9/submit",
+  "data": {
+    "id": "62d03f43-6245-4bd1-bf6e-675e3695f6d9",
+    "studentId": "89ea9a17-1cce-4fff-855c-d32a081648cd",
+    "licenseCategory": "B1",
+    "status": "COMPLETED",
+    "totalScenarios": 5,
+    "correctCount": 4,
+    "score": 80,
+    "isPassed": true,
+    "startedAt": "2026-05-21T10:00:00.000Z",
+    "completedAt": "2026-05-21T10:05:00.000Z"
+  }
 }
 ```
 
@@ -413,7 +413,6 @@ npm.cmd run db:seed
 ```
 
 The simulation seed inserts deterministic maneuver/checkpoint/error content for demo license categories. Without seed data, `GET /simulation/maneuvers` and `GET /simulation/maneuver-errors` correctly return empty arrays, so the frontend should treat an empty list as “no content seeded yet”, not as an API failure.
-
 ## SRS Alignment Additions: UC35/UC36 (2D Driving Practice)
 
 ### POST `/simulation/practice2d/sessions`
@@ -426,52 +425,52 @@ Starts a 2D practice session for the current student. The session begins in `IN_
 
 ```json
 {
-	"licenseCategory": "B1",
-	"clientCapabilities": {
-		"canvas": true,
-		"webgl": true,
-		"keyboard": true,
-		"touch": false
-	},
-	"persistTelemetry": true
+  "licenseCategory": "B1",
+  "clientCapabilities": {
+    "canvas": true,
+    "webgl": true,
+    "keyboard": true,
+    "touch": false
+  },
+  "persistTelemetry": true
 }
 ```
 
 **Validation**
 
-- `licenseCategory`: Required `LicenseCategory`.
-- `clientCapabilities`: Required object. Must have (`canvas` or `webgl`) = `true`, and (`keyboard` or `touch`) = `true`. Otherwise, returns `MSG131` (HTTP 400).
-- `persistTelemetry`: Optional boolean (default `false`). If `true`, the last ingested telemetry event will be stored in the session.
+*   `licenseCategory`: Required `LicenseCategory`.
+*   `clientCapabilities`: Required object. Must have (`canvas` or `webgl`) = `true`, and (`keyboard` or `touch`) = `true`. Otherwise, returns `MSG131` (HTTP 400).
+*   `persistTelemetry`: Optional boolean (default `false`). If `true`, the last ingested telemetry event will be stored in the session.
 
 **Response `201 Created`**
 
 ```json
 {
-	"success": true,
-	"code": "SUCCESS",
-	"message": "OK",
-	"timestamp": "2026-05-21T10:00:00.000Z",
-	"path": "/simulation/practice2d/sessions",
-	"data": {
-		"id": "session-uuid",
-		"studentId": "student-uuid",
-		"licenseCategory": "B1",
-		"status": "IN_PROGRESS",
-		"clientCapabilities": {
-			"canvas": true,
-			"webgl": true,
-			"keyboard": true,
-			"touch": false
-		},
-		"persistTelemetry": true,
-		"totalEvents": 0,
-		"errorCount": 0,
-		"totalPenalty": 0,
-		"score": null,
-		"summary": {},
-		"startedAt": "2026-05-21T10:00:00.000Z",
-		"endedAt": null
-	}
+  "success": true,
+  "code": "SUCCESS",
+  "message": "OK",
+  "timestamp": "2026-05-21T10:00:00.000Z",
+  "path": "/simulation/practice2d/sessions",
+  "data": {
+    "id": "session-uuid",
+    "studentId": "student-uuid",
+    "licenseCategory": "B1",
+    "status": "IN_PROGRESS",
+    "clientCapabilities": {
+      "canvas": true,
+      "webgl": true,
+      "keyboard": true,
+      "touch": false
+    },
+    "persistTelemetry": true,
+    "totalEvents": 0,
+    "errorCount": 0,
+    "totalPenalty": 0,
+    "score": null,
+    "summary": {},
+    "startedAt": "2026-05-21T10:00:00.000Z",
+    "endedAt": null
+  }
 }
 ```
 
@@ -485,33 +484,33 @@ Ingests live telemetry packet from the 2D simulator client, runs the error detec
 
 **Path Parameters**
 
-| Name | Type   | Required | Description            |
-| ---- | ------ | -------- | ---------------------- |
-| `id` | `uuid` | yes      | 2D practice session id |
+| Name | Type | Required | Description |
+| --- | --- | --- | --- |
+| `id` | `uuid` | yes | 2D practice session id |
 
 **Body**
 
 ```json
 {
-	"type": "LANE_KEEPING",
-	"speedKmh": 65,
-	"laneOffset": 1.2,
-	"collision": false,
-	"signal": "LEFT",
-	"payload": {
-		"x": 105.4,
-		"y": 204.2,
-		"heading": 90
-	}
+  "type": "LANE_KEEPING",
+  "speedKmh": 65,
+  "laneOffset": 1.2,
+  "collision": false,
+  "signal": "LEFT",
+  "payload": {
+    "x": 105.4,
+    "y": 204.2,
+    "heading": 90
+  }
 }
 ```
 
 **Validation**
 
-- `type`: Required string (telemetry type e.g., `LANE_KEEPING`, `STEERING`).
-- `collision`: Optional boolean.
-- `speedKmh`: Optional number.
-- `laneOffset`: Optional number.
+*   `type`: Required string (telemetry type e.g., `LANE_KEEPING`, `STEERING`).
+*   `collision`: Optional boolean.
+*   `speedKmh`: Optional number.
+*   `laneOffset`: Optional number.
 
 **Response `201 Created`**
 
@@ -519,28 +518,28 @@ If a rule is violated, it returns the generated warning/fatal feedback:
 
 ```json
 {
-	"success": true,
-	"code": "SUCCESS",
-	"message": "OK",
-	"timestamp": "2026-05-21T10:00:01.000Z",
-	"path": "/simulation/practice2d/sessions/session-uuid/telemetry",
-	"data": {
-		"id": "feedback-event-uuid",
-		"telemetryType": "LANE_KEEPING",
-		"errorCode": "OVERSPEED",
-		"severity": "WARNING",
-		"penalty": 10,
-		"message": "Speed exceeded the configured practice threshold.",
-		"hint": "Slow down before entering the next checkpoint.",
-		"occurredAt": "2026-05-21T10:00:01.000Z"
-	}
+  "success": true,
+  "code": "SUCCESS",
+  "message": "OK",
+  "timestamp": "2026-05-21T10:00:01.000Z",
+  "path": "/simulation/practice2d/sessions/session-uuid/telemetry",
+  "data": {
+    "id": "feedback-event-uuid",
+    "telemetryType": "LANE_KEEPING",
+    "errorCode": "OVERSPEED",
+    "severity": "WARNING",
+    "penalty": 10,
+    "message": "Speed exceeded the configured practice threshold.",
+    "hint": "Slow down before entering the next checkpoint.",
+    "occurredAt": "2026-05-21T10:00:01.000Z"
+  }
 }
 ```
 
-- **Error Detection Logic:**
-    - `collision` = `true` ➔ `errorCode` = `"COLLISION"`, `severity` = `"FATAL"`, `penalty` = `100`.
-    - `speedKmh` > `60` ➔ `errorCode` = `"OVERSPEED"`, `severity` = `"WARNING"`, `penalty` = `10`.
-    - `abs(laneOffset)` > `1.0` ➔ `errorCode` = `"LANE_DEPARTURE"`, `severity` = `"WARNING"`, `penalty` = `5`.
+*   **Error Detection Logic:**
+    *   `collision` = `true` ➔ `errorCode` = `"COLLISION"`, `severity` = `"FATAL"`, `penalty` = `100`.
+    *   `speedKmh` > `60` ➔ `errorCode` = `"OVERSPEED"`, `severity` = `"WARNING"`, `penalty` = `10`.
+    *   `abs(laneOffset)` > `1.0` ➔ `errorCode` = `"LANE_DEPARTURE"`, `severity` = `"WARNING"`, `penalty` = `5`.
 
 ---
 
@@ -552,15 +551,15 @@ Ends or abandons the active 2D practice session. It calculates the final score =
 
 **Path Parameters**
 
-| Name | Type   | Required | Description            |
-| ---- | ------ | -------- | ---------------------- |
-| `id` | `uuid` | yes      | 2D practice session id |
+| Name | Type | Required | Description |
+| --- | --- | --- | --- |
+| `id` | `uuid` | yes | 2D practice session id |
 
 **Body**
 
 ```json
 {
-	"abandoned": false
+  "abandoned": false
 }
 ```
 
@@ -568,37 +567,37 @@ Ends or abandons the active 2D practice session. It calculates the final score =
 
 ```json
 {
-	"success": true,
-	"code": "SUCCESS",
-	"message": "OK",
-	"timestamp": "2026-05-21T10:15:00.000Z",
-	"path": "/simulation/practice2d/sessions/session-uuid/end",
-	"data": {
-		"id": "session-uuid",
-		"studentId": "student-uuid",
-		"licenseCategory": "B1",
-		"status": "COMPLETED",
-		"clientCapabilities": {
-			"canvas": true,
-			"webgl": true,
-			"keyboard": true,
-			"touch": false
-		},
-		"persistTelemetry": true,
-		"totalEvents": 150,
-		"errorCount": 2,
-		"totalPenalty": 15,
-		"score": 85,
-		"summary": {
-			"totalEvents": 150,
-			"errorCount": 2,
-			"totalPenalty": 15,
-			"score": 85,
-			"status": "COMPLETED"
-		},
-		"startedAt": "2026-05-21T10:00:00.000Z",
-		"endedAt": "2026-05-21T10:15:00.000Z"
-	}
+  "success": true,
+  "code": "SUCCESS",
+  "message": "OK",
+  "timestamp": "2026-05-21T10:15:00.000Z",
+  "path": "/simulation/practice2d/sessions/session-uuid/end",
+  "data": {
+    "id": "session-uuid",
+    "studentId": "student-uuid",
+    "licenseCategory": "B1",
+    "status": "COMPLETED",
+    "clientCapabilities": {
+      "canvas": true,
+      "webgl": true,
+      "keyboard": true,
+      "touch": false
+    },
+    "persistTelemetry": true,
+    "totalEvents": 150,
+    "errorCount": 2,
+    "totalPenalty": 15,
+    "score": 85,
+    "summary": {
+      "totalEvents": 150,
+      "errorCount": 2,
+      "totalPenalty": 15,
+      "score": 85,
+      "status": "COMPLETED"
+    },
+    "startedAt": "2026-05-21T10:00:00.000Z",
+    "endedAt": "2026-05-21T10:15:00.000Z"
+  }
 }
 ```
 
@@ -612,57 +611,57 @@ Retrieves a detailed summary of a 2D practice session including all feedback eve
 
 **Path Parameters**
 
-| Name | Type   | Required | Description            |
-| ---- | ------ | -------- | ---------------------- |
-| `id` | `uuid` | yes      | 2D practice session id |
+| Name | Type | Required | Description |
+| --- | --- | --- | --- |
+| `id` | `uuid` | yes | 2D practice session id |
 
 **Response `200 OK`**
 
 ```json
 {
-	"success": true,
-	"code": "SUCCESS",
-	"message": "OK",
-	"timestamp": "2026-05-21T10:20:00.000Z",
-	"path": "/simulation/practice2d/sessions/session-uuid",
-	"data": {
-		"id": "session-uuid",
-		"studentId": "student-uuid",
-		"licenseCategory": "B1",
-		"status": "COMPLETED",
-		"clientCapabilities": {
-			"canvas": true,
-			"webgl": true,
-			"keyboard": true,
-			"touch": false
-		},
-		"persistTelemetry": true,
-		"totalEvents": 150,
-		"errorCount": 2,
-		"totalPenalty": 15,
-		"score": 85,
-		"summary": {
-			"totalEvents": 150,
-			"errorCount": 2,
-			"totalPenalty": 15,
-			"score": 85,
-			"status": "COMPLETED"
-		},
-		"startedAt": "2026-05-21T10:00:00.000Z",
-		"endedAt": "2026-05-21T10:15:00.000Z",
-		"feedbackEvents": [
-			{
-				"id": "feedback-event-uuid-1",
-				"telemetryType": "LANE_KEEPING",
-				"errorCode": "OVERSPEED",
-				"severity": "WARNING",
-				"penalty": 10,
-				"message": "Speed exceeded the configured practice threshold.",
-				"hint": "Slow down before entering the next checkpoint.",
-				"occurredAt": "2026-05-21T10:00:01.000Z"
-			}
-		]
-	}
+  "success": true,
+  "code": "SUCCESS",
+  "message": "OK",
+  "timestamp": "2026-05-21T10:20:00.000Z",
+  "path": "/simulation/practice2d/sessions/session-uuid",
+  "data": {
+    "id": "session-uuid",
+    "studentId": "student-uuid",
+    "licenseCategory": "B1",
+    "status": "COMPLETED",
+    "clientCapabilities": {
+      "canvas": true,
+      "webgl": true,
+      "keyboard": true,
+      "touch": false
+    },
+    "persistTelemetry": true,
+    "totalEvents": 150,
+    "errorCount": 2,
+    "totalPenalty": 15,
+    "score": 85,
+    "summary": {
+      "totalEvents": 150,
+      "errorCount": 2,
+      "totalPenalty": 15,
+      "score": 85,
+      "status": "COMPLETED"
+    },
+    "startedAt": "2026-05-21T10:00:00.000Z",
+    "endedAt": "2026-05-21T10:15:00.000Z",
+    "feedbackEvents": [
+      {
+        "id": "feedback-event-uuid-1",
+        "telemetryType": "LANE_KEEPING",
+        "errorCode": "OVERSPEED",
+        "severity": "WARNING",
+        "penalty": 10,
+        "message": "Speed exceeded the configured practice threshold.",
+        "hint": "Slow down before entering the next checkpoint.",
+        "occurredAt": "2026-05-21T10:00:01.000Z"
+      }
+    ]
+  }
 }
 ```
 
@@ -671,7 +670,6 @@ Retrieves a detailed summary of a 2D practice session including all feedback eve
 ### Maneuver Metadata
 
 `ManeuverCheckpoint` supports coordinates `x`, `y` and `visualColor`. `ManeuverError` supports `pointsDeducted`, `isFatal`, `isGeneral`, `isActive`, `visualColor`, and `icon`; `GET /simulation/maneuver-errors` returns active general errors only.
-
 ## Endpoint Gap Batch Additions
 
 ### GET `/simulation/sessions`

@@ -133,12 +133,20 @@ export interface TopicScore {
 	score: number
 }
 
+export interface ClassProgressStudent {
+	id: string
+	name: string
+	progress: number
+	status: string
+}
+
 export interface ClassProgress {
 	id: string
 	name: string
 	completed: number
 	total: number
 	percent: number
+	students: ClassProgressStudent[]
 }
 
 export interface TodaySession {

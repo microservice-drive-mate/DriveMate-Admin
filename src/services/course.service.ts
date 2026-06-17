@@ -11,6 +11,8 @@ import type {
 	CreateSchedulePayload,
 	UpdateSchedulePayload,
 	AddCourseInstructorPayload,
+	AdminEnrollmentItem,
+	EnrollmentStatus,
 } from "@/types/course.types"
 
 import { apiService } from "@/lib"
@@ -145,5 +147,18 @@ export const courseService = {
 		apiService.delete<ApiResponse<CourseResponse>>(
 			`/admin/courses/${courseId}/instructors/${userId}`,
 		),
+	),
+
+	listStudentEnrollments: withErrorHandling(
+		(params: {
+			studentId: string
+			page?: number
+			size?: number
+			status?: EnrollmentStatus
+		}) =>
+			apiService.get<ApiResponse<PaginatedResponse<AdminEnrollmentItem>>>(
+				"/admin/enrollments",
+				{ params },
+			),
 	),
 }
