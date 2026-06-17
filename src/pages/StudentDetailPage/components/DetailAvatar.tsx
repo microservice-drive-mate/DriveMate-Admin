@@ -1,17 +1,17 @@
-import { useMediaUrl } from "@/hooks/useMediaUrl";
+import { useMediaUrl } from "@/hooks/useMediaUrl"
 import {
 	studentAvatarColor,
 	studentInitials,
 	type Student,
-} from "@/types/student.types";
+} from "@/types/student.types"
 
 interface DetailAvatarProps {
-	student: Student;
+	student: Student
 }
 
 export function DetailAvatar({ student }: DetailAvatarProps) {
-	const { url } = useMediaUrl(student.mediaFileId);
-	const imageUrl = url || student.avatarUrl;
+	const { url } = useMediaUrl(student.mediaFileId)
+	const imageUrl = url || student.avatarUrl
 
 	return (
 		<div
@@ -20,12 +20,13 @@ export function DetailAvatar({ student }: DetailAvatarProps) {
 				imageUrl
 					? undefined
 					: { background: studentAvatarColor(student.id) }
-			}>
+			}
+		>
 			{imageUrl ? (
 				<img src={imageUrl} alt={student.fullName} />
 			) : (
 				studentInitials(student.fullName)
 			)}
 		</div>
-	);
+	)
 }

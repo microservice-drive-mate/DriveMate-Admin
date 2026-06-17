@@ -1,83 +1,83 @@
-import type { LicenseTier } from "./user-profile.types";
+import type { LicenseTier } from "./user-profile.types"
 
-export type LicenseCategory = LicenseTier;
+export type LicenseCategory = LicenseTier
 
 export interface TopicDistributionItem {
-	topicId: string;
-	questionCount: number;
+	topicId: string
+	questionCount: number
 }
 
 export interface ExamTemplate {
-	id: string;
-	name: string;
-	description?: string;
-	licenseCategory: LicenseCategory;
-	totalQuestions: number;
-	passingScore: number;
-	durationMinutes: number;
-	criticalQuestions: number;
-	maxCriticalMistakes: number;
-	shuffleQuestions: boolean;
-	topicDistribution: TopicDistributionItem[];
-	isActive: boolean;
-	isDeleted: boolean;
-	version: number;
-	createdById: string;
-	createdAt: string;
-	updatedAt: string;
+	id: string
+	name: string
+	description?: string
+	licenseCategory: LicenseCategory
+	totalQuestions: number
+	passingScore: number
+	durationMinutes: number
+	criticalQuestions: number
+	maxCriticalMistakes: number
+	shuffleQuestions: boolean
+	topicDistribution: TopicDistributionItem[]
+	isActive: boolean
+	isDeleted: boolean
+	version: number
+	createdById: string
+	createdAt: string
+	updatedAt: string
 }
 
 export interface CreateExamTemplatePayload {
-	name: string;
-	description?: string;
-	licenseCategory: LicenseCategory;
-	totalQuestions: number;
-	passingScore: number;
-	durationMinutes: number;
-	criticalQuestions: number;
-	maxCriticalMistakes: number;
-	shuffleQuestions: boolean;
-	topicDistribution: TopicDistributionItem[];
+	name: string
+	description?: string
+	licenseCategory: LicenseCategory
+	totalQuestions: number
+	passingScore: number
+	durationMinutes: number
+	criticalQuestions: number
+	maxCriticalMistakes: number
+	shuffleQuestions: boolean
+	topicDistribution: TopicDistributionItem[]
 }
 
 export interface UpdateExamTemplatePayload {
-	version: number;
-	name?: string;
-	description?: string;
-	totalQuestions?: number;
-	passingScore?: number;
-	durationMinutes?: number;
-	criticalQuestions?: number;
-	maxCriticalMistakes?: number;
-	shuffleQuestions?: boolean;
-	topicDistribution?: TopicDistributionItem[];
-	isActive?: boolean;
+	version: number
+	name?: string
+	description?: string
+	totalQuestions?: number
+	passingScore?: number
+	durationMinutes?: number
+	criticalQuestions?: number
+	maxCriticalMistakes?: number
+	shuffleQuestions?: boolean
+	topicDistribution?: TopicDistributionItem[]
+	isActive?: boolean
 }
 
 export interface DeleteExamTemplatePayload {
-	version: number;
+	version: number
 }
 
 export interface ExamTemplateListParams {
-	page?: number;
-	size?: number;
-	licenseCategory?: LicenseCategory;
-	isActive?: boolean;
-	includeDeleted?: boolean;
+	page?: number
+	size?: number
+	licenseCategory?: LicenseCategory
+	isActive?: boolean
+	includeDeleted?: boolean
 }
 
 export interface ExamTemplateFormData {
-	name: string;
-	description: string;
-	licenseCategory: LicenseCategory | "";
-	totalQuestions: number;
-	passingScore: number;
-	durationMinutes: number;
-	criticalQuestions: number;
-	maxCriticalMistakes: number;
-	shuffleQuestions: boolean;
-	topicDistribution: TopicDistributionItem[];
-	isActive: boolean;
+	name: string
+	description: string
+	licenseCategory: LicenseCategory | ""
+	totalQuestions: number
+	passingScore: number
+	durationMinutes: number
+	criticalQuestions: number
+	maxCriticalMistakes: number
+	shuffleQuestions: boolean
+	topicDistribution: TopicDistributionItem[]
+	isActive: boolean
 }
 
 export const LICENSE_CATEGORIES: LicenseCategory[] = [
@@ -89,7 +89,7 @@ export const LICENSE_CATEGORIES: LicenseCategory[] = [
 	"D",
 	"E",
 	"F",
-];
+]
 
 export const LICENSE_CATEGORY_DEFAULTS: Record<
 	LicenseCategory,
@@ -106,4 +106,4 @@ export const LICENSE_CATEGORY_DEFAULTS: Record<
 	D: { totalQuestions: 45, passingScore: 41, durationMinutes: 32 },
 	E: { totalQuestions: 45, passingScore: 41, durationMinutes: 32 },
 	F: { totalQuestions: 45, passingScore: 41, durationMinutes: 32 },
-};
+}

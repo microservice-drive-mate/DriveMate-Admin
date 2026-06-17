@@ -1,4 +1,4 @@
-import type { MediaReference } from "@/types/media.types";
+import type { MediaReference } from "@/types/media.types"
 import type {
 	CreateQuestionPayload,
 	LicenseCategory,
@@ -7,21 +7,21 @@ import type {
 	QuestionResponse,
 	QuestionType,
 	UpdateQuestionPayload,
-} from "@/types/question.types";
+} from "@/types/question.types"
 
 const UUID_PATTERN =
-	/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+	/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
 
 export const isUuid = (value: string | null | undefined): value is string =>
-	typeof value === "string" && UUID_PATTERN.test(value);
+	typeof value === "string" && UUID_PATTERN.test(value)
 
 export const toMediaReference = (
 	mediaFileId: string | null,
 	publicUrl: string | null,
 ): MediaReference | null => {
-	if (!isUuid(mediaFileId)) return null;
-	return { mediaFileId, publicUrl: publicUrl ?? "" };
-};
+	if (!isUuid(mediaFileId)) return null
+	return { mediaFileId, publicUrl: publicUrl ?? "" }
+}
 
 export const questionToFormData = (
 	question: QuestionResponse,
@@ -42,7 +42,7 @@ export const questionToFormData = (
 			displayOrder: option.displayOrder,
 		})),
 	explanation: question.explanation,
-});
+})
 
 const toPayloadOptions = (
 	options: QuestionFormData["options"],
@@ -51,7 +51,7 @@ const toPayloadOptions = (
 		content: option.content.trim(),
 		isCorrect: option.isCorrect,
 		displayOrder: option.displayOrder,
-	}));
+	}))
 
 const buildBasePayload = (form: QuestionFormData): CreateQuestionPayload => ({
 	content: form.content.trim(),
@@ -63,20 +63,20 @@ const buildBasePayload = (form: QuestionFormData): CreateQuestionPayload => ({
 	isActive: form.isActive,
 	topicId: form.topicId,
 	options: toPayloadOptions(form.options),
-});
+})
 
 const areLicenseCategoriesEqual = (
 	current: LicenseCategory[],
 	initial: LicenseCategory[],
 ) => {
-	if (current.length !== initial.length) return false;
+	if (current.length !== initial.length) return false
 
-	const currentSorted = [...current].sort();
-	const initialSorted = [...initial].sort();
+	const currentSorted = [...current].sort()
+	const initialSorted = [...initial].sort()
 	return currentSorted.every(
 		(category, index) => category === initialSorted[index],
-	);
-};
+	)
+}
 
 const areOptionsEqual = (
 	current: CreateQuestionPayload["options"],
@@ -84,39 +84,39 @@ const areOptionsEqual = (
 ) =>
 	current.length === initial.length &&
 	current.every((option, index) => {
-		const initialOption = initial[index];
+		const initialOption = initial[index]
 		return (
 			initialOption &&
 			option.content === initialOption.content &&
 			option.isCorrect === initialOption.isCorrect &&
 			option.displayOrder === initialOption.displayOrder
-		);
-	});
+		)
+	})
 
 const setMediaPayload = (
 	payload: CreateQuestionPayload | UpdateQuestionPayload,
 	image: MediaReference,
 ) => {
-	if (!isUuid(image.mediaFileId)) return;
-	payload.imageUrl = image.publicUrl || null;
-	payload.mediaFileId = image.mediaFileId;
-};
+	if (!isUuid(image.mediaFileId)) return
+	payload.imageUrl = image.publicUrl || null
+	payload.mediaFileId = image.mediaFileId
+}
 
 export const buildCreateQuestionPayload = (
 	form: QuestionFormData,
 	image: MediaReference | null,
 ): CreateQuestionPayload => {
-	const payload = buildBasePayload(form);
-	if (image) setMediaPayload(payload, image);
-	return payload;
-};
+	const payload = buildBasePayload(form)
+	if (image) setMediaPayload(payload, image)
+	return payload
+}
 
 interface BuildUpdatePayloadArgs {
-	form: QuestionFormData;
-	initialForm: QuestionFormData | null;
-	version: number;
-	image: MediaReference | null;
-	imageChanged: boolean;
+	form: QuestionFormData
+	initialForm: QuestionFormData | null
+	version: number
+	image: MediaReference | null
+	imageChanged: boolean
 }
 
 export const buildUpdateQuestionPayload = ({
@@ -126,52 +126,53 @@ export const buildUpdateQuestionPayload = ({
 	image,
 	imageChanged,
 }: BuildUpdatePayloadArgs): UpdateQuestionPayload => {
-	const payload: UpdateQuestionPayload = { version };
+	const payload: UpdateQuestionPayload = { version }
 
 	if (!initialForm) {
-		Object.assign(payload, buildBasePayload(form));
+		Object.assign(payload, buildBasePayload(form))
 	} else {
-		const current = buildBasePayload(form);
-		const initial = buildBasePayload(initialForm);
+		const current = buildBasePayload(form)
+		const initial = buildBasePayload(initialForm)
 
-		if (current.content !== initial.content) payload.content = current.content;
-		if (current.type !== initial.type) payload.type = current.type;
+		if (current.content !== initial.content)
+			payload.content = current.content
+		if (current.type !== initial.type) payload.type = current.type
 		if (
 			!areLicenseCategoriesEqual(
 				current.licenseCategories,
 				initial.licenseCategories,
 			)
 		) {
-			payload.licenseCategories = current.licenseCategories;
+			payload.licenseCategories = current.licenseCategories
 		}
 		if (current.difficulty !== initial.difficulty) {
-			payload.difficulty = current.difficulty;
+			payload.difficulty = current.difficulty
 		}
 		if (current.explanation !== initial.explanation) {
-			payload.explanation = current.explanation;
+			payload.explanation = current.explanation
 		}
 		if (current.isCritical !== initial.isCritical) {
-			payload.isCritical = current.isCritical;
+			payload.isCritical = current.isCritical
 		}
 		if (current.isActive !== initial.isActive) {
-			payload.isActive = current.isActive;
+			payload.isActive = current.isActive
 		}
 		if (current.topicId !== initial.topicId) {
-			payload.topicId = current.topicId;
+			payload.topicId = current.topicId
 		}
 		if (!areOptionsEqual(current.options, initial.options)) {
-			payload.options = current.options;
+			payload.options = current.options
 		}
 	}
 
 	if (imageChanged) {
 		if (image && isUuid(image.mediaFileId)) {
-			setMediaPayload(payload, image);
+			setMediaPayload(payload, image)
 		} else {
-			payload.imageUrl = null;
-			payload.mediaFileId = null;
+			payload.imageUrl = null
+			payload.mediaFileId = null
 		}
 	}
 
-	return payload;
-};
+	return payload
+}

@@ -1,104 +1,109 @@
 :root {
-  /* Layout */
-  --sidebar-width: 260px;
-  --header-height: 60px;
+	/* Layout */
+	--sidebar-width: 260px;
+	--header-height: 60px;
 
-  /* Colors */
-  --color-primary: #2563eb;
-  --color-primary-hover: #1d4ed8;
-  --color-bg: #1a1a1a;
-  --color-surface: #242424;
-  --color-border: #333333;
-  --color-text: #f0f0f0;
-  --color-text-muted: #888888;
+	/* Colors */
+	--color-primary: #2563eb;
+	--color-primary-hover: #1d4ed8;
+	--color-bg: #1a1a1a;
+	--color-surface: #242424;
+	--color-border: #333333;
+	--color-text: #f0f0f0;
+	--color-text-muted: #888888;
 
-  /* Sidebar */
-  --sidebar-bg: #1a1a1a;
-  --sidebar-text: #9ca3af;
-  --sidebar-text-active: #ffffff;
-  --sidebar-item-hover-bg: rgba(255, 255, 255, 0.07);
-  --sidebar-item-active-bg: #fdb913;
+	/* Sidebar */
+	--sidebar-bg: #1a1a1a;
+	--sidebar-text: #9ca3af;
+	--sidebar-text-active: #ffffff;
+	--sidebar-item-hover-bg: rgba(255, 255, 255, 0.07);
+	--sidebar-item-active-bg: #fdb913;
 
-  /* Typography */
-  --font-sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --font-mono: ui-monospace, Consolas, monospace;
+	/* Typography */
+	--font-sans: system-ui, "Segoe UI", Roboto, sans-serif;
+	--font-mono: ui-monospace, Consolas, monospace;
 
-  /* Shadows */
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+	/* Shadows */
+	--shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
 
-  /* Radius */
-  --radius-sm: 4px;
-  --radius-md: 8px;
+	/* Radius */
+	--radius-sm: 4px;
+	--radius-md: 8px;
 
-  /* Scrollbar */
-  --scrollbar-size: 10px;
-  --scrollbar-track: #1a1a1a;
-  --scrollbar-thumb: #4a4a4a;
-  --scrollbar-thumb-hover: #666666;
+	/* Scrollbar */
+	--scrollbar-size: 10px;
+	--scrollbar-track: #1a1a1a;
+	--scrollbar-thumb: #4a4a4a;
+	--scrollbar-thumb-hover: #666666;
 }
 
 *,
 *::before,
 *::after {
-  box-sizing: border-box;
+	box-sizing: border-box;
 }
 
 * {
-  scrollbar-width: thin;
-  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+	scrollbar-width: thin;
+	scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
 }
 
 *::-webkit-scrollbar {
-  width: var(--scrollbar-size);
-  height: var(--scrollbar-size);
+	width: var(--scrollbar-size);
+	height: var(--scrollbar-size);
 }
 
 *::-webkit-scrollbar-track {
-  background: var(--scrollbar-track);
+	background: var(--scrollbar-track);
 }
 
 *::-webkit-scrollbar-thumb {
-  background: var(--scrollbar-thumb);
-  border: 2px solid var(--scrollbar-track);
-  border-radius: 999px;
+	background: var(--scrollbar-thumb);
+	border: 2px solid var(--scrollbar-track);
+	border-radius: 999px;
 }
 
 *::-webkit-scrollbar-thumb:hover {
-  background: var(--scrollbar-thumb-hover);
+	background: var(--scrollbar-thumb-hover);
 }
 
 *::-webkit-scrollbar-corner {
-  background: var(--scrollbar-track);
+	background: var(--scrollbar-track);
 }
 
 body {
-  margin: 0;
-  font-family: var(--font-sans);
-  font-size: 14px;
-  color: var(--color-text);
-  background: var(--color-bg);
-  -webkit-font-smoothing: antialiased;
+	margin: 0;
+	font-family: var(--font-sans);
+	font-size: 14px;
+	color: var(--color-text);
+	background: var(--color-bg);
+	-webkit-font-smoothing: antialiased;
 }
 
 #root {
-  width: 100%;
-  max-width: none;
-  margin: 0;
-  text-align: left;
-  min-height: 100vh;
-  display: block;
+	width: 100%;
+	max-width: none;
+	margin: 0;
+	text-align: left;
+	min-height: 100vh;
+	display: block;
 }
 
-h1, h2, h3, h4, h5, h6 {
-  margin: 0;
-  font-weight: 600;
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	margin: 0;
+	font-weight: 600;
 }
 
 p {
-  margin: 0;
+	margin: 0;
 }
 
 a {
-  color: inherit;
-  text-decoration: none;
+	color: inherit;
+	text-decoration: none;
 }

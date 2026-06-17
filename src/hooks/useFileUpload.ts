@@ -1,19 +1,19 @@
-import { useRef, useState } from "react";
-import type { ChangeEvent, DragEvent } from "react";
+import { useRef, useState } from "react"
+import type { ChangeEvent, DragEvent } from "react"
 
-import { validateFile } from "@/constants/media";
-import { invalidateMediaUrl } from "@/lib";
-import { mediaService } from "@/services/media.service";
-import type { UploadResult } from "@/types/media.types";
+import { validateFile } from "@/constants/media"
+import { invalidateMediaUrl } from "@/lib"
+import { mediaService } from "@/services/media.service"
+import type { UploadResult } from "@/types/media.types"
 
 interface UseFileUploadOptions {
-	accept: readonly string[];
-	maxSize: number;
-	disabled: boolean;
+	accept: readonly string[]
+	maxSize: number
+	disabled: boolean
 	/** mediaFileId hiện tại để invalidate cache khi thay/xoá. */
-	currentMediaFileId: string | null | undefined;
-	onUploaded: (result: UploadResult) => void;
-	onCleared: () => void;
+	currentMediaFileId: string | null | undefined
+	onUploaded: (result: UploadResult) => void
+	onCleared: () => void
 }
 
 /**
@@ -29,68 +29,68 @@ export function useFileUpload({
 	onUploaded,
 	onCleared,
 }: UseFileUploadOptions) {
-	const inputRef = useRef<HTMLInputElement | null>(null);
-	const [uploading, setUploading] = useState(false);
-	const [error, setError] = useState<string | null>(null);
-	const [dragging, setDragging] = useState(false);
+	const inputRef = useRef<HTMLInputElement | null>(null)
+	const [uploading, setUploading] = useState(false)
+	const [error, setError] = useState<string | null>(null)
+	const [dragging, setDragging] = useState(false)
 
 	const pickFile = () => {
-		if (disabled || uploading) return;
-		inputRef.current?.click();
-	};
+		if (disabled || uploading) return
+		inputRef.current?.click()
+	}
 
 	const handleFiles = async (files: FileList | null) => {
-		if (!files || files.length === 0) return;
-		const file = files[0];
+		if (!files || files.length === 0) return
+		const file = files[0]
 
-		const validationError = validateFile(file, accept, maxSize);
+		const validationError = validateFile(file, accept, maxSize)
 		if (validationError) {
-			setError(validationError.message);
-			return;
+			setError(validationError.message)
+			return
 		}
 
-		setError(null);
-		setUploading(true);
+		setError(null)
+		setUploading(true)
 
-		const result = await mediaService.uploadViaDirect(file);
+		const result = await mediaService.uploadViaDirect(file)
 
-		setUploading(false);
+		setUploading(false)
 
 		if (!result.success) {
-			setError(result.error);
-			return;
+			setError(result.error)
+			return
 		}
 
-		invalidateMediaUrl(currentMediaFileId);
-		onUploaded(result.data);
-	};
+		invalidateMediaUrl(currentMediaFileId)
+		onUploaded(result.data)
+	}
 
 	const remove = () => {
-		if (disabled || uploading) return;
-		invalidateMediaUrl(currentMediaFileId);
-		onCleared();
-		setError(null);
-	};
+		if (disabled || uploading) return
+		invalidateMediaUrl(currentMediaFileId)
+		onCleared()
+		setError(null)
+	}
 
 	const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
-		e.preventDefault();
-		if (disabled || uploading) return;
-		setDragging(true);
-	};
+		e.preventDefault()
+		if (disabled || uploading) return
+		setDragging(true)
+	}
 
-	const handleDragLeave = () => setDragging(false);
+	const handleDragLeave = () => setDragging(false)
 
 	const handleDrop = (e: DragEvent<HTMLDivElement>) => {
-		e.preventDefault();
-		setDragging(false);
-		if (disabled || uploading) return;
-		void handleFiles(e.dataTransfer.files);
-	};
+		e.preventDefault()
+		setDragging(false)
+		if (disabled || uploading) return
+		void handleFiles(e.dataTransfer.files)
+	}
 
 	const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-		void handleFiles(e.target.files);
-		e.target.value = "";
-	};
+		void handleFiles(e.target.files)
+		e.target.value = ""
+	}
 
 	return {
 		inputRef,
@@ -104,5 +104,5 @@ export function useFileUpload({
 		handleDragLeave,
 		handleDrop,
 		handleInputChange,
-	};
+	}
 }

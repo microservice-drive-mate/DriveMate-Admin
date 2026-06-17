@@ -1,39 +1,39 @@
 .admin-layout {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  grid-template-rows: var(--header-height) 1fr;
-  grid-template-areas:
-    'sidebar header'
-    'sidebar main';
-  min-height: 100vh;
+	display: grid;
+	grid-template-columns: auto 1fr;
+	grid-template-rows: var(--header-height) 1fr;
+	grid-template-areas:
+		"sidebar header"
+		"sidebar main";
+	min-height: 100vh;
 }
 
 .admin-layout__sidebar {
-  grid-area: sidebar;
-  grid-row: 1 / -1;
-  width: var(--sidebar-width);
-  transition: width 0.25s ease;
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  overflow: hidden;
-  flex-shrink: 0;
+	grid-area: sidebar;
+	grid-row: 1 / -1;
+	width: var(--sidebar-width);
+	transition: width 0.25s ease;
+	position: sticky;
+	top: 0;
+	height: 100vh;
+	overflow: hidden;
+	flex-shrink: 0;
 }
 
 .admin-layout__header {
-  grid-area: header;
-  position: sticky;
-  top: 0;
-  z-index: 10;
+	grid-area: header;
+	position: sticky;
+	top: 0;
+	z-index: 10;
 }
 
 .admin-layout--collapsed .admin-layout__sidebar {
-  width: 64px;
+	width: 64px;
 }
 
 .admin-layout__main {
-  grid-area: main;
-  padding: 24px;
-  overflow-y: auto;
-  min-width: 0;
+	grid-area: main;
+	padding: 24px;
+	overflow-y: auto;
+	min-width: 0;
 }

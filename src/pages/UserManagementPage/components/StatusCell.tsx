@@ -1,8 +1,8 @@
-import type { IdentityUser } from "@/types/identity.types";
-import { formatDate } from "../userTableUtils";
+import type { IdentityUser } from "@/types/identity.types"
+import { formatDate } from "../userTableUtils"
 
 interface StatusCellProps {
-	user: IdentityUser;
+	user: IdentityUser
 }
 
 export function StatusCell({ user }: StatusCellProps) {
@@ -16,12 +16,14 @@ export function StatusCell({ user }: StatusCellProps) {
 					</span>
 				)}
 			</div>
-		);
+		)
 	}
 
 	return (
-		<span className={`badge ${user.isActive ? "badge--active" : "badge--inactive"}`}>
+		<span
+			className={`badge ${user.isActive ? "badge--active" : "badge--inactive"}`}
+		>
 			{user.isActive ? "Hoạt động" : "Tạm dừng"}
 		</span>
-	);
+	)
 }

@@ -1,17 +1,17 @@
 export interface FilterOption {
-	value: string;
-	label: string;
-	disabled?: boolean;
+	value: string
+	label: string
+	disabled?: boolean
 }
 
 interface FilterSelectProps {
-	value: string;
-	onChange: (value: string) => void;
+	value: string
+	onChange: (value: string) => void
 	/** Nhãn cho option rỗng đầu danh sách (value=""). */
-	placeholder: string;
-	options: FilterOption[];
-	disabled?: boolean;
-	className?: string;
+	placeholder: string
+	options: FilterOption[]
+	disabled?: boolean
+	className?: string
 }
 
 /**
@@ -32,13 +32,18 @@ export function FilterSelect({
 			className={className}
 			value={value}
 			disabled={disabled}
-			onChange={(e) => onChange(e.target.value)}>
+			onChange={(e) => onChange(e.target.value)}
+		>
 			<option value="">{placeholder}</option>
 			{options.map((option) => (
-				<option key={option.value} value={option.value} disabled={option.disabled}>
+				<option
+					key={option.value}
+					value={option.value}
+					disabled={option.disabled}
+				>
 					{option.label}
 				</option>
 			))}
 		</select>
-	);
+	)
 }

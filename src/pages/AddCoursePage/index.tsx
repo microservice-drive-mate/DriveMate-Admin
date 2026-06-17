@@ -1,8 +1,8 @@
-import { useCourseForm } from "./hooks/useCourseForm";
-import { CourseBasicInfoSection } from "./components/CourseBasicInfoSection";
-import { CourseRequirementSection } from "./components/CourseRequirementSection";
-import { CoursePreviewSidebar } from "./components/CoursePreviewSidebar";
-import "./AddCoursePage.css";
+import { useCourseForm } from "./hooks/useCourseForm"
+import { CourseBasicInfoSection } from "./components/CourseBasicInfoSection"
+import { CourseRequirementSection } from "./components/CourseRequirementSection"
+import { CoursePreviewSidebar } from "./components/CoursePreviewSidebar"
+import "./AddCoursePage.css"
 
 export default function AddCoursePage() {
 	const {
@@ -20,14 +20,14 @@ export default function AddCoursePage() {
 		handleSubmit,
 		goBack,
 		fetchLoading,
-	} = useCourseForm();
+	} = useCourseForm()
 
 	if (fetchLoading) {
 		return (
 			<div className="add-course">
 				<div className="add-course__loading">Đang tải...</div>
 			</div>
-		);
+		)
 	}
 
 	return (
@@ -41,12 +41,17 @@ export default function AddCoursePage() {
 							viewBox="0 0 24 24"
 							fill="none"
 							stroke="currentColor"
-							strokeWidth="2.5">
+							strokeWidth="2.5"
+						>
 							<path d="M19 12H5M12 5l-7 7 7 7" />
 						</svg>
 					</button>
 					<div>
-						<h1>{isEdit ? "Chỉnh Sửa Khóa Học" : "Thêm Khóa Học Mới"}</h1>
+						<h1>
+							{isEdit
+								? "Chỉnh Sửa Khóa Học"
+								: "Thêm Khóa Học Mới"}
+						</h1>
 						<p>
 							{isEdit
 								? "Cập nhật thông tin khóa học"
@@ -87,5 +92,5 @@ export default function AddCoursePage() {
 				/>
 			</div>
 		</div>
-	);
+	)
 }

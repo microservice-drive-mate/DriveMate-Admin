@@ -2,21 +2,21 @@ import {
 	ALLOWED_IMAGE_MIMES,
 	MAX_FILE_SIZE_BYTES,
 	formatFileSize,
-} from "@/constants/media";
-import { useFileUpload } from "@/hooks/useFileUpload";
-import { useMediaUrl } from "@/hooks/useMediaUrl";
-import type { MediaReference } from "@/types/media.types";
+} from "@/constants/media"
+import { useFileUpload } from "@/hooks/useFileUpload"
+import { useMediaUrl } from "@/hooks/useMediaUrl"
+import type { MediaReference } from "@/types/media.types"
 
-import "./ImageUploader.css";
+import "./ImageUploader.css"
 
 interface ImageUploaderProps {
-	value: MediaReference | null;
-	onChange: (next: MediaReference | null) => void;
-	disabled?: boolean;
-	maxSize?: number;
-	accept?: readonly string[];
-	helpText?: string;
-	shape?: "square" | "circle";
+	value: MediaReference | null
+	onChange: (next: MediaReference | null) => void
+	disabled?: boolean
+	maxSize?: number
+	accept?: readonly string[]
+	helpText?: string
+	shape?: "square" | "circle"
 }
 
 export function ImageUploader({
@@ -30,7 +30,7 @@ export function ImageUploader({
 }: ImageUploaderProps) {
 	const { url: previewUrl, loading: loadingPreview } = useMediaUrl(
 		value?.mediaFileId ?? null,
-	);
+	)
 
 	const {
 		inputRef,
@@ -55,9 +55,9 @@ export function ImageUploader({
 				publicUrl: result.publicUrl,
 			}),
 		onCleared: () => onChange(null),
-	});
+	})
 
-	const hasImage = !!value?.mediaFileId;
+	const hasImage = !!value?.mediaFileId
 
 	return (
 		<div className={`image-uploader image-uploader--${shape}`}>
@@ -78,15 +78,17 @@ export function ImageUploader({
 				tabIndex={disabled ? -1 : 0}
 				onKeyDown={(e) => {
 					if (e.key === "Enter" || e.key === " ") {
-						e.preventDefault();
-						handlePickFile();
+						e.preventDefault()
+						handlePickFile()
 					}
 				}}
 			>
 				{uploading || loadingPreview ? (
 					<div className="image-uploader__placeholder">
 						<span className="image-uploader__spinner" />
-						<span>{uploading ? "Đang tải lên..." : "Đang tải ảnh..."}</span>
+						<span>
+							{uploading ? "Đang tải lên..." : "Đang tải ảnh..."}
+						</span>
 					</div>
 				) : previewUrl ? (
 					<img
@@ -157,5 +159,5 @@ export function ImageUploader({
 			)}
 			{error && <p className="image-uploader__error">{error}</p>}
 		</div>
-	);
+	)
 }

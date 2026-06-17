@@ -1,19 +1,19 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react"
 
 export type AsyncDataResult<T> =
 	| { success: true; data: T; message?: string }
-	| { success: false; error: string; code?: string; status?: number };
+	| { success: false; error: string; code?: string; status?: number }
 
 interface AsyncDataState<T> {
-	data: T;
-	loading: boolean;
-	error: string | null;
+	data: T
+	loading: boolean
+	error: string | null
 }
 
 interface UseAsyncDataOptions<T> {
-	initialData: T;
-	enabled?: boolean;
-	retainPreviousData?: boolean;
+	initialData: T
+	enabled?: boolean
+	retainPreviousData?: boolean
 }
 
 export function useAsyncData<T>(
@@ -24,68 +24,79 @@ export function useAsyncData<T>(
 		retainPreviousData = true,
 	}: UseAsyncDataOptions<T>,
 ) {
-	const [reloadKey, setReloadKey] = useState(0);
-	const requestRef = useRef(0);
+	const [reloadKey, setReloadKey] = useState(0)
+	const requestRef = useRef(0)
 	// Capture initialData in a ref so array/object literals don't cause infinite re-renders
-	const initialDataRef = useRef(initialData);
+	const initialDataRef = useRef(initialData)
 	const [state, setState] = useState<AsyncDataState<T>>({
 		data: initialData,
 		loading: enabled,
 		error: null,
-	});
+	})
 
 	useEffect(() => {
-		if (!enabled) return;
+		if (!enabled) return
 
-		let active = true;
-		const requestId = requestRef.current + 1;
-		requestRef.current = requestId;
+		let active = true
+		const requestId = requestRef.current + 1
+		requestRef.current = requestId
 
 		void Promise.resolve()
 			.then(() => {
-				if (!active || requestRef.current !== requestId) return undefined;
+				if (!active || requestRef.current !== requestId)
+					return undefined
 				setState((current) => ({
-					data: retainPreviousData ? current.data : initialDataRef.current,
+					data: retainPreviousData
+						? current.data
+						: initialDataRef.current,
 					loading: true,
 					error: null,
-				}));
-				return load();
+				}))
+				return load()
 			})
 			.then((result) => {
-				if (!result || !active || requestRef.current !== requestId) return;
+				if (!result || !active || requestRef.current !== requestId)
+					return
 
 				if (result.success) {
 					setState({
 						data: result.data,
 						loading: false,
 						error: null,
-					});
-					return;
+					})
+					return
 				}
 
 				setState((current) => ({
-					data: retainPreviousData ? current.data : initialDataRef.current,
+					data: retainPreviousData
+						? current.data
+						: initialDataRef.current,
 					loading: false,
 					error: result.error,
-				}));
+				}))
 			})
 			.catch((error: unknown) => {
-				if (!active || requestRef.current !== requestId) return;
+				if (!active || requestRef.current !== requestId) return
 				setState((current) => ({
-					data: retainPreviousData ? current.data : initialDataRef.current,
+					data: retainPreviousData
+						? current.data
+						: initialDataRef.current,
 					loading: false,
-					error: error instanceof Error ? error.message : "Unexpected error",
-				}));
-			});
+					error:
+						error instanceof Error
+							? error.message
+							: "Unexpected error",
+				}))
+			})
 
 		return () => {
-			active = false;
-		};
-	}, [enabled, load, reloadKey, retainPreviousData]);
+			active = false
+		}
+	}, [enabled, load, reloadKey, retainPreviousData])
 
 	const refetch = useCallback(() => {
-		setReloadKey((current) => current + 1);
-	}, []);
+		setReloadKey((current) => current + 1)
+	}, [])
 
 	const setData = useCallback((nextData: T | ((current: T) => T)) => {
 		setState((current) => ({
@@ -94,12 +105,12 @@ export function useAsyncData<T>(
 				typeof nextData === "function"
 					? (nextData as (current: T) => T)(current.data)
 					: nextData,
-		}));
-	}, []);
+		}))
+	}, [])
 
 	return {
 		...state,
 		refetch,
 		setData,
-	};
+	}
 }

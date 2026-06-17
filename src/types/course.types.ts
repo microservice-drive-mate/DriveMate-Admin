@@ -1,215 +1,243 @@
-import type { UserRole } from './identity.types';
+import type { UserRole } from "./identity.types"
 
-export type LicenseCategory = 'A1' | 'A2' | 'B1' | 'B2' | 'C' | 'D' | 'E' | 'F';
-export type CourseStatus = 'DRAFT' | 'ACTIVE' | 'ARCHIVED';
+export type LicenseCategory = "A1" | "A2" | "B1" | "B2" | "C" | "D" | "E" | "F"
+export type CourseStatus = "DRAFT" | "ACTIVE" | "ARCHIVED"
+export type EnrollmentStatus = "ACTIVE" | "COMPLETED" | "DROPPED"
 
 export interface CourseLesson {
-  id: string;
-  courseId: string;
-  title: string;
-  content: string | null;
-  order: number;
-  createdAt: string;
+	id: string
+	courseId: string
+	title: string
+	content: string | null
+	order: number
+	createdAt: string
 }
 
 export interface CourseMaterial {
-  id: string;
-  title: string;
-  fileUrl: string | null;
-  mediaFileId: string | null;
-  type: string | null;
-  createdAt: string;
+	id: string
+	title: string
+	fileUrl: string | null
+	mediaFileId: string | null
+	type: string | null
+	createdAt: string
 }
 
 export interface CourseRequirement {
-  id: string;
-  minAge: number | null;
-  prerequisites: string | null;
-  attendanceRate: number;
-  minPassScore: number;
-  requiredExams: number;
+	id: string
+	minAge: number | null
+	prerequisites: string | null
+	attendanceRate: number
+	minPassScore: number
+	requiredExams: number
 }
 
 export interface CourseResponse {
-  id: string;
-  courseCode: string | null;
-  title: string;
-  description: string | null;
-  licenseCategory: LicenseCategory;
-  totalLessons: number;
-  duration: string | null;
-  tuitionFee: number;
-  capacity: number | null;
-  status: CourseStatus;
-  version: number;
-  isDeleted: boolean;
-  deletedAt: string | null;
-  deletedBy: string | null;
-  createdById: string;
-  createdAt: string;
-  updatedAt: string;
-  lessons: CourseLesson[];
-  instructorIds: string[];
-  requirement: CourseRequirement | null;
-  materials: CourseMaterial[];
+	id: string
+	courseCode: string | null
+	title: string
+	description: string | null
+	licenseCategory: LicenseCategory
+	totalLessons: number
+	duration: string | null
+	tuitionFee: number
+	capacity: number | null
+	status: CourseStatus
+	version: number
+	isDeleted: boolean
+	deletedAt: string | null
+	deletedBy: string | null
+	createdById: string
+	createdAt: string
+	updatedAt: string
+	lessons: CourseLesson[]
+	instructorIds: string[]
+	requirement: CourseRequirement | null
+	materials: CourseMaterial[]
 }
 
 export interface CourseFilters {
-  search: string;
-  licenseCategory: LicenseCategory | '';
-  status: CourseStatus | '';
+	search: string
+	licenseCategory: LicenseCategory | ""
+	status: CourseStatus | ""
 }
 
 export interface CreateCoursePayload {
-  title: string;
-  courseCode?: string;
-  licenseCategory: LicenseCategory;
-  description?: string;
-  duration?: string;
-  tuitionFee?: number;
-  capacity?: number;
-  instructorIds?: string[];
-  requirement?: {
-    minAge?: number;
-    prerequisites?: string;
-    attendanceRate?: number;
-    minPassScore?: number;
-    requiredExams?: number;
-  };
+	title: string
+	courseCode?: string
+	licenseCategory: LicenseCategory
+	description?: string
+	duration?: string
+	tuitionFee?: number
+	capacity?: number
+	instructorIds?: string[]
+	requirement?: {
+		minAge?: number
+		prerequisites?: string
+		attendanceRate?: number
+		minPassScore?: number
+		requiredExams?: number
+	}
 }
 
 export interface UpdateCoursePayload {
-  version?: number;
-  title?: string;
-  description?: string;
-  duration?: string;
-  tuitionFee?: number;
-  capacity?: number;
-  requirement?: {
-    minAge?: number;
-    prerequisites?: string;
-    attendanceRate?: number;
-    minPassScore?: number;
-    requiredExams?: number;
-  };
+	version?: number
+	title?: string
+	description?: string
+	duration?: string
+	tuitionFee?: number
+	capacity?: number
+	requirement?: {
+		minAge?: number
+		prerequisites?: string
+		attendanceRate?: number
+		minPassScore?: number
+		requiredExams?: number
+	}
 }
 
 export interface AddLessonPayload {
-  title: string;
-  order: number;
-  content?: string;
+	title: string
+	order: number
+	content?: string
 }
 
 export interface UpdateLessonPayload {
-  title?: string;
-  order?: number;
-  content?: string;
+	title?: string
+	order?: number
+	content?: string
 }
 
 export interface AddMaterialPayload {
-  title: string;
-  fileUrl?: string;
-  mediaFileId?: string;
-  type?: string;
+	title: string
+	fileUrl?: string
+	mediaFileId?: string
+	type?: string
 }
 
 export interface CourseInstructor {
-  userId: string;
-  fullName: string;
-  email: string;
-  role?: UserRole;
-  isActive?: boolean;
-  assignedAt?: string;
+	userId: string
+	fullName: string
+	email: string
+	role?: UserRole
+	isActive?: boolean
+	assignedAt?: string
 }
 
 export interface CourseInstructorListParams {
-  page?: number;
-  size?: number;
-  search?: string;
-  isActive?: boolean;
+	page?: number
+	size?: number
+	search?: string
+	isActive?: boolean
 }
 
 export interface AddCourseInstructorPayload {
-  instructorId: string;
+	instructorId: string
 }
 
 export interface CourseFormData {
-  courseCode: string;
-  version: number | null;
-  title: string;
-  licenseCategory: LicenseCategory | '';
-  description: string;
-  duration: string;
-  tuitionFee: number;
-  capacity: number;
-  instructorIds: string[];
-  requirement: {
-    minAge: number;
-    prerequisites: string;
-    attendanceRate: number;
-    minPassScore: number;
-    requiredExams: number;
-  };
+	courseCode: string
+	version: number | null
+	title: string
+	licenseCategory: LicenseCategory | ""
+	description: string
+	duration: string
+	tuitionFee: number
+	capacity: number
+	instructorIds: string[]
+	requirement: {
+		minAge: number
+		prerequisites: string
+		attendanceRate: number
+		minPassScore: number
+		requiredExams: number
+	}
 }
 
-export type CourseScheduleDayOfWeek = 1 | 2 | 3 | 4 | 5 | 6 | 7;
+export type CourseScheduleDayOfWeek = 1 | 2 | 3 | 4 | 5 | 6 | 7
 
 export interface CourseSchedule {
-  id: string;
-  courseId: string;
-  instructorId: string;
-  dayOfWeek: CourseScheduleDayOfWeek;
-  startTime: string;
-  endTime: string;
-  room: string;
-  effectiveFrom: string;
-  effectiveTo?: string | null;
-  isActive: boolean;
-  createdAt: string;
-  updatedAt: string;
+	id: string
+	courseId: string
+	instructorId: string
+	dayOfWeek: CourseScheduleDayOfWeek
+	startTime: string
+	endTime: string
+	room: string
+	effectiveFrom: string
+	effectiveTo?: string | null
+	isActive: boolean
+	createdAt: string
+	updatedAt: string
 }
 
 export interface CreateSchedulePayload {
-  instructorId: string;
-  dayOfWeek: CourseScheduleDayOfWeek;
-  startTime: string;
-  endTime: string;
-  room: string;
-  effectiveFrom: string;
-  effectiveTo?: string | null;
-  isActive?: boolean;
+	instructorId: string
+	dayOfWeek: CourseScheduleDayOfWeek
+	startTime: string
+	endTime: string
+	room: string
+	effectiveFrom: string
+	effectiveTo?: string | null
+	isActive?: boolean
 }
 
 export interface UpdateSchedulePayload {
-  dayOfWeek?: CourseScheduleDayOfWeek;
-  startTime?: string;
-  endTime?: string;
-  room?: string;
-  effectiveFrom?: string;
-  effectiveTo?: string | null;
-  isActive?: boolean;
+	dayOfWeek?: CourseScheduleDayOfWeek
+	startTime?: string
+	endTime?: string
+	room?: string
+	effectiveFrom?: string
+	effectiveTo?: string | null
+	isActive?: boolean
+}
+
+export interface AdminEnrollmentItem {
+	enrollmentId: string
+	courseId: string
+	courseCode: string | null
+	title: string
+	licenseCategory: LicenseCategory
+	status: EnrollmentStatus
+	progress: number
+	enrolledAt: string
+	completedAt: string | null
 }
 
 export const DAY_OF_WEEK_LABELS: Record<CourseScheduleDayOfWeek, string> = {
-  1: 'Thứ Hai',
-  2: 'Thứ Ba',
-  3: 'Thứ Tư',
-  4: 'Thứ Năm',
-  5: 'Thứ Sáu',
-  6: 'Thứ Bảy',
-  7: 'Chủ Nhật',
-};
+	1: "Thứ Hai",
+	2: "Thứ Ba",
+	3: "Thứ Tư",
+	4: "Thứ Năm",
+	5: "Thứ Sáu",
+	6: "Thứ Bảy",
+	7: "Chủ Nhật",
+}
 
 export const COURSE_STATUS_LABELS: Record<CourseStatus, string> = {
-  DRAFT: 'Bản nháp',
-  ACTIVE: 'Đang hoạt động',
-  ARCHIVED: 'Đã lưu trữ',
-};
+	DRAFT: "Bản nháp",
+	ACTIVE: "Đang hoạt động",
+	ARCHIVED: "Đã lưu trữ",
+}
 
-export const COURSE_LICENSE_CATEGORIES: LicenseCategory[] = ['A1', 'A2', 'B1', 'B2', 'C', 'D', 'E', 'F'];
+export const ENROLLMENT_STATUS_LABELS: Record<EnrollmentStatus, string> = {
+	ACTIVE: "Đang học",
+	COMPLETED: "Hoàn thành",
+	DROPPED: "Đã hủy",
+}
+
+export const COURSE_LICENSE_CATEGORIES: LicenseCategory[] = [
+	"A1",
+	"A2",
+	"B1",
+	"B2",
+	"C",
+	"D",
+	"E",
+	"F",
+]
 
 export const COURSE_STATUS_OPTIONS: { value: CourseStatus; label: string }[] = [
-  { value: 'DRAFT', label: 'Bản nháp' },
-  { value: 'ACTIVE', label: 'Đang hoạt động' },
-  { value: 'ARCHIVED', label: 'Đã lưu trữ' },
-];
+	{ value: "DRAFT", label: "Bản nháp" },
+	{ value: "ACTIVE", label: "Đang hoạt động" },
+	{ value: "ARCHIVED", label: "Đã lưu trữ" },
+]

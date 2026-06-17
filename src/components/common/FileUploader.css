@@ -15,7 +15,9 @@
 	border-radius: 12px;
 	background: var(--color-surface-muted, #f9fafb);
 	cursor: pointer;
-	transition: border-color 0.15s ease, background 0.15s ease;
+	transition:
+		border-color 0.15s ease,
+		background 0.15s ease;
 	color: var(--color-text-muted, #6b7280);
 }
 

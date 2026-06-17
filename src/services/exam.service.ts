@@ -1,16 +1,16 @@
-import type { ApiResponse, PaginatedResponse } from "@/types";
+import type { ApiResponse, PaginatedResponse } from "@/types"
 import type {
 	CreateExamTemplatePayload,
 	ExamTemplate,
 	ExamTemplateListParams,
 	UpdateExamTemplatePayload,
-} from "@/types/exam-template.types";
+} from "@/types/exam-template.types"
 import type {
 	AdminExamSession,
 	AdminExamSessionListParams,
-} from "@/types/exam-session.types";
-import { apiService } from "@/lib";
-import { withErrorHandling } from "@/utils";
+} from "@/types/exam-session.types"
+import { apiService } from "@/lib"
+import { withErrorHandling } from "@/utils"
 
 export const examService = {
 	list: withErrorHandling((params?: ExamTemplateListParams) =>
@@ -54,4 +54,4 @@ export const examService = {
 			{ params },
 		),
 	),
-};
+}

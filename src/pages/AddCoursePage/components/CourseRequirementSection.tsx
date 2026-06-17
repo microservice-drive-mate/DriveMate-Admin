@@ -1,8 +1,8 @@
-import type { CourseFormData } from "@/types/course.types";
+import type { CourseFormData } from "@/types/course.types"
 
 interface CourseRequirementSectionProps {
-	requirement: CourseFormData["requirement"];
-	onUpdate: (patch: Partial<CourseFormData["requirement"]>) => void;
+	requirement: CourseFormData["requirement"]
+	onUpdate: (patch: Partial<CourseFormData["requirement"]>) => void
 }
 
 export function CourseRequirementSection({
@@ -32,7 +32,9 @@ export function CourseRequirementSection({
 							min={0}
 							value={requirement.requiredExams}
 							onChange={(e) =>
-								onUpdate({ requiredExams: Number(e.target.value) })
+								onUpdate({
+									requiredExams: Number(e.target.value),
+								})
 							}
 						/>
 					</div>
@@ -46,7 +48,9 @@ export function CourseRequirementSection({
 							max={100}
 							value={requirement.attendanceRate}
 							onChange={(e) =>
-								onUpdate({ attendanceRate: Number(e.target.value) })
+								onUpdate({
+									attendanceRate: Number(e.target.value),
+								})
 							}
 						/>
 					</div>
@@ -58,7 +62,9 @@ export function CourseRequirementSection({
 							max={100}
 							value={requirement.minPassScore}
 							onChange={(e) =>
-								onUpdate({ minPassScore: Number(e.target.value) })
+								onUpdate({
+									minPassScore: Number(e.target.value),
+								})
 							}
 						/>
 					</div>
@@ -76,5 +82,5 @@ export function CourseRequirementSection({
 				</div>
 			</div>
 		</div>
-	);
+	)
 }

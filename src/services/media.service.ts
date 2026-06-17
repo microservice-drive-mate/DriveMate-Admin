@@ -1,4 +1,4 @@
-import type { ApiResponse, PaginatedResponse } from "@/types";
+import type { ApiResponse, PaginatedResponse } from "@/types"
 import type {
 	FileObject,
 	MediaFileListParams,
@@ -6,17 +6,20 @@ import type {
 	UploadInitPayload,
 	UploadInitResponse,
 	UploadResult,
-} from "@/types/media.types";
-import { apiService } from "@/lib";
-import { withErrorHandling } from "@/utils";
+} from "@/types/media.types"
+import { apiService } from "@/lib"
+import { withErrorHandling } from "@/utils"
 
 const uploadInitRaw = withErrorHandling((payload: UploadInitPayload) =>
-	apiService.post<ApiResponse<UploadInitResponse>>("/media/files/init", payload),
-);
+	apiService.post<ApiResponse<UploadInitResponse>>(
+		"/media/files/init",
+		payload,
+	),
+)
 
 const confirmUploadRaw = withErrorHandling((id: string) =>
 	apiService.post<ApiResponse<FileObject>>(`/media/files/${id}/complete`),
-);
+)
 
 async function uploadViaDirect(
 	file: File,
@@ -28,13 +31,13 @@ async function uploadViaDirect(
 		originalName: file.name,
 		mimeType: file.type,
 		fileSize: file.size,
-	});
+	})
 
 	if (!init.success) {
-		return { success: false, error: init.error, code: init.code };
+		return { success: false, error: init.error, code: init.code }
 	}
 
-	const { mediaFileId, uploadUrl, publicUrl } = init.data;
+	const { mediaFileId, uploadUrl, publicUrl } = init.data
 
 	try {
 		const uploadResponse = await fetch(uploadUrl, {
@@ -44,14 +47,14 @@ async function uploadViaDirect(
 				"x-ms-blob-type": "BlockBlob",
 			},
 			body: file,
-		});
+		})
 
 		if (!uploadResponse.ok) {
 			return {
 				success: false,
 				error: `Upload to the presigned URL failed (${uploadResponse.status}).`,
 				code: "PRESIGNED_UPLOAD_FAILED",
-			};
+			}
 		}
 	} catch (err) {
 		return {
@@ -61,12 +64,16 @@ async function uploadViaDirect(
 					? err.message
 					: "Unable to upload file to the presigned URL.",
 			code: "PRESIGNED_UPLOAD_FAILED",
-		};
+		}
 	}
 
-	const completeResult = await confirmUploadRaw(mediaFileId);
+	const completeResult = await confirmUploadRaw(mediaFileId)
 	if (!completeResult.success) {
-		return { success: false, error: completeResult.error, code: completeResult.code };
+		return {
+			success: false,
+			error: completeResult.error,
+			code: completeResult.code,
+		}
 	}
 
 	return {
@@ -78,7 +85,7 @@ async function uploadViaDirect(
 			mimeType: file.type,
 			fileSize: file.size,
 		},
-	};
+	}
 }
 
 export const mediaService = {
@@ -110,10 +117,14 @@ export const mediaService = {
 	),
 
 	serverUpload: withErrorHandling((file: File) => {
-		const formData = new FormData();
-		formData.append("file", file);
-		return apiService.post<ApiResponse<FileObject>>("/media/files", formData, {
-			headers: { "Content-Type": "multipart/form-data" },
-		});
+		const formData = new FormData()
+		formData.append("file", file)
+		return apiService.post<ApiResponse<FileObject>>(
+			"/media/files",
+			formData,
+			{
+				headers: { "Content-Type": "multipart/form-data" },
+			},
+		)
 	}),
-};
+}

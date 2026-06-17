@@ -42,18 +42,18 @@ NEXT_PUBLIC_KEYCLOAK_CLIENT_ID=frontend
 
 ## Mapping Route Qua Kong
 
-| Service | Business API path | Swagger path |
-| --- | --- | --- |
-| `identity-service` | `/auth/*`, `/admin/*` | `/identity-service/docs` |
-| `user-service` | `/users/*`, `/admin/users/*` | `/user-service/docs` |
-| `exam-service` | `/exams/*`, `/admin/exams/*` | `/exam-service/docs` |
-| `course-service` | `/courses/*`, `/enrollments/*`, `/admin/courses/*` | `/course-service/docs` |
-| `question-service` | `/admin/questions/*` | `/question-service/docs` |
-| `notification-service` | `/notifications/*`, `/admin/academic-warnings/*` | `/notification-service/docs` |
-| `analytics-service` | `/analytics/*`, `/admin/analytics/*` | `/analytics-service/docs` |
-| `simulation-service` | `/simulation/*` | `/simulation-service/docs` |
-| `media-service` | `/media/*`, `/admin/media/*` | `/media-service/docs` |
-| `audit-service` | `/admin/audit-logs/*` | `/audit-service/docs` |
+| Service                | Business API path                                  | Swagger path                 |
+| ---------------------- | -------------------------------------------------- | ---------------------------- |
+| `identity-service`     | `/auth/*`, `/admin/*`                              | `/identity-service/docs`     |
+| `user-service`         | `/users/*`, `/admin/users/*`                       | `/user-service/docs`         |
+| `exam-service`         | `/exams/*`, `/admin/exams/*`                       | `/exam-service/docs`         |
+| `course-service`       | `/courses/*`, `/enrollments/*`, `/admin/courses/*` | `/course-service/docs`       |
+| `question-service`     | `/admin/questions/*`                               | `/question-service/docs`     |
+| `notification-service` | `/notifications/*`, `/admin/academic-warnings/*`   | `/notification-service/docs` |
+| `analytics-service`    | `/analytics/*`, `/admin/analytics/*`               | `/analytics-service/docs`    |
+| `simulation-service`   | `/simulation/*`                                    | `/simulation-service/docs`   |
+| `media-service`        | `/media/*`, `/admin/media/*`                       | `/media-service/docs`        |
+| `audit-service`        | `/admin/audit-logs/*`                              | `/audit-service/docs`        |
 
 Swagger JSON tương ứng dùng `/docs-json`, ví dụ:
 
@@ -102,8 +102,8 @@ Content-Type: application/json
 
 ```json
 {
-  "username": "admin@test.com",
-  "password": "123456"
+	"username": "admin@test.com",
+	"password": "123456"
 }
 ```
 
@@ -111,18 +111,18 @@ Response được bọc bởi shared response envelope:
 
 ```json
 {
-  "success": true,
-  "code": "SUCCESS",
-  "message": "OK",
-  "timestamp": "2026-06-09T00:00:00.000Z",
-  "path": "/auth/login",
-  "data": {
-    "accessToken": "eyJ...",
-    "refreshToken": "eyJ...",
-    "expiresIn": 300,
-    "refreshExpiresIn": 1800,
-    "tokenType": "Bearer"
-  }
+	"success": true,
+	"code": "SUCCESS",
+	"message": "OK",
+	"timestamp": "2026-06-09T00:00:00.000Z",
+	"path": "/auth/login",
+	"data": {
+		"accessToken": "eyJ...",
+		"refreshToken": "eyJ...",
+		"expiresIn": 300,
+		"refreshExpiresIn": 1800,
+		"tokenType": "Bearer"
+	}
 }
 ```
 
@@ -137,7 +137,7 @@ Content-Type: application/json
 
 ```json
 {
-  "refreshToken": "<refresh_token>"
+	"refreshToken": "<refresh_token>"
 }
 ```
 
@@ -153,7 +153,7 @@ Content-Type: application/json
 
 ```json
 {
-  "refreshToken": "<refresh_token>"
+	"refreshToken": "<refresh_token>"
 }
 ```
 
@@ -168,7 +168,7 @@ Content-Type: application/json
 
 ```json
 {
-  "email": "student.b1@test.com"
+	"email": "student.b1@test.com"
 }
 ```
 
@@ -183,48 +183,48 @@ Chi tiết cấu hình SMTP nằm ở [Forgot Password Email Summary](../require
 ## Axios Interceptor Gợi Ý
 
 ```ts
-import axios from 'axios';
+import axios from "axios"
 
 export const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL,
-});
+	baseURL: import.meta.env.VITE_API_BASE_URL,
+})
 
 api.interceptors.request.use((config) => {
-  const token = authStore.getAccessToken();
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
+	const token = authStore.getAccessToken()
+	if (token) {
+		config.headers.Authorization = `Bearer ${token}`
+	}
+	return config
+})
 
 api.interceptors.response.use(
-  (response) => response,
-  async (error) => {
-    const original = error.config;
+	(response) => response,
+	async (error) => {
+		const original = error.config
 
-    if (error.response?.status === 401 && !original._retry) {
-      original._retry = true;
+		if (error.response?.status === 401 && !original._retry) {
+			original._retry = true
 
-      try {
-        const refreshToken = authStore.getRefreshToken();
-        const refreshResponse = await axios.post(
-          `${import.meta.env.VITE_API_BASE_URL}/auth/refresh`,
-          { refreshToken },
-        );
+			try {
+				const refreshToken = authStore.getRefreshToken()
+				const refreshResponse = await axios.post(
+					`${import.meta.env.VITE_API_BASE_URL}/auth/refresh`,
+					{ refreshToken },
+				)
 
-        const tokens = refreshResponse.data.data;
-        authStore.setTokens(tokens.accessToken, tokens.refreshToken);
-        original.headers.Authorization = `Bearer ${tokens.accessToken}`;
-        return api(original);
-      } catch {
-        authStore.clear();
-        window.location.assign('/login');
-      }
-    }
+				const tokens = refreshResponse.data.data
+				authStore.setTokens(tokens.accessToken, tokens.refreshToken)
+				original.headers.Authorization = `Bearer ${tokens.accessToken}`
+				return api(original)
+			} catch {
+				authStore.clear()
+				window.location.assign("/login")
+			}
+		}
 
-    return Promise.reject(error);
-  },
-);
+		return Promise.reject(error)
+	},
+)
 ```
 
 ## Response Envelope
@@ -233,12 +233,12 @@ Response thành công:
 
 ```json
 {
-  "success": true,
-  "code": "SUCCESS",
-  "message": "OK",
-  "timestamp": "2026-06-09T00:00:00.000Z",
-  "path": "/admin/questions",
-  "data": {}
+	"success": true,
+	"code": "SUCCESS",
+	"message": "OK",
+	"timestamp": "2026-06-09T00:00:00.000Z",
+	"path": "/admin/questions",
+	"data": {}
 }
 ```
 
@@ -246,11 +246,11 @@ Response lỗi:
 
 ```json
 {
-  "success": false,
-  "code": "VALIDATION_ERROR",
-  "message": "Request validation failed",
-  "timestamp": "2026-06-09T00:00:00.000Z",
-  "path": "/admin/questions"
+	"success": false,
+	"code": "VALIDATION_ERROR",
+	"message": "Request validation failed",
+	"timestamp": "2026-06-09T00:00:00.000Z",
+	"path": "/admin/questions"
 }
 ```
 
@@ -341,14 +341,14 @@ docker compose -f docker-compose.infra.yml restart kong-dev
 
 ## Troubleshooting
 
-| Lỗi | Cách kiểm tra |
-| --- | --- |
-| `401 Unauthorized` | Kiểm tra header `Authorization: Bearer <token>`, token còn hạn và đúng realm/client |
-| `403 Forbidden` | Token hợp lệ nhưng role không đủ, ví dụ `STUDENT` gọi API admin |
-| `502 Bad Gateway` | Service upstream chưa chạy hoặc sai port; kiểm tra `pnpm run dev` và log Kong |
-| CORS error | Kiểm tra frontend origin có trong `kong/kong.dev.yaml` |
-| Swagger qua Kong không load | Gọi thử `http://localhost:8000/<service-name>/docs-json` |
-| Refresh loop | Đảm bảo interceptor chỉ retry một lần và logout khi `/auth/refresh` trả `401` |
+| Lỗi                         | Cách kiểm tra                                                                       |
+| --------------------------- | ----------------------------------------------------------------------------------- |
+| `401 Unauthorized`          | Kiểm tra header `Authorization: Bearer <token>`, token còn hạn và đúng realm/client |
+| `403 Forbidden`             | Token hợp lệ nhưng role không đủ, ví dụ `STUDENT` gọi API admin                     |
+| `502 Bad Gateway`           | Service upstream chưa chạy hoặc sai port; kiểm tra `pnpm run dev` và log Kong       |
+| CORS error                  | Kiểm tra frontend origin có trong `kong/kong.dev.yaml`                              |
+| Swagger qua Kong không load | Gọi thử `http://localhost:8000/<service-name>/docs-json`                            |
+| Refresh loop                | Đảm bảo interceptor chỉ retry một lần và logout khi `/auth/refresh` trả `401`       |
 
 ## Ghi Nhớ
 
