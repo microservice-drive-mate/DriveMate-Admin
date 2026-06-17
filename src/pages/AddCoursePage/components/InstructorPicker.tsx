@@ -1,12 +1,12 @@
-import type { IdentityUser } from "@/types/identity.types";
+import type { IdentityUser } from "@/types/identity.types"
 
 interface InstructorPickerProps {
-	isEdit: boolean;
-	instructors: IdentityUser[];
-	value: string[];
-	onChange: (next: string[]) => void;
-	search: string;
-	onSearchChange: (next: string) => void;
+	isEdit: boolean
+	instructors: IdentityUser[]
+	value: string[]
+	onChange: (next: string[]) => void
+	search: string
+	onSearchChange: (next: string) => void
 }
 
 export function InstructorPicker({
@@ -26,16 +26,19 @@ export function InstructorPicker({
 					</span>
 				) : (
 					value.map((id) => {
-						const found = instructors.find((i) => i.userId === id);
+						const found = instructors.find((i) => i.userId === id)
 						return (
-							<span key={id} className="add-course__instructor-tag">
+							<span
+								key={id}
+								className="add-course__instructor-tag"
+							>
 								{found ? found.fullName : id.slice(0, 8)}
 							</span>
-						);
+						)
 					})
 				)}
 			</div>
-		);
+		)
 	}
 
 	return (
@@ -49,25 +52,26 @@ export function InstructorPicker({
 			<div className="add-course__instructor-list">
 				{instructors
 					.filter((i) => {
-						const q = search.toLowerCase();
+						const q = search.toLowerCase()
 						return (
 							!q ||
 							i.fullName.toLowerCase().includes(q) ||
 							i.email.toLowerCase().includes(q)
-						);
+						)
 					})
 					.map((i) => (
 						<label
 							key={i.userId}
-							className="add-course__instructor-option">
+							className="add-course__instructor-option"
+						>
 							<input
 								type="checkbox"
 								checked={value.includes(i.userId)}
 								onChange={(e) => {
 									const next = e.target.checked
 										? [...value, i.userId]
-										: value.filter((id) => id !== i.userId);
-									onChange(next);
+										: value.filter((id) => id !== i.userId)
+									onChange(next)
 								}}
 							/>
 							<span className="add-course__instructor-name">
@@ -85,5 +89,5 @@ export function InstructorPicker({
 				)}
 			</div>
 		</>
-	);
+	)
 }

@@ -1,31 +1,31 @@
-import { useState } from "react";
-import type { Gender } from "@/types/user-profile.types";
-import type { MediaReference } from "@/types/media.types";
-import { userService } from "@/services";
-import { ImageUploader } from "@/components/common/ImageUploader";
-import { validatePhoneNumber } from "@/utils/authUtils";
-import { toDateInput } from "@/utils/format";
+import { useState } from "react"
+import type { Gender } from "@/types/user-profile.types"
+import type { MediaReference } from "@/types/media.types"
+import { userService } from "@/services"
+import { ImageUploader } from "@/components/common/ImageUploader"
+import { validatePhoneNumber } from "@/utils/authUtils"
+import { toDateInput } from "@/utils/format"
 import {
 	getUpdateAccountErrorMessage,
 	getUpdateAccountSuccessMessage,
-} from "@/utils/srsMessages";
-import type { Student } from "@/types/student.types";
-import { studentFromProfile } from "@/types/student.types";
-import { Modal } from "./Modal";
+} from "@/utils/srsMessages"
+import type { Student } from "@/types/student.types"
+import { studentFromProfile } from "@/types/student.types"
+import { Modal } from "./Modal"
 
 interface ProfileForm {
-	phoneNumber: string;
-	dateOfBirth: string;
-	gender: Gender | "";
-	address: string;
-	notes: string;
+	phoneNumber: string
+	dateOfBirth: string
+	gender: Gender | ""
+	address: string
+	notes: string
 }
 
 interface EditProfileModalProps {
-	student: Student;
-	onClose: () => void;
-	onToast: (message: string, type: "success" | "error") => void;
-	onStudentChange: (next: Student) => void;
+	student: Student
+	onClose: () => void
+	onToast: (message: string, type: "success" | "error") => void
+	onStudentChange: (next: Student) => void
 }
 
 export function EditProfileModal({
@@ -40,7 +40,7 @@ export function EditProfileModal({
 		gender: student.gender ?? "",
 		address: student.address ?? "",
 		notes: student.notes ?? "",
-	});
+	})
 	const [profileAvatar, setProfileAvatar] = useState<MediaReference | null>(
 		student.mediaFileId
 			? {
@@ -48,16 +48,16 @@ export function EditProfileModal({
 					publicUrl: student.avatarUrl ?? "",
 				}
 			: null,
-	);
-	const [submitting, setSubmitting] = useState(false);
+	)
+	const [submitting, setSubmitting] = useState(false)
 
 	const confirmEditProfile = async () => {
 		if (!validatePhoneNumber(profileForm.phoneNumber)) {
-			onToast("Số điện thoại không hợp lệ.", "error");
-			return;
+			onToast("Số điện thoại không hợp lệ.", "error")
+			return
 		}
 
-		setSubmitting(true);
+		setSubmitting(true)
 		const res = await userService.update(student.id, {
 			phoneNumber: profileForm.phoneNumber.trim() || undefined,
 			dateOfBirth: profileForm.dateOfBirth || undefined,
@@ -66,17 +66,17 @@ export function EditProfileModal({
 			notes: profileForm.notes.trim() || undefined,
 			avatarUrl: profileAvatar?.publicUrl,
 			mediaFileId: profileAvatar?.mediaFileId,
-		});
-		setSubmitting(false);
+		})
+		setSubmitting(false)
 
 		if (res.success) {
-			onStudentChange(studentFromProfile(res.data));
-			onToast(getUpdateAccountSuccessMessage(), "success");
-			onClose();
+			onStudentChange(studentFromProfile(res.data))
+			onToast(getUpdateAccountSuccessMessage(), "success")
+			onClose()
 		} else {
-			onToast(getUpdateAccountErrorMessage(res), "error");
+			onToast(getUpdateAccountErrorMessage(res), "error")
 		}
-	};
+	}
 
 	return (
 		<Modal
@@ -88,11 +88,13 @@ export function EditProfileModal({
 					<button
 						className="detail-modal__confirm detail-modal__confirm--green"
 						onClick={confirmEditProfile}
-						disabled={submitting}>
+						disabled={submitting}
+					>
 						{submitting ? "Đang lưu..." : "Lưu hồ sơ"}
 					</button>
 				</div>
-			}>
+			}
+		>
 			<div className="detail-modal__avatar-edit">
 				<ImageUploader
 					value={profileAvatar}
@@ -138,7 +140,8 @@ export function EditProfileModal({
 								...current,
 								gender: e.target.value as Gender | "",
 							}))
-						}>
+						}
+					>
 						<option value="">Chọn giới tính</option>
 						<option value="MALE">Nam</option>
 						<option value="FEMALE">Nữ</option>
@@ -173,5 +176,5 @@ export function EditProfileModal({
 				/>
 			</div>
 		</Modal>
-	);
+	)
 }

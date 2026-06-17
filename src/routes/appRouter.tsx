@@ -1,35 +1,30 @@
-import { Navigate, createBrowserRouter } from "react-router-dom";
+import { Navigate, createBrowserRouter } from "react-router-dom"
 
-import { ProtectedRoute } from "@/components/ProtectedRoute";
-import { AdminLayout } from "@/components/layout/AdminLayout";
-import AddCoursePage from "@/pages/AddCoursePage";
-import AddExamConfigPage from "@/pages/AddExamConfigPage";
-import AddQuestionPage from "@/pages/AddQuestionPage";
-import AddStudentPage from "@/pages/AddStudentPage";
-import AddUserPage from "@/pages/AddUserPage";
-import AuditLogPage from "@/pages/AuditLogPage";
-import CourseDetailPage from "@/pages/CourseDetailPage";
-import CourseManagementPage from "@/pages/CourseManagementPage";
-import { DashboardGiangVienPage } from "@/pages/DashboardGiangVienPage";
-import { DashboardPage } from "@/pages/DashboardPage";
-import ExamConfigManagementPage from "@/pages/ExamConfigManagementPage";
-import { ForgotPasswordStep1 } from "@/pages/ForgotPasswordStep1";
-import { LoginPage } from "@/pages/LoginPage";
-import QuestionManagementPage from "@/pages/QuestionManagementPage";
-import StudentDetailPage from "@/pages/StudentDetailPage";
-import StudentManagementPage from "@/pages/StudentManagementPage";
-import SystemHealthPage from "@/pages/SystemHealthPage";
-import UserManagementPage from "@/pages/UserManagementPage";
+import { ProtectedRoute } from "@/components/ProtectedRoute"
+import { AdminLayout } from "@/components/layout/AdminLayout"
+import AddCoursePage from "@/pages/AddCoursePage"
+import AddExamConfigPage from "@/pages/AddExamConfigPage"
+import AddQuestionPage from "@/pages/AddQuestionPage"
+import AddStudentPage from "@/pages/AddStudentPage"
+import AddUserPage from "@/pages/AddUserPage"
+import AuditLogPage from "@/pages/AuditLogPage"
+import CourseDetailPage from "@/pages/CourseDetailPage"
+import CourseManagementPage from "@/pages/CourseManagementPage"
+import { DashboardGiangVienPage } from "@/pages/DashboardGiangVienPage"
+import { DashboardPage } from "@/pages/DashboardPage"
+import ExamConfigManagementPage from "@/pages/ExamConfigManagementPage"
+import { ForgotPasswordStep1 } from "@/pages/ForgotPasswordStep1"
+import { LoginPage } from "@/pages/LoginPage"
+import QuestionManagementPage from "@/pages/QuestionManagementPage"
+import StudentDetailPage from "@/pages/StudentDetailPage"
+import StudentManagementPage from "@/pages/StudentManagementPage"
+import SystemHealthPage from "@/pages/SystemHealthPage"
+import UserManagementPage from "@/pages/UserManagementPage"
 
 export const appRouter = createBrowserRouter([
 	{
 		path: "/",
-		element: (
-			<Navigate
-				to="/dashboard"
-				replace
-			/>
-		),
+		element: <Navigate to="/dashboard" replace />,
 	},
 	{
 		path: "/login",
@@ -133,4 +128,4 @@ export const appRouter = createBrowserRouter([
 			</div>
 		),
 	},
-]);
+])

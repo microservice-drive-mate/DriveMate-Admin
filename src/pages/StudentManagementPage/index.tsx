@@ -1,33 +1,33 @@
-import { useCallback, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useAsyncData } from "@/hooks/useAsyncData";
-import { userService } from "@/services";
+import { useCallback, useMemo, useState } from "react"
+import { useNavigate } from "react-router-dom"
+import { useAsyncData } from "@/hooks/useAsyncData"
+import { userService } from "@/services"
 import {
 	studentFromProfile,
 	studentStatus,
 	type Student,
 	type StudentFilters,
-} from "../../types/student.types";
-import Pagination from "../../components/Pagination";
-import { DEFAULT_PAGE_SIZE } from "../../constants/pagination";
-import { FilterBar } from "./components/FilterBar";
-import { StudentTable } from "./components/StudentTable";
-import { SummaryCard } from "./components/SummaryCard";
-import "./StudentManagementPage.css";
+} from "../../types/student.types"
+import Pagination from "../../components/Pagination"
+import { DEFAULT_PAGE_SIZE } from "../../constants/pagination"
+import { FilterBar } from "./components/FilterBar"
+import { StudentTable } from "./components/StudentTable"
+import { SummaryCard } from "./components/SummaryCard"
+import "./StudentManagementPage.css"
 
 const EMPTY_STUDENT_PAGE = {
 	items: [] as Student[],
 	total: 0,
-};
+}
 
 export default function StudentManagementPage() {
-	const navigate = useNavigate();
+	const navigate = useNavigate()
 	const [filters, setFilters] = useState<StudentFilters>({
 		search: "",
 		licenseTier: "",
 		status: "",
-	});
-	const [currentPage, setCurrentPage] = useState(1);
+	})
+	const [currentPage, setCurrentPage] = useState(1)
 
 	const loadStudents = useCallback(async () => {
 		const isActive =
@@ -35,7 +35,7 @@ export default function StudentManagementPage() {
 				? false
 				: filters.status === ""
 					? undefined
-					: true;
+					: true
 
 		const res = await userService.list({
 			role: "STUDENT",
@@ -43,15 +43,13 @@ export default function StudentManagementPage() {
 			size: DEFAULT_PAGE_SIZE,
 			search: filters.search.trim() || undefined,
 			isActive,
-		});
+		})
 
-		if (!res.success) return res;
+		if (!res.success) return res
 
-		let mapped = res.data.items.map(studentFromProfile);
+		let mapped = res.data.items.map(studentFromProfile)
 		if (filters.licenseTier) {
-			mapped = mapped.filter(
-				(s) => s.licenseTier === filters.licenseTier,
-			);
+			mapped = mapped.filter((s) => s.licenseTier === filters.licenseTier)
 		}
 
 		return {
@@ -60,31 +58,31 @@ export default function StudentManagementPage() {
 				items: mapped,
 				total: res.data.total,
 			},
-		};
-	}, [currentPage, filters.licenseTier, filters.search, filters.status]);
+		}
+	}, [currentPage, filters.licenseTier, filters.search, filters.status])
 	const studentsQuery = useAsyncData(loadStudents, {
 		initialData: EMPTY_STUDENT_PAGE,
 		retainPreviousData: false,
-	});
+	})
 
-	const students = studentsQuery.data.items;
-	const total = studentsQuery.data.total;
-	const totalPages = Math.max(1, Math.ceil(total / DEFAULT_PAGE_SIZE));
+	const students = studentsQuery.data.items
+	const total = studentsQuery.data.total
+	const totalPages = Math.max(1, Math.ceil(total / DEFAULT_PAGE_SIZE))
 
 	const summary = useMemo(() => {
 		const studying = students.filter(
 			(s) => studentStatus(s) === "studying",
-		).length;
+		).length
 		const locked = students.filter(
 			(s) => studentStatus(s) === "locked",
-		).length;
-		return { total, studying, locked };
-	}, [students, total]);
+		).length
+		return { total, studying, locked }
+	}, [students, total])
 
 	const handleFilters = (next: StudentFilters) => {
-		setFilters(next);
-		setCurrentPage(1);
-	};
+		setFilters(next)
+		setCurrentPage(1)
+	}
 
 	return (
 		<div className="student-management">
@@ -95,7 +93,8 @@ export default function StudentManagementPage() {
 				</div>
 				<button
 					className="student-management__add"
-					onClick={() => navigate("/students/new")}>
+					onClick={() => navigate("/students/new")}
+				>
 					+ Thêm Học Viên
 				</button>
 			</div>
@@ -116,19 +115,14 @@ export default function StudentManagementPage() {
 					value={summary.locked.toLocaleString("vi-VN")}
 					accent="#ef4444"
 				/>
-				<SummaryCard
-					title="Hoàn thành"
-					value="—"
-					accent="#94a3b8"
-				/>
+				<SummaryCard title="Hoàn thành" value="—" accent="#94a3b8" />
 			</div>
 
-			<FilterBar
-				filters={filters}
-				onChange={handleFilters}
-			/>
+			<FilterBar filters={filters} onChange={handleFilters} />
 
-			{studentsQuery.loading && <div className="student-empty">Đang tải...</div>}
+			{studentsQuery.loading && (
+				<div className="student-empty">Đang tải...</div>
+			)}
 			{studentsQuery.error && !studentsQuery.loading && (
 				<div className="student-empty">Lỗi: {studentsQuery.error}</div>
 			)}
@@ -145,5 +139,5 @@ export default function StudentManagementPage() {
 				onChange={setCurrentPage}
 			/>
 		</div>
-	);
+	)
 }

@@ -27,10 +27,10 @@ Business service khác chỉ lưu:
 
 ```json
 {
-  "mediaFileId": "media-file-uuid",
-  "avatarUrl": "https://.../blob.jpg",
-  "fileUrl": "https://.../file.pdf",
-  "imageUrl": "https://.../question.jpg"
+	"mediaFileId": "media-file-uuid",
+	"avatarUrl": "https://.../blob.jpg",
+	"fileUrl": "https://.../file.pdf",
+	"imageUrl": "https://.../question.jpg"
 }
 ```
 
@@ -63,10 +63,10 @@ API response hiện tại không trả `status`, nhưng domain vẫn dùng `stat
 
 ## File Status
 
-| Status | Ý nghĩa |
-| --- | --- |
-| `UNLINKED` | Metadata đã được tạo cho direct upload, nhưng chưa có entity nào xác nhận dùng file này. |
-| `LINKED` | File đã được upload qua server upload, hoặc đã được service khác gắn vào entity và gửi event xác nhận. |
+| Status     | Ý nghĩa                                                                                                |
+| ---------- | ------------------------------------------------------------------------------------------------------ |
+| `UNLINKED` | Metadata đã được tạo cho direct upload, nhưng chưa có entity nào xác nhận dùng file này.               |
+| `LINKED`   | File đã được upload qua server upload, hoặc đã được service khác gắn vào entity và gửi event xác nhận. |
 
 Server upload `POST /media/files` tạo file với `LINKED`.
 
@@ -78,23 +78,23 @@ Direct upload `POST /media/files/init` tạo file với `UNLINKED`; sau khi user
 
 Giới hạn hiện tại trong domain:
 
-| Rule | Giá trị |
-| --- | --- |
-| Max file size | `10 MB` |
-| Allowed image MIME | `image/jpeg`, `image/png`, `image/gif`, `image/webp`, `image/svg+xml` |
+| Rule                  | Giá trị                                                                                                            |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| Max file size         | `10 MB`                                                                                                            |
+| Allowed image MIME    | `image/jpeg`, `image/png`, `image/gif`, `image/webp`, `image/svg+xml`                                              |
 | Allowed document MIME | `application/pdf`, `application/msword`, `application/vnd.openxmlformats-officedocument.wordprocessingml.document` |
-| Allowed video MIME | `video/mp4`, `video/webm` |
-| Allowed audio MIME | `audio/mpeg`, `audio/wav` |
+| Allowed video MIME    | `video/mp4`, `video/webm`                                                                                          |
+| Allowed audio MIME    | `audio/mpeg`, `audio/wav`                                                                                          |
 
 Nếu file không hợp lệ:
 
 ```json
 {
-  "success": false,
-  "code": "INVALID_MIME_TYPE",
-  "message": "Invalid MIME type: ...",
-  "timestamp": "2026-05-18T10:00:00.000Z",
-  "path": "/media/files/init"
+	"success": false,
+	"code": "INVALID_MIME_TYPE",
+	"message": "Invalid MIME type: ...",
+	"timestamp": "2026-05-18T10:00:00.000Z",
+	"path": "/media/files/init"
 }
 ```
 
@@ -102,11 +102,11 @@ Nếu vượt size:
 
 ```json
 {
-  "success": false,
-  "code": "FILE_TOO_LARGE",
-  "message": "File size ... exceeds maximum ...",
-  "timestamp": "2026-05-18T10:00:00.000Z",
-  "path": "/media/files"
+	"success": false,
+	"code": "FILE_TOO_LARGE",
+	"message": "File size ... exceeds maximum ...",
+	"timestamp": "2026-05-18T10:00:00.000Z",
+	"path": "/media/files"
 }
 ```
 
@@ -114,25 +114,25 @@ Nếu vượt size:
 
 ## API Summary
 
-| API | Mục đích | Auth |
-| --- | --- | --- |
-| `POST /media/files` | Upload file qua media-service bằng multipart | JWT hợp lệ |
-| `POST /media/files/init` | Tạo metadata và SAS URL để frontend upload trực tiếp lên Azure | JWT hợp lệ |
-| `GET /media/files/:id` | Lấy metadata file | JWT hợp lệ |
-| `GET /media/files/:id/url` | Lấy presigned download URL để browser render/download | JWT hợp lệ |
-| `GET /admin/media/files` | Admin list metadata file | `ADMIN`, `CENTER_MANAGER` |
-| `DELETE /admin/media/files/:id` | Xóa file khỏi Azure và database | `ADMIN`, `CENTER_MANAGER` |
+| API                             | Mục đích                                                       | Auth                      |
+| ------------------------------- | -------------------------------------------------------------- | ------------------------- |
+| `POST /media/files`             | Upload file qua media-service bằng multipart                   | JWT hợp lệ                |
+| `POST /media/files/init`        | Tạo metadata và SAS URL để frontend upload trực tiếp lên Azure | JWT hợp lệ                |
+| `GET /media/files/:id`          | Lấy metadata file                                              | JWT hợp lệ                |
+| `GET /media/files/:id/url`      | Lấy presigned download URL để browser render/download          | JWT hợp lệ                |
+| `GET /admin/media/files`        | Admin list metadata file                                       | `ADMIN`, `CENTER_MANAGER` |
+| `DELETE /admin/media/files/:id` | Xóa file khỏi Azure và database                                | `ADMIN`, `CENTER_MANAGER` |
 
 Tất cả HTTP success response được bọc bởi `ApiResponseInterceptor`:
 
 ```json
 {
-  "success": true,
-  "code": "SUCCESS",
-  "message": "OK",
-  "timestamp": "2026-05-18T10:00:00.000Z",
-  "path": "/media/files/:id",
-  "data": {}
+	"success": true,
+	"code": "SUCCESS",
+	"message": "OK",
+	"timestamp": "2026-05-18T10:00:00.000Z",
+	"path": "/media/files/:id",
+	"data": {}
 }
 ```
 
@@ -167,30 +167,30 @@ Content-Type: multipart/form-data
 
 Form-data:
 
-| Field | Type | Required |
-| --- | --- | --- |
-| `file` | binary | Yes |
+| Field  | Type   | Required |
+| ------ | ------ | -------- |
+| `file` | binary | Yes      |
 
 **Response `201 Created`**
 
 ```json
 {
-  "success": true,
-  "code": "SUCCESS",
-  "message": "Created",
-  "timestamp": "2026-05-18T10:00:00.000Z",
-  "path": "/media/files",
-  "data": {
-    "id": "media-file-uuid",
-    "storageKey": "uploads/2026/05/media-file-uuid.jpg",
-    "originalName": "avatar.jpg",
-    "mimeType": "image/jpeg",
-    "fileSize": 204800,
-    "bucketName": "media",
-    "uploadedById": "keycloak-user-uuid",
-    "isPublic": false,
-    "createdAt": "2026-05-18T10:00:00.000Z"
-  }
+	"success": true,
+	"code": "SUCCESS",
+	"message": "Created",
+	"timestamp": "2026-05-18T10:00:00.000Z",
+	"path": "/media/files",
+	"data": {
+		"id": "media-file-uuid",
+		"storageKey": "uploads/2026/05/media-file-uuid.jpg",
+		"originalName": "avatar.jpg",
+		"mimeType": "image/jpeg",
+		"fileSize": 204800,
+		"bucketName": "media",
+		"uploadedById": "keycloak-user-uuid",
+		"isPublic": false,
+		"createdAt": "2026-05-18T10:00:00.000Z"
+	}
 }
 ```
 
@@ -223,9 +223,9 @@ Body:
 
 ```json
 {
-  "originalName": "avatar.jpg",
-  "mimeType": "image/jpeg",
-  "fileSize": 204800
+	"originalName": "avatar.jpg",
+	"mimeType": "image/jpeg",
+	"fileSize": 204800
 }
 ```
 
@@ -233,17 +233,17 @@ Body:
 
 ```json
 {
-  "success": true,
-  "code": "SUCCESS",
-  "message": "Created",
-  "timestamp": "2026-05-18T10:00:00.000Z",
-  "path": "/media/files/init",
-  "data": {
-    "mediaFileId": "media-file-uuid",
-    "uploadUrl": "https://account.blob.core.windows.net/media/uploads/2026/05/media-file-uuid.jpg?sv=...",
-    "publicUrl": "https://account.blob.core.windows.net/media/uploads/2026/05/media-file-uuid.jpg",
-    "expiresAt": "2026-05-18T11:00:00.000Z"
-  }
+	"success": true,
+	"code": "SUCCESS",
+	"message": "Created",
+	"timestamp": "2026-05-18T10:00:00.000Z",
+	"path": "/media/files/init",
+	"data": {
+		"mediaFileId": "media-file-uuid",
+		"uploadUrl": "https://account.blob.core.windows.net/media/uploads/2026/05/media-file-uuid.jpg?sv=...",
+		"publicUrl": "https://account.blob.core.windows.net/media/uploads/2026/05/media-file-uuid.jpg",
+		"expiresAt": "2026-05-18T11:00:00.000Z"
+	}
 }
 ```
 
@@ -269,8 +269,8 @@ Content-Type: application/json
 
 ```json
 {
-  "avatarUrl": "https://account.blob.core.windows.net/media/uploads/2026/05/media-file-uuid.jpg",
-  "mediaFileId": "media-file-uuid"
+	"avatarUrl": "https://account.blob.core.windows.net/media/uploads/2026/05/media-file-uuid.jpg",
+	"mediaFileId": "media-file-uuid"
 }
 ```
 
@@ -278,9 +278,9 @@ User-service sẽ publish:
 
 ```json
 {
-  "eventName": "user.avatar.linked",
-  "userId": "user-uuid",
-  "mediaFileId": "media-file-uuid"
+	"eventName": "user.avatar.linked",
+	"userId": "user-uuid",
+	"mediaFileId": "media-file-uuid"
 }
 ```
 
@@ -296,22 +296,22 @@ Lấy metadata file.
 
 ```json
 {
-  "success": true,
-  "code": "SUCCESS",
-  "message": "OK",
-  "timestamp": "2026-05-18T10:00:00.000Z",
-  "path": "/media/files/media-file-uuid",
-  "data": {
-    "id": "media-file-uuid",
-    "storageKey": "uploads/2026/05/media-file-uuid.jpg",
-    "originalName": "avatar.jpg",
-    "mimeType": "image/jpeg",
-    "fileSize": 204800,
-    "bucketName": "media",
-    "uploadedById": "keycloak-user-uuid",
-    "isPublic": false,
-    "createdAt": "2026-05-18T10:00:00.000Z"
-  }
+	"success": true,
+	"code": "SUCCESS",
+	"message": "OK",
+	"timestamp": "2026-05-18T10:00:00.000Z",
+	"path": "/media/files/media-file-uuid",
+	"data": {
+		"id": "media-file-uuid",
+		"storageKey": "uploads/2026/05/media-file-uuid.jpg",
+		"originalName": "avatar.jpg",
+		"mimeType": "image/jpeg",
+		"fileSize": 204800,
+		"bucketName": "media",
+		"uploadedById": "keycloak-user-uuid",
+		"isPublic": false,
+		"createdAt": "2026-05-18T10:00:00.000Z"
+	}
 }
 ```
 
@@ -327,15 +327,15 @@ Sinh presigned download URL. Đây là API frontend nên dùng để render ản
 
 ```json
 {
-  "success": true,
-  "code": "SUCCESS",
-  "message": "OK",
-  "timestamp": "2026-05-18T10:00:00.000Z",
-  "path": "/media/files/media-file-uuid/url",
-  "data": {
-    "url": "https://account.blob.core.windows.net/media/uploads/2026/05/media-file-uuid.jpg?sv=...",
-    "expiresAt": "2026-05-18T11:00:00.000Z"
-  }
+	"success": true,
+	"code": "SUCCESS",
+	"message": "OK",
+	"timestamp": "2026-05-18T10:00:00.000Z",
+	"path": "/media/files/media-file-uuid/url",
+	"data": {
+		"url": "https://account.blob.core.windows.net/media/uploads/2026/05/media-file-uuid.jpg?sv=...",
+		"expiresAt": "2026-05-18T11:00:00.000Z"
+	}
 }
 ```
 
@@ -357,40 +357,40 @@ Admin list metadata file.
 
 **Query**
 
-| Param | Type | Default | Ghi chú |
-| --- | --- | ---: | --- |
-| `page` | number | 1 | Trang |
-| `size` | number | 20 | Số item |
-| `uploadedById` | string | - | Lọc theo uploader |
-| `mimeType` | string | - | Lọc theo prefix/type, ví dụ `image/` |
+| Param          | Type   | Default | Ghi chú                              |
+| -------------- | ------ | ------: | ------------------------------------ |
+| `page`         | number |       1 | Trang                                |
+| `size`         | number |      20 | Số item                              |
+| `uploadedById` | string |       - | Lọc theo uploader                    |
+| `mimeType`     | string |       - | Lọc theo prefix/type, ví dụ `image/` |
 
 **Response `200 OK`**
 
 ```json
 {
-  "success": true,
-  "code": "SUCCESS",
-  "message": "OK",
-  "timestamp": "2026-05-18T10:00:00.000Z",
-  "path": "/admin/media/files",
-  "data": {
-    "items": [
-      {
-        "id": "media-file-uuid",
-        "storageKey": "uploads/2026/05/media-file-uuid.jpg",
-        "originalName": "avatar.jpg",
-        "mimeType": "image/jpeg",
-        "fileSize": 204800,
-        "bucketName": "media",
-        "uploadedById": "keycloak-user-uuid",
-        "isPublic": false,
-        "createdAt": "2026-05-18T10:00:00.000Z"
-      }
-    ],
-    "total": 1,
-    "page": 1,
-    "size": 20
-  }
+	"success": true,
+	"code": "SUCCESS",
+	"message": "OK",
+	"timestamp": "2026-05-18T10:00:00.000Z",
+	"path": "/admin/media/files",
+	"data": {
+		"items": [
+			{
+				"id": "media-file-uuid",
+				"storageKey": "uploads/2026/05/media-file-uuid.jpg",
+				"originalName": "avatar.jpg",
+				"mimeType": "image/jpeg",
+				"fileSize": 204800,
+				"bucketName": "media",
+				"uploadedById": "keycloak-user-uuid",
+				"isPublic": false,
+				"createdAt": "2026-05-18T10:00:00.000Z"
+			}
+		],
+		"total": 1,
+		"page": 1,
+		"size": 20
+	}
 }
 ```
 
@@ -408,10 +408,10 @@ Sau khi xóa, media-service publish:
 
 ```json
 {
-  "eventName": "media.file.deleted",
-  "fileId": "media-file-uuid",
-  "storageKey": "uploads/2026/05/media-file-uuid.jpg",
-  "deletedById": "admin-user-uuid"
+	"eventName": "media.file.deleted",
+	"fileId": "media-file-uuid",
+	"storageKey": "uploads/2026/05/media-file-uuid.jpg",
+	"deletedById": "admin-user-uuid"
 }
 ```
 
@@ -424,8 +424,8 @@ User-service sẽ clear avatar nếu profile đang dùng file đó:
 
 ```json
 {
-  "avatarUrl": null,
-  "mediaFileId": null
+	"avatarUrl": null,
+	"mediaFileId": null
 }
 ```
 
@@ -433,8 +433,8 @@ Course-service sẽ clear material reference nếu material đang dùng file đ�
 
 ```json
 {
-  "fileUrl": null,
-  "mediaFileId": null
+	"fileUrl": null,
+	"mediaFileId": null
 }
 ```
 
@@ -500,9 +500,9 @@ POST /media/files/init
 
 ```json
 {
-  "originalName": "avatar.jpg",
-  "mimeType": "image/jpeg",
-  "fileSize": 204800
+	"originalName": "avatar.jpg",
+	"mimeType": "image/jpeg",
+	"fileSize": 204800
 }
 ```
 
@@ -516,8 +516,8 @@ PATCH /users/me
 
 ```json
 {
-  "avatarUrl": "https://account.blob.core.windows.net/media/uploads/2026/05/media-file-uuid.jpg",
-  "mediaFileId": "media-file-uuid"
+	"avatarUrl": "https://account.blob.core.windows.net/media/uploads/2026/05/media-file-uuid.jpg",
+	"mediaFileId": "media-file-uuid"
 }
 ```
 
@@ -531,9 +531,9 @@ PATCH /admin/users/:id
 
 ```json
 {
-  "eventName": "user.avatar.linked",
-  "userId": "user-uuid",
-  "mediaFileId": "media-file-uuid"
+	"eventName": "user.avatar.linked",
+	"userId": "user-uuid",
+	"mediaFileId": "media-file-uuid"
 }
 ```
 
@@ -559,9 +559,9 @@ POST /media/files/init
 
 ```json
 {
-  "originalName": "giao-trinh-b2.pdf",
-  "mimeType": "application/pdf",
-  "fileSize": 1048576
+	"originalName": "giao-trinh-b2.pdf",
+	"mimeType": "application/pdf",
+	"fileSize": 1048576
 }
 ```
 
@@ -575,10 +575,10 @@ POST /admin/courses/:id/materials
 
 ```json
 {
-  "title": "Giáo trình B2",
-  "fileUrl": "https://account.blob.core.windows.net/media/uploads/2026/05/media-file-uuid.pdf",
-  "mediaFileId": "media-file-uuid",
-  "type": "PDF"
+	"title": "Giáo trình B2",
+	"fileUrl": "https://account.blob.core.windows.net/media/uploads/2026/05/media-file-uuid.pdf",
+	"mediaFileId": "media-file-uuid",
+	"type": "PDF"
 }
 ```
 
@@ -586,10 +586,10 @@ POST /admin/courses/:id/materials
 
 ```json
 {
-  "eventName": "course.material.linked",
-  "courseId": "course-uuid",
-  "materialId": "material-uuid",
-  "mediaFileId": "media-file-uuid"
+	"eventName": "course.material.linked",
+	"courseId": "course-uuid",
+	"materialId": "material-uuid",
+	"mediaFileId": "media-file-uuid"
 }
 ```
 
@@ -615,9 +615,9 @@ POST /media/files/init
 
 ```json
 {
-  "originalName": "question-301.png",
-  "mimeType": "image/png",
-  "fileSize": 153600
+	"originalName": "question-301.png",
+	"mimeType": "image/png",
+	"fileSize": 153600
 }
 ```
 
@@ -639,8 +639,8 @@ Body field liên quan:
 
 ```json
 {
-  "imageUrl": "https://account.blob.core.windows.net/media/uploads/2026/05/media-file-uuid.png",
-  "mediaFileId": "media-file-uuid"
+	"imageUrl": "https://account.blob.core.windows.net/media/uploads/2026/05/media-file-uuid.png",
+	"mediaFileId": "media-file-uuid"
 }
 ```
 
@@ -648,9 +648,9 @@ Body field liên quan:
 
 ```json
 {
-  "eventName": "question.image.linked",
-  "questionId": "question-uuid",
-  "mediaFileId": "media-file-uuid"
+	"eventName": "question.image.linked",
+	"questionId": "question-uuid",
+	"mediaFileId": "media-file-uuid"
 }
 ```
 
@@ -672,10 +672,10 @@ Student exam response có:
 
 ```json
 {
-  "questionId": "question-uuid",
-  "content": "Nội dung câu hỏi",
-  "imageUrl": "https://account.blob.core.windows.net/media/uploads/2026/05/media-file-uuid.png",
-  "mediaFileId": "media-file-uuid"
+	"questionId": "question-uuid",
+	"content": "Nội dung câu hỏi",
+	"imageUrl": "https://account.blob.core.windows.net/media/uploads/2026/05/media-file-uuid.png",
+	"mediaFileId": "media-file-uuid"
 }
 ```
 
@@ -690,13 +690,13 @@ Frontend exam screen nên:
 
 ## Presigned URL Vs Stable Blob URL
 
-| Field | Đến từ đâu | Dùng để làm gì | Có render trực tiếp được không |
-| --- | --- | --- | --- |
-| `publicUrl` | `POST /media/files/init` | Stable blob URL fallback/debug | Chỉ được nếu container/blob public |
-| `avatarUrl` | user-service profile | Stable blob URL đã lưu vào profile | Chỉ được nếu container/blob public |
-| `fileUrl` | course material | Stable blob URL đã lưu vào material | Chỉ được nếu container/blob public |
-| `imageUrl` | question/exam | Stable blob URL đã lưu vào question snapshot | Chỉ được nếu container/blob public |
-| `data.url` từ `GET /media/files/:id/url` | media-service | Presigned/SAS read URL ngắn hạn | Có, đây là đường chính cho private container |
+| Field                                    | Đến từ đâu               | Dùng để làm gì                               | Có render trực tiếp được không               |
+| ---------------------------------------- | ------------------------ | -------------------------------------------- | -------------------------------------------- |
+| `publicUrl`                              | `POST /media/files/init` | Stable blob URL fallback/debug               | Chỉ được nếu container/blob public           |
+| `avatarUrl`                              | user-service profile     | Stable blob URL đã lưu vào profile           | Chỉ được nếu container/blob public           |
+| `fileUrl`                                | course material          | Stable blob URL đã lưu vào material          | Chỉ được nếu container/blob public           |
+| `imageUrl`                               | question/exam            | Stable blob URL đã lưu vào question snapshot | Chỉ được nếu container/blob public           |
+| `data.url` từ `GET /media/files/:id/url` | media-service            | Presigned/SAS read URL ngắn hạn              | Có, đây là đường chính cho private container |
 
 Contract frontend nên nhớ:
 
@@ -715,13 +715,13 @@ Không có mediaFileId nhưng có imageUrl/avatarUrl/fileUrl -> chỉ dùng fall
 
 ```json
 {
-  "eventName": "media.file.uploaded",
-  "fileId": "media-file-uuid",
-  "storageKey": "uploads/2026/05/media-file-uuid.jpg",
-  "originalName": "avatar.jpg",
-  "mimeType": "image/jpeg",
-  "fileSize": 204800,
-  "uploadedById": "user-uuid"
+	"eventName": "media.file.uploaded",
+	"fileId": "media-file-uuid",
+	"storageKey": "uploads/2026/05/media-file-uuid.jpg",
+	"originalName": "avatar.jpg",
+	"mimeType": "image/jpeg",
+	"fileSize": 204800,
+	"uploadedById": "user-uuid"
 }
 ```
 
@@ -729,26 +729,26 @@ Không có mediaFileId nhưng có imageUrl/avatarUrl/fileUrl -> chỉ dùng fall
 
 ```json
 {
-  "eventName": "media.file.deleted",
-  "fileId": "media-file-uuid",
-  "storageKey": "uploads/2026/05/media-file-uuid.jpg",
-  "deletedById": "admin-user-uuid"
+	"eventName": "media.file.deleted",
+	"fileId": "media-file-uuid",
+	"storageKey": "uploads/2026/05/media-file-uuid.jpg",
+	"deletedById": "admin-user-uuid"
 }
 ```
 
 ### Events Media-Service Consumes
 
-| Event | Source | Effect |
-| --- | --- | --- |
-| `user.avatar.linked` | user-service | Mark file `LINKED` |
-| `course.material.linked` | course-service | Mark file `LINKED` |
-| `question.image.linked` | question-service | Mark file `LINKED` |
+| Event                    | Source           | Effect             |
+| ------------------------ | ---------------- | ------------------ |
+| `user.avatar.linked`     | user-service     | Mark file `LINKED` |
+| `course.material.linked` | course-service   | Mark file `LINKED` |
+| `question.image.linked`  | question-service | Mark file `LINKED` |
 
 Minimal payload:
 
 ```json
 {
-  "mediaFileId": "media-file-uuid"
+	"mediaFileId": "media-file-uuid"
 }
 ```
 
@@ -791,42 +791,42 @@ Pseudo-code direct upload:
 
 ```ts
 async function uploadViaMedia(file: File) {
-  const init = await api.post('/media/files/init', {
-    originalName: file.name,
-    mimeType: file.type,
-    fileSize: file.size,
-  });
+	const init = await api.post("/media/files/init", {
+		originalName: file.name,
+		mimeType: file.type,
+		fileSize: file.size,
+	})
 
-  await fetch(init.data.uploadUrl, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': file.type,
-      'x-ms-blob-type': 'BlockBlob',
-    },
-    body: file,
-  });
+	await fetch(init.data.uploadUrl, {
+		method: "PUT",
+		headers: {
+			"Content-Type": file.type,
+			"x-ms-blob-type": "BlockBlob",
+		},
+		body: file,
+	})
 
-  return {
-    mediaFileId: init.data.mediaFileId,
-    publicUrl: init.data.publicUrl,
-  };
+	return {
+		mediaFileId: init.data.mediaFileId,
+		publicUrl: init.data.publicUrl,
+	}
 }
 ```
 
 Pseudo-code render:
 
 ```ts
-const mediaUrlCache = new Map<string, { url: string; expiresAt: string }>();
+const mediaUrlCache = new Map<string, { url: string; expiresAt: string }>()
 
 async function getRenderableMediaUrl(mediaFileId: string) {
-  const cached = mediaUrlCache.get(mediaFileId);
-  if (cached && new Date(cached.expiresAt).getTime() - Date.now() > 60_000) {
-    return cached.url;
-  }
+	const cached = mediaUrlCache.get(mediaFileId)
+	if (cached && new Date(cached.expiresAt).getTime() - Date.now() > 60_000) {
+		return cached.url
+	}
 
-  const response = await api.get(`/media/files/${mediaFileId}/url`);
-  mediaUrlCache.set(mediaFileId, response.data);
-  return response.data.url;
+	const response = await api.get(`/media/files/${mediaFileId}/url`)
+	mediaUrlCache.set(mediaFileId, response.data)
+	return response.data.url
 }
 ```
 

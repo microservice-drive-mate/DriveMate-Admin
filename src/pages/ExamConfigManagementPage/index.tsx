@@ -1,37 +1,34 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { examService } from "@/services";
-import type {
-	ExamTemplate,
-	LicenseCategory,
-} from "@/types/exam-template.types";
-import { LICENSE_CATEGORIES } from "@/types/exam-template.types";
-import { EXAM_CONFIG_PAGE_SIZE } from "../../constants/pagination";
-import { DetailModal } from "./components/DetailModal";
-import { ExamConfigCard } from "./components/ExamConfigCard";
-import "./ExamConfigManagementPage.css";
+import { useEffect, useState } from "react"
+import { useNavigate } from "react-router-dom"
+import { examService } from "@/services"
+import type { ExamTemplate, LicenseCategory } from "@/types/exam-template.types"
+import { LICENSE_CATEGORIES } from "@/types/exam-template.types"
+import { EXAM_CONFIG_PAGE_SIZE } from "../../constants/pagination"
+import { DetailModal } from "./components/DetailModal"
+import { ExamConfigCard } from "./components/ExamConfigCard"
+import "./ExamConfigManagementPage.css"
 
 interface Filters {
-	licenseCategory: LicenseCategory | "";
-	isActive: "" | "true" | "false";
+	licenseCategory: LicenseCategory | ""
+	isActive: "" | "true" | "false"
 }
 
 export default function ExamConfigManagementPage() {
-	const navigate = useNavigate();
-	const [templates, setTemplates] = useState<ExamTemplate[]>([]);
-	const [total, setTotal] = useState(0);
-	const [loading, setLoading] = useState(false);
-	const [error, setError] = useState("");
-	const [deletingId, setDeletingId] = useState<string | null>(null);
-	const [selected, setSelected] = useState<ExamTemplate | null>(null);
+	const navigate = useNavigate()
+	const [templates, setTemplates] = useState<ExamTemplate[]>([])
+	const [total, setTotal] = useState(0)
+	const [loading, setLoading] = useState(false)
+	const [error, setError] = useState("")
+	const [deletingId, setDeletingId] = useState<string | null>(null)
+	const [selected, setSelected] = useState<ExamTemplate | null>(null)
 	const [filters, setFilters] = useState<Filters>({
 		licenseCategory: "",
 		isActive: "",
-	});
+	})
 
 	const fetchTemplates = () => {
-		setLoading(true);
-		setError("");
+		setLoading(true)
+		setError("")
 		examService
 			.list({
 				page: 1,
@@ -44,20 +41,20 @@ export default function ExamConfigManagementPage() {
 			})
 			.then((res) => {
 				if (res.success) {
-					setTemplates(res.data.items);
-					setTotal(res.data.total);
+					setTemplates(res.data.items)
+					setTotal(res.data.total)
 				} else {
-					setError(res.error);
-					setTemplates([]);
+					setError(res.error)
+					setTemplates([])
 				}
-				setLoading(false);
-			});
-	};
+				setLoading(false)
+			})
+	}
 
 	useEffect(() => {
-		fetchTemplates();
+		fetchTemplates()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [filters.licenseCategory, filters.isActive]);
+	}, [filters.licenseCategory, filters.isActive])
 
 	const handleDelete = async (template: ExamTemplate) => {
 		if (
@@ -65,22 +62,22 @@ export default function ExamConfigManagementPage() {
 				`Xóa đề thi "${template.name}"? Thao tác này soft delete, không thể hoàn tác qua UI.`,
 			)
 		)
-			return;
-		setDeletingId(template.id);
-		const res = await examService.softDelete(template.id, template.version);
-		setDeletingId(null);
+			return
+		setDeletingId(template.id)
+		const res = await examService.softDelete(template.id, template.version)
+		setDeletingId(null)
 		if (res.success) {
-			fetchTemplates();
+			fetchTemplates()
 		} else {
-			setError(res.error);
+			setError(res.error)
 		}
-	};
+	}
 
-	const activeCount = templates.filter((t) => t.isActive).length;
-	const inactiveCount = templates.filter((t) => !t.isActive).length;
+	const activeCount = templates.filter((t) => t.isActive).length
+	const inactiveCount = templates.filter((t) => !t.isActive).length
 	const hasActiveFilters = Boolean(
 		filters.licenseCategory || filters.isActive,
-	);
+	)
 
 	return (
 		<div className="ec-management">
@@ -91,7 +88,8 @@ export default function ExamConfigManagementPage() {
 				</div>
 				<button
 					className="ec-management__add-btn"
-					onClick={() => navigate("/exam-config/new")}>
+					onClick={() => navigate("/exam-config/new")}
+				>
 					+ Thêm Đề Thi
 				</button>
 			</div>
@@ -104,12 +102,9 @@ export default function ExamConfigManagementPage() {
 						viewBox="0 0 24 24"
 						fill="none"
 						stroke="currentColor"
-						strokeWidth="2">
-						<circle
-							cx="12"
-							cy="12"
-							r="3"
-						/>
+						strokeWidth="2"
+					>
+						<circle cx="12" cy="12" r="3" />
 						<path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14" />
 						<path d="M12 2v2M12 20v2M2 12h2M20 12h2" />
 					</svg>
@@ -137,12 +132,11 @@ export default function ExamConfigManagementPage() {
 								| LicenseCategory
 								| "",
 						}))
-					}>
+					}
+				>
 					<option value="">Tất cả hạng bằng</option>
 					{LICENSE_CATEGORIES.map((cat) => (
-						<option
-							key={cat}
-							value={cat}>
+						<option key={cat} value={cat}>
 							{cat}
 						</option>
 					))}
@@ -156,7 +150,8 @@ export default function ExamConfigManagementPage() {
 							...f,
 							isActive: e.target.value as Filters["isActive"],
 						}))
-					}>
+					}
+				>
 					<option value="">Tất cả trạng thái</option>
 					<option value="true">Đang áp dụng</option>
 					<option value="false">Ngừng áp dụng</option>
@@ -167,14 +162,16 @@ export default function ExamConfigManagementPage() {
 					disabled={!hasActiveFilters}
 					onClick={() =>
 						setFilters({ licenseCategory: "", isActive: "" })
-					}>
+					}
+				>
 					<svg
 						width="14"
 						height="14"
 						viewBox="0 0 24 24"
 						fill="none"
 						stroke="currentColor"
-						strokeWidth="2">
+						strokeWidth="2"
+					>
 						<path d="M3 12a9 9 0 1 0 3-6.7" />
 						<path d="M3 4v6h6" />
 					</svg>
@@ -219,7 +216,8 @@ export default function ExamConfigManagementPage() {
 							viewBox="0 0 24 24"
 							fill="none"
 							stroke="currentColor"
-							strokeWidth="2">
+							strokeWidth="2"
+						>
 							<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
 							<polyline points="14 2 14 8 20 8" />
 						</svg>
@@ -241,12 +239,9 @@ export default function ExamConfigManagementPage() {
 							viewBox="0 0 24 24"
 							fill="none"
 							stroke="currentColor"
-							strokeWidth="2">
-							<circle
-								cx="12"
-								cy="12"
-								r="3"
-							/>
+							strokeWidth="2"
+						>
+							<circle cx="12" cy="12" r="3" />
 							<path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14" />
 						</svg>
 					</div>
@@ -263,21 +258,12 @@ export default function ExamConfigManagementPage() {
 							viewBox="0 0 24 24"
 							fill="none"
 							stroke="currentColor"
-							strokeWidth="2">
+							strokeWidth="2"
+						>
 							<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
 							<polyline points="14 2 14 8 20 8" />
-							<line
-								x1="16"
-								y1="13"
-								x2="8"
-								y2="13"
-							/>
-							<line
-								x1="16"
-								y1="17"
-								x2="8"
-								y2="17"
-							/>
+							<line x1="16" y1="13" x2="8" y2="13" />
+							<line x1="16" y1="17" x2="8" y2="17" />
 						</svg>
 					</div>
 					<div>
@@ -296,5 +282,5 @@ export default function ExamConfigManagementPage() {
 				/>
 			)}
 		</div>
-	);
+	)
 }

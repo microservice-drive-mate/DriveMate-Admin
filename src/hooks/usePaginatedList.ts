@@ -1,19 +1,19 @@
-import { useCallback, useState } from "react";
+import { useCallback, useState } from "react"
 
-import { DEFAULT_PAGE_SIZE } from "@/constants/pagination";
-import type { PaginatedResponse } from "@/types/api.types";
+import { DEFAULT_PAGE_SIZE } from "@/constants/pagination"
+import type { PaginatedResponse } from "@/types/api.types"
 
-import { useAsyncData, type AsyncDataResult } from "./useAsyncData";
+import { useAsyncData, type AsyncDataResult } from "./useAsyncData"
 
 export interface PaginatedLoaderParams<F> {
-	page: number;
-	pageSize: number;
-	filters: F;
+	page: number
+	pageSize: number
+	filters: F
 }
 
 interface UsePaginatedListOptions<F> {
-	initialFilters: F;
-	pageSize?: number;
+	initialFilters: F
+	pageSize?: number
 }
 
 const EMPTY_PAGE: PaginatedResponse<never> = {
@@ -21,7 +21,7 @@ const EMPTY_PAGE: PaginatedResponse<never> = {
 	total: 0,
 	page: 1,
 	size: 0,
-};
+}
 
 /**
  * Gói chung pattern danh sách phân trang + filter dùng lặp ở các trang quản lý:
@@ -35,28 +35,31 @@ export function usePaginatedList<T, F>(
 	loader: (
 		params: PaginatedLoaderParams<F>,
 	) => Promise<AsyncDataResult<PaginatedResponse<T>>>,
-	{ initialFilters, pageSize = DEFAULT_PAGE_SIZE }: UsePaginatedListOptions<F>,
+	{
+		initialFilters,
+		pageSize = DEFAULT_PAGE_SIZE,
+	}: UsePaginatedListOptions<F>,
 ) {
-	const [page, setPage] = useState(1);
-	const [filters, setFiltersState] = useState<F>(initialFilters);
+	const [page, setPage] = useState(1)
+	const [filters, setFiltersState] = useState<F>(initialFilters)
 
 	const load = useCallback(
 		() => loader({ page, pageSize, filters }),
 		[loader, page, pageSize, filters],
-	);
+	)
 
 	const query = useAsyncData<PaginatedResponse<T>>(load, {
 		initialData: EMPTY_PAGE,
 		retainPreviousData: false,
-	});
+	})
 
 	const setFilters = useCallback((next: F) => {
-		setFiltersState(next);
-		setPage(1);
-	}, []);
+		setFiltersState(next)
+		setPage(1)
+	}, [])
 
-	const total = query.data.total;
-	const totalPages = Math.max(1, Math.ceil(total / pageSize));
+	const total = query.data.total
+	const totalPages = Math.max(1, Math.ceil(total / pageSize))
 
 	return {
 		items: query.data.items,
@@ -70,5 +73,5 @@ export function usePaginatedList<T, F>(
 		error: query.error,
 		refetch: query.refetch,
 		setData: query.setData,
-	};
+	}
 }

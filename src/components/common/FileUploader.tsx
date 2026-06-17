@@ -4,32 +4,32 @@ import {
 	ALLOWED_VIDEO_MIMES,
 	MAX_FILE_SIZE_BYTES,
 	formatFileSize,
-} from "@/constants/media";
-import { useFileUpload } from "@/hooks/useFileUpload";
-import type { MediaReference, UploadResult } from "@/types/media.types";
+} from "@/constants/media"
+import { useFileUpload } from "@/hooks/useFileUpload"
+import type { MediaReference, UploadResult } from "@/types/media.types"
 
-import "./FileUploader.css";
+import "./FileUploader.css"
 
 interface FileUploaderValue extends MediaReference {
-	originalName?: string;
-	fileSize?: number;
-	mimeType?: string;
+	originalName?: string
+	fileSize?: number
+	mimeType?: string
 }
 
 interface FileUploaderProps {
-	value: FileUploaderValue | null;
-	onChange: (next: (FileUploaderValue & UploadResult) | null) => void;
-	disabled?: boolean;
-	maxSize?: number;
-	accept?: readonly string[];
-	label?: string;
+	value: FileUploaderValue | null
+	onChange: (next: (FileUploaderValue & UploadResult) | null) => void
+	disabled?: boolean
+	maxSize?: number
+	accept?: readonly string[]
+	label?: string
 }
 
 const DEFAULT_ACCEPT = [
 	...ALLOWED_DOCUMENT_MIMES,
 	...ALLOWED_VIDEO_MIMES,
 	...ALLOWED_AUDIO_MIMES,
-] as const;
+] as const
 
 export function FileUploader({
 	value,
@@ -58,7 +58,7 @@ export function FileUploader({
 		currentMediaFileId: value?.mediaFileId,
 		onUploaded: (result) => onChange(result),
 		onCleared: () => onChange(null),
-	});
+	})
 
 	return (
 		<div className="file-uploader">
@@ -79,8 +79,8 @@ export function FileUploader({
 					tabIndex={disabled ? -1 : 0}
 					onKeyDown={(e) => {
 						if (e.key === "Enter" || e.key === " ") {
-							e.preventDefault();
-							handlePickFile();
+							e.preventDefault()
+							handlePickFile()
 						}
 					}}
 				>
@@ -170,5 +170,5 @@ export function FileUploader({
 
 			{error && <p className="file-uploader__error">{error}</p>}
 		</div>
-	);
+	)
 }

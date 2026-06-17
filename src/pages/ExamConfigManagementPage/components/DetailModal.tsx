@@ -1,22 +1,18 @@
-import type { ExamTemplate } from "@/types/exam-template.types";
+import type { ExamTemplate } from "@/types/exam-template.types"
 
 export function DetailModal({
 	template,
 	onClose,
 }: {
-	template: ExamTemplate;
-	onClose: () => void;
+	template: ExamTemplate
+	onClose: () => void
 }) {
-	const statusKey = template.isActive ? "active" : "inactive";
-	const statusLabel = template.isActive ? "Đang áp dụng" : "Ngừng áp dụng";
+	const statusKey = template.isActive ? "active" : "inactive"
+	const statusLabel = template.isActive ? "Đang áp dụng" : "Ngừng áp dụng"
 
 	return (
-		<div
-			className="ec-modal-overlay"
-			onClick={onClose}>
-			<div
-				className="ec-modal"
-				onClick={(e) => e.stopPropagation()}>
+		<div className="ec-modal-overlay" onClick={onClose}>
+			<div className="ec-modal" onClick={(e) => e.stopPropagation()}>
 				<div className="ec-modal__header">
 					<div className="ec-modal__title-row">
 						<div className="ec-modal__badge">
@@ -25,33 +21,23 @@ export function DetailModal({
 						<div>
 							<h2>{template.name}</h2>
 							<span
-								className={`ec-card__status ec-card__status--${statusKey}`}>
+								className={`ec-card__status ec-card__status--${statusKey}`}
+							>
 								{statusLabel}
 							</span>
 						</div>
 					</div>
-					<button
-						className="ec-modal__close"
-						onClick={onClose}>
+					<button className="ec-modal__close" onClick={onClose}>
 						<svg
 							width="18"
 							height="18"
 							viewBox="0 0 24 24"
 							fill="none"
 							stroke="currentColor"
-							strokeWidth="2">
-							<line
-								x1="18"
-								y1="6"
-								x2="6"
-								y2="18"
-							/>
-							<line
-								x1="6"
-								y1="6"
-								x2="18"
-								y2="18"
-							/>
+							strokeWidth="2"
+						>
+							<line x1="18" y1="6" x2="6" y2="18" />
+							<line x1="6" y1="6" x2="18" y2="18" />
 						</svg>
 					</button>
 				</div>
@@ -107,5 +93,5 @@ export function DetailModal({
 				</div>
 			</div>
 		</div>
-	);
+	)
 }

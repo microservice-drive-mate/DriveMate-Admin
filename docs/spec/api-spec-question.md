@@ -15,18 +15,18 @@ Question-service validate JWT/RBAC tại service bằng Keycloak guard. Frontend
 
 ## Authentication
 
-| Endpoint | Role |
-| --- | --- |
-| `POST /admin/questions/topics` | `ADMIN`, `CENTER_MANAGER` |
-| `GET /admin/questions/topics` | `ADMIN`, `CENTER_MANAGER` |
-| `GET /admin/questions/topics/:id` | `ADMIN`, `CENTER_MANAGER` |
-| `PATCH /admin/questions/topics/:id` | `ADMIN`, `CENTER_MANAGER` |
-| `POST /admin/questions` | `ADMIN`, `CENTER_MANAGER` |
-| `GET /admin/questions` | `ADMIN`, `CENTER_MANAGER` |
-| `GET /admin/questions/:id` | `ADMIN`, `CENTER_MANAGER` |
-| `PATCH /admin/questions/:id` | `ADMIN`, `CENTER_MANAGER` |
-| `DELETE /admin/questions/:id` | `ADMIN`, `CENTER_MANAGER` |
-| `POST /admin/questions/pool` | `ADMIN`, `CENTER_MANAGER`, `INSTRUCTOR` or exam-service service account |
+| Endpoint                            | Role                                                                    |
+| ----------------------------------- | ----------------------------------------------------------------------- |
+| `POST /admin/questions/topics`      | `ADMIN`, `CENTER_MANAGER`                                               |
+| `GET /admin/questions/topics`       | `ADMIN`, `CENTER_MANAGER`                                               |
+| `GET /admin/questions/topics/:id`   | `ADMIN`, `CENTER_MANAGER`                                               |
+| `PATCH /admin/questions/topics/:id` | `ADMIN`, `CENTER_MANAGER`                                               |
+| `POST /admin/questions`             | `ADMIN`, `CENTER_MANAGER`                                               |
+| `GET /admin/questions`              | `ADMIN`, `CENTER_MANAGER`                                               |
+| `GET /admin/questions/:id`          | `ADMIN`, `CENTER_MANAGER`                                               |
+| `PATCH /admin/questions/:id`        | `ADMIN`, `CENTER_MANAGER`                                               |
+| `DELETE /admin/questions/:id`       | `ADMIN`, `CENTER_MANAGER`                                               |
+| `POST /admin/questions/pool`        | `ADMIN`, `CENTER_MANAGER`, `INSTRUCTOR` or exam-service service account |
 
 ---
 
@@ -36,12 +36,12 @@ Tất cả HTTP success response được bọc bởi `ApiResponseInterceptor`.
 
 ```json
 {
-  "success": true,
-  "code": "SUCCESS",
-  "message": "OK",
-  "timestamp": "2026-05-14T10:00:00.000Z",
-  "path": "/admin/questions",
-  "data": {}
+	"success": true,
+	"code": "SUCCESS",
+	"message": "OK",
+	"timestamp": "2026-05-14T10:00:00.000Z",
+	"path": "/admin/questions",
+	"data": {}
 }
 ```
 
@@ -49,11 +49,11 @@ Lỗi domain:
 
 ```json
 {
-  "success": false,
-  "code": "QUESTION_NOT_FOUND",
-  "message": "Question not found: question-uuid",
-  "timestamp": "2026-05-14T10:00:00.000Z",
-  "path": "/admin/questions/question-uuid"
+	"success": false,
+	"code": "QUESTION_NOT_FOUND",
+	"message": "Question not found: question-uuid",
+	"timestamp": "2026-05-14T10:00:00.000Z",
+	"path": "/admin/questions/question-uuid"
 }
 ```
 
@@ -61,14 +61,14 @@ Lỗi domain:
 
 ## Error Codes
 
-| HTTP | Code | Nguyên nhân |
-| ---: | --- | --- |
-| 400 | `VALIDATION_ERROR`, `INVALID_QUESTION` | Body/query hoặc invariant không hợp lệ |
-| 404 | `QUESTION_NOT_FOUND` | Không tìm thấy question |
-| 404 | `QUESTION_TOPIC_NOT_FOUND` | Không tìm thấy topic |
-| 409 | `QUESTION_DUPLICATE` | Question trùng normalized content + topic |
-| 409 | `QUESTION_VERSION_CONFLICT` | Optimistic concurrency conflict |
-| 422 | `QUESTION_ALREADY_DELETED` | Thao tác trên question đã soft-delete |
+| HTTP | Code                                   | Nguyên nhân                               |
+| ---: | -------------------------------------- | ----------------------------------------- |
+|  400 | `VALIDATION_ERROR`, `INVALID_QUESTION` | Body/query hoặc invariant không hợp lệ    |
+|  404 | `QUESTION_NOT_FOUND`                   | Không tìm thấy question                   |
+|  404 | `QUESTION_TOPIC_NOT_FOUND`             | Không tìm thấy topic                      |
+|  409 | `QUESTION_DUPLICATE`                   | Question trùng normalized content + topic |
+|  409 | `QUESTION_VERSION_CONFLICT`            | Optimistic concurrency conflict           |
+|  422 | `QUESTION_ALREADY_DELETED`             | Thao tác trên question đã soft-delete     |
 
 ---
 
@@ -98,13 +98,13 @@ Critical question numbers:
 Critical counts by seeded topic:
 
 | Topic range | Critical count |
-| --- | ---: |
-| `1-180` | 47 |
-| `181-205` | 2 |
-| `206-263` | 11 |
-| `264-300` | 0 |
-| `301-485` | 0 |
-| `486-600` | 0 |
+| ----------- | -------------: |
+| `1-180`     |             47 |
+| `181-205`   |              2 |
+| `206-263`   |             11 |
+| `264-300`   |              0 |
+| `301-485`   |              0 |
+| `486-600`   |              0 |
 
 Exam templates with `criticalQuestions > 0` must include at least one topic from the first three ranges in `topicDistribution`.
 
@@ -128,9 +128,9 @@ Tạo topic mới.
 
 ```json
 {
-  "name": "Biển báo giao thông",
-  "description": "Nhóm câu hỏi về biển báo",
-  "parentId": null
+	"name": "Biển báo giao thông",
+	"description": "Nhóm câu hỏi về biển báo",
+	"parentId": null
 }
 ```
 
@@ -138,18 +138,18 @@ Tạo topic mới.
 
 ```json
 {
-  "success": true,
-  "code": "SUCCESS",
-  "message": "Created",
-  "timestamp": "2026-05-14T10:00:00.000Z",
-  "path": "/admin/questions/topics",
-  "data": {
-    "id": "topic-uuid",
-    "name": "Biển báo giao thông",
-    "description": "Nhóm câu hỏi về biển báo",
-    "parentId": null,
-    "createdAt": "2026-05-14T10:00:00.000Z"
-  }
+	"success": true,
+	"code": "SUCCESS",
+	"message": "Created",
+	"timestamp": "2026-05-14T10:00:00.000Z",
+	"path": "/admin/questions/topics",
+	"data": {
+		"id": "topic-uuid",
+		"name": "Biển báo giao thông",
+		"description": "Nhóm câu hỏi về biển báo",
+		"parentId": null,
+		"createdAt": "2026-05-14T10:00:00.000Z"
+	}
 }
 ```
 
@@ -161,35 +161,35 @@ List topic có phân trang.
 
 **Query**
 
-| Param | Type | Default | Validation |
-| --- | --- | ---: | --- |
-| `page` | number | 1 | integer, `>= 1` |
-| `size` | number | 20 | integer, `1..100` |
-| `parentId` | UUID | - | optional UUID |
+| Param      | Type   | Default | Validation        |
+| ---------- | ------ | ------: | ----------------- |
+| `page`     | number |       1 | integer, `>= 1`   |
+| `size`     | number |      20 | integer, `1..100` |
+| `parentId` | UUID   |       - | optional UUID     |
 
 **Response `200 OK`**
 
 ```json
 {
-  "success": true,
-  "code": "SUCCESS",
-  "message": "OK",
-  "timestamp": "2026-05-14T10:00:00.000Z",
-  "path": "/admin/questions/topics",
-  "data": {
-    "items": [
-      {
-        "id": "topic-uuid",
-        "name": "Biển báo giao thông",
-        "description": "Nhóm câu hỏi về biển báo",
-        "parentId": null,
-        "createdAt": "2026-05-14T10:00:00.000Z"
-      }
-    ],
-    "total": 1,
-    "page": 1,
-    "size": 20
-  }
+	"success": true,
+	"code": "SUCCESS",
+	"message": "OK",
+	"timestamp": "2026-05-14T10:00:00.000Z",
+	"path": "/admin/questions/topics",
+	"data": {
+		"items": [
+			{
+				"id": "topic-uuid",
+				"name": "Biển báo giao thông",
+				"description": "Nhóm câu hỏi về biển báo",
+				"parentId": null,
+				"createdAt": "2026-05-14T10:00:00.000Z"
+			}
+		],
+		"total": 1,
+		"page": 1,
+		"size": 20
+	}
 }
 ```
 
@@ -203,18 +203,18 @@ Lấy chi tiết topic.
 
 ```json
 {
-  "success": true,
-  "code": "SUCCESS",
-  "message": "OK",
-  "timestamp": "2026-05-14T10:00:00.000Z",
-  "path": "/admin/questions/topics/topic-uuid",
-  "data": {
-    "id": "topic-uuid",
-    "name": "Biển báo giao thông",
-    "description": "Nhóm câu hỏi về biển báo",
-    "parentId": null,
-    "createdAt": "2026-05-14T10:00:00.000Z"
-  }
+	"success": true,
+	"code": "SUCCESS",
+	"message": "OK",
+	"timestamp": "2026-05-14T10:00:00.000Z",
+	"path": "/admin/questions/topics/topic-uuid",
+	"data": {
+		"id": "topic-uuid",
+		"name": "Biển báo giao thông",
+		"description": "Nhóm câu hỏi về biển báo",
+		"parentId": null,
+		"createdAt": "2026-05-14T10:00:00.000Z"
+	}
 }
 ```
 
@@ -228,9 +228,9 @@ Cập nhật `name`, `description`, hoặc `parentId`.
 
 ```json
 {
-  "name": "Biển báo cấm",
-  "description": "Nhóm câu hỏi về biển báo cấm",
-  "parentId": "parent-topic-uuid"
+	"name": "Biển báo cấm",
+	"description": "Nhóm câu hỏi về biển báo cấm",
+	"parentId": "parent-topic-uuid"
 }
 ```
 
@@ -238,18 +238,18 @@ Cập nhật `name`, `description`, hoặc `parentId`.
 
 ```json
 {
-  "success": true,
-  "code": "SUCCESS",
-  "message": "OK",
-  "timestamp": "2026-05-14T10:00:00.000Z",
-  "path": "/admin/questions/topics/topic-uuid",
-  "data": {
-    "id": "topic-uuid",
-    "name": "Biển báo cấm",
-    "description": "Nhóm câu hỏi về biển báo cấm",
-    "parentId": "parent-topic-uuid",
-    "createdAt": "2026-05-14T10:00:00.000Z"
-  }
+	"success": true,
+	"code": "SUCCESS",
+	"message": "OK",
+	"timestamp": "2026-05-14T10:00:00.000Z",
+	"path": "/admin/questions/topics/topic-uuid",
+	"data": {
+		"id": "topic-uuid",
+		"name": "Biển báo cấm",
+		"description": "Nhóm câu hỏi về biển báo cấm",
+		"parentId": "parent-topic-uuid",
+		"createdAt": "2026-05-14T10:00:00.000Z"
+	}
 }
 ```
 
@@ -265,20 +265,20 @@ Tạo question mới. `createdById` lấy từ `sub` trong JWT của caller.
 
 ```json
 {
-  "content": "Khi gặp đèn đỏ, người lái xe phải làm gì?",
-  "type": "THEORY",
-  "licenseCategories": ["B2"],
-  "difficulty": "EASY",
-  "explanation": "Đèn đỏ yêu cầu dừng lại trước vạch dừng.",
-  "imageUrl": null,
-  "mediaFileId": "media-file-uuid",
-  "isCritical": false,
-  "isActive": true,
-  "topicId": "topic-uuid",
-  "options": [
-    { "content": "Dừng lại", "isCorrect": true, "displayOrder": 1 },
-    { "content": "Đi tiếp", "isCorrect": false, "displayOrder": 2 }
-  ]
+	"content": "Khi gặp đèn đỏ, người lái xe phải làm gì?",
+	"type": "THEORY",
+	"licenseCategories": ["B2"],
+	"difficulty": "EASY",
+	"explanation": "Đèn đỏ yêu cầu dừng lại trước vạch dừng.",
+	"imageUrl": null,
+	"mediaFileId": "media-file-uuid",
+	"isCritical": false,
+	"isActive": true,
+	"topicId": "topic-uuid",
+	"options": [
+		{ "content": "Dừng lại", "isCorrect": true, "displayOrder": 1 },
+		{ "content": "Đi tiếp", "isCorrect": false, "displayOrder": 2 }
+	]
 }
 ```
 
@@ -286,39 +286,39 @@ Tạo question mới. `createdById` lấy từ `sub` trong JWT của caller.
 
 ```json
 {
-  "success": true,
-  "code": "SUCCESS",
-  "message": "Created",
-  "timestamp": "2026-05-14T10:00:00.000Z",
-  "path": "/admin/questions",
-  "data": {
-    "id": "question-uuid",
-    "content": "Khi gặp đèn đỏ, người lái xe phải làm gì?",
-    "type": "THEORY",
-    "licenseCategories": ["B2"],
-    "difficulty": "EASY",
-    "explanation": "Đèn đỏ yêu cầu dừng lại trước vạch dừng.",
-    "imageUrl": null,
-    "mediaFileId": "media-file-uuid",
-    "isCritical": false,
-    "isActive": true,
-    "isDeleted": false,
-    "topicId": "topic-uuid",
-    "createdById": "admin-uuid",
-    "version": 1,
-    "deletedById": null,
-    "deletedAt": null,
-    "createdAt": "2026-05-14T10:00:00.000Z",
-    "updatedAt": "2026-05-14T10:00:00.000Z",
-    "options": [
-      {
-        "id": "option-uuid",
-        "content": "Dừng lại",
-        "isCorrect": true,
-        "displayOrder": 1
-      }
-    ]
-  }
+	"success": true,
+	"code": "SUCCESS",
+	"message": "Created",
+	"timestamp": "2026-05-14T10:00:00.000Z",
+	"path": "/admin/questions",
+	"data": {
+		"id": "question-uuid",
+		"content": "Khi gặp đèn đỏ, người lái xe phải làm gì?",
+		"type": "THEORY",
+		"licenseCategories": ["B2"],
+		"difficulty": "EASY",
+		"explanation": "Đèn đỏ yêu cầu dừng lại trước vạch dừng.",
+		"imageUrl": null,
+		"mediaFileId": "media-file-uuid",
+		"isCritical": false,
+		"isActive": true,
+		"isDeleted": false,
+		"topicId": "topic-uuid",
+		"createdById": "admin-uuid",
+		"version": 1,
+		"deletedById": null,
+		"deletedAt": null,
+		"createdAt": "2026-05-14T10:00:00.000Z",
+		"updatedAt": "2026-05-14T10:00:00.000Z",
+		"options": [
+			{
+				"id": "option-uuid",
+				"content": "Dừng lại",
+				"isCorrect": true,
+				"displayOrder": 1
+			}
+		]
+	}
 }
 ```
 
@@ -332,63 +332,63 @@ Search question bank có filter và pagination.
 
 **Query**
 
-| Param | Type | Default |
-| --- | --- | ---: |
-| `page` | number | 1 |
-| `size` | number | 20 |
-| `keyword` | string | - |
-| `licenseCategory` | LicenseCategory | - |
-| `type` | QuestionType | - |
-| `difficulty` | QuestionDifficulty | - |
-| `topicId` | UUID | - |
-| `isCritical` | boolean | - |
-| `isActive` | boolean | - |
-| `includeDeleted` | boolean | false |
+| Param             | Type               | Default |
+| ----------------- | ------------------ | ------: |
+| `page`            | number             |       1 |
+| `size`            | number             |      20 |
+| `keyword`         | string             |       - |
+| `licenseCategory` | LicenseCategory    |       - |
+| `type`            | QuestionType       |       - |
+| `difficulty`      | QuestionDifficulty |       - |
+| `topicId`         | UUID               |       - |
+| `isCritical`      | boolean            |       - |
+| `isActive`        | boolean            |       - |
+| `includeDeleted`  | boolean            |   false |
 
 **Response `200 OK`**
 
 ```json
 {
-  "success": true,
-  "code": "SUCCESS",
-  "message": "OK",
-  "timestamp": "2026-05-14T10:00:00.000Z",
-  "path": "/admin/questions",
-  "data": {
-    "items": [
-      {
-        "id": "question-uuid",
-        "content": "Khi gặp đèn đỏ, người lái xe phải làm gì?",
-        "type": "THEORY",
-        "licenseCategories": ["B2"],
-        "difficulty": "EASY",
-        "explanation": "Đèn đỏ yêu cầu dừng lại trước vạch dừng.",
-        "imageUrl": null,
-        "mediaFileId": "media-file-uuid",
-        "isCritical": false,
-        "isActive": true,
-        "isDeleted": false,
-        "topicId": "topic-uuid",
-        "createdById": "admin-uuid",
-        "version": 1,
-        "deletedById": null,
-        "deletedAt": null,
-        "createdAt": "2026-05-14T10:00:00.000Z",
-        "updatedAt": "2026-05-14T10:00:00.000Z",
-        "options": [
-          {
-            "id": "option-uuid",
-            "content": "Dừng lại",
-            "isCorrect": true,
-            "displayOrder": 1
-          }
-        ]
-      }
-    ],
-    "total": 1,
-    "page": 1,
-    "size": 20
-  }
+	"success": true,
+	"code": "SUCCESS",
+	"message": "OK",
+	"timestamp": "2026-05-14T10:00:00.000Z",
+	"path": "/admin/questions",
+	"data": {
+		"items": [
+			{
+				"id": "question-uuid",
+				"content": "Khi gặp đèn đỏ, người lái xe phải làm gì?",
+				"type": "THEORY",
+				"licenseCategories": ["B2"],
+				"difficulty": "EASY",
+				"explanation": "Đèn đỏ yêu cầu dừng lại trước vạch dừng.",
+				"imageUrl": null,
+				"mediaFileId": "media-file-uuid",
+				"isCritical": false,
+				"isActive": true,
+				"isDeleted": false,
+				"topicId": "topic-uuid",
+				"createdById": "admin-uuid",
+				"version": 1,
+				"deletedById": null,
+				"deletedAt": null,
+				"createdAt": "2026-05-14T10:00:00.000Z",
+				"updatedAt": "2026-05-14T10:00:00.000Z",
+				"options": [
+					{
+						"id": "option-uuid",
+						"content": "Dừng lại",
+						"isCorrect": true,
+						"displayOrder": 1
+					}
+				]
+			}
+		],
+		"total": 1,
+		"page": 1,
+		"size": 20
+	}
 }
 ```
 
@@ -402,39 +402,39 @@ Lấy chi tiết question. Response có `options[].isCorrect`; chỉ dùng cho a
 
 ```json
 {
-  "success": true,
-  "code": "SUCCESS",
-  "message": "OK",
-  "timestamp": "2026-05-14T10:00:00.000Z",
-  "path": "/admin/questions/question-uuid",
-  "data": {
-    "id": "question-uuid",
-    "content": "Khi gặp đèn đỏ, người lái xe phải làm gì?",
-    "type": "THEORY",
-    "licenseCategories": ["B2"],
-    "difficulty": "EASY",
-    "explanation": "Đèn đỏ yêu cầu dừng lại trước vạch dừng.",
-    "imageUrl": null,
-    "mediaFileId": "media-file-uuid",
-    "isCritical": false,
-    "isActive": true,
-    "isDeleted": false,
-    "topicId": "topic-uuid",
-    "createdById": "admin-uuid",
-    "version": 1,
-    "deletedById": null,
-    "deletedAt": null,
-    "createdAt": "2026-05-14T10:00:00.000Z",
-    "updatedAt": "2026-05-14T10:00:00.000Z",
-    "options": [
-      {
-        "id": "option-uuid",
-        "content": "Dừng lại",
-        "isCorrect": true,
-        "displayOrder": 1
-      }
-    ]
-  }
+	"success": true,
+	"code": "SUCCESS",
+	"message": "OK",
+	"timestamp": "2026-05-14T10:00:00.000Z",
+	"path": "/admin/questions/question-uuid",
+	"data": {
+		"id": "question-uuid",
+		"content": "Khi gặp đèn đỏ, người lái xe phải làm gì?",
+		"type": "THEORY",
+		"licenseCategories": ["B2"],
+		"difficulty": "EASY",
+		"explanation": "Đèn đỏ yêu cầu dừng lại trước vạch dừng.",
+		"imageUrl": null,
+		"mediaFileId": "media-file-uuid",
+		"isCritical": false,
+		"isActive": true,
+		"isDeleted": false,
+		"topicId": "topic-uuid",
+		"createdById": "admin-uuid",
+		"version": 1,
+		"deletedById": null,
+		"deletedAt": null,
+		"createdAt": "2026-05-14T10:00:00.000Z",
+		"updatedAt": "2026-05-14T10:00:00.000Z",
+		"options": [
+			{
+				"id": "option-uuid",
+				"content": "Dừng lại",
+				"isCorrect": true,
+				"displayOrder": 1
+			}
+		]
+	}
 }
 ```
 
@@ -448,9 +448,9 @@ Cập nhật question. Bắt buộc gửi `version`.
 
 ```json
 {
-  "version": 1,
-  "content": "Nội dung mới",
-  "isActive": false
+	"version": 1,
+	"content": "Nội dung mới",
+	"isActive": false
 }
 ```
 
@@ -458,39 +458,39 @@ Cập nhật question. Bắt buộc gửi `version`.
 
 ```json
 {
-  "success": true,
-  "code": "SUCCESS",
-  "message": "OK",
-  "timestamp": "2026-05-14T10:00:00.000Z",
-  "path": "/admin/questions/question-uuid",
-  "data": {
-    "id": "question-uuid",
-    "content": "Nội dung mới",
-    "type": "THEORY",
-    "licenseCategories": ["B2"],
-    "difficulty": "EASY",
-    "explanation": "Đèn đỏ yêu cầu dừng lại trước vạch dừng.",
-    "imageUrl": null,
-    "mediaFileId": "media-file-uuid",
-    "isCritical": false,
-    "isActive": false,
-    "isDeleted": false,
-    "topicId": "topic-uuid",
-    "createdById": "admin-uuid",
-    "version": 2,
-    "deletedById": null,
-    "deletedAt": null,
-    "createdAt": "2026-05-14T10:00:00.000Z",
-    "updatedAt": "2026-05-14T10:05:00.000Z",
-    "options": [
-      {
-        "id": "option-uuid",
-        "content": "Dừng lại",
-        "isCorrect": true,
-        "displayOrder": 1
-      }
-    ]
-  }
+	"success": true,
+	"code": "SUCCESS",
+	"message": "OK",
+	"timestamp": "2026-05-14T10:00:00.000Z",
+	"path": "/admin/questions/question-uuid",
+	"data": {
+		"id": "question-uuid",
+		"content": "Nội dung mới",
+		"type": "THEORY",
+		"licenseCategories": ["B2"],
+		"difficulty": "EASY",
+		"explanation": "Đèn đỏ yêu cầu dừng lại trước vạch dừng.",
+		"imageUrl": null,
+		"mediaFileId": "media-file-uuid",
+		"isCritical": false,
+		"isActive": false,
+		"isDeleted": false,
+		"topicId": "topic-uuid",
+		"createdById": "admin-uuid",
+		"version": 2,
+		"deletedById": null,
+		"deletedAt": null,
+		"createdAt": "2026-05-14T10:00:00.000Z",
+		"updatedAt": "2026-05-14T10:05:00.000Z",
+		"options": [
+			{
+				"id": "option-uuid",
+				"content": "Dừng lại",
+				"isCorrect": true,
+				"displayOrder": 1
+			}
+		]
+	}
 }
 ```
 
@@ -506,7 +506,7 @@ Soft delete question. `deletedById` lấy từ `sub` trong JWT của caller.
 
 ```json
 {
-  "version": 2
+	"version": 2
 }
 ```
 
@@ -514,39 +514,39 @@ Soft delete question. `deletedById` lấy từ `sub` trong JWT của caller.
 
 ```json
 {
-  "success": true,
-  "code": "SUCCESS",
-  "message": "OK",
-  "timestamp": "2026-05-14T10:00:00.000Z",
-  "path": "/admin/questions/question-uuid",
-  "data": {
-    "id": "question-uuid",
-    "content": "Khi gặp đèn đỏ, người lái xe phải làm gì?",
-    "type": "THEORY",
-    "licenseCategories": ["B2"],
-    "difficulty": "EASY",
-    "explanation": "Đèn đỏ yêu cầu dừng lại trước vạch dừng.",
-    "imageUrl": null,
-    "mediaFileId": "media-file-uuid",
-    "isCritical": false,
-    "isActive": false,
-    "isDeleted": true,
-    "topicId": "topic-uuid",
-    "createdById": "admin-uuid",
-    "version": 3,
-    "deletedById": "admin-uuid",
-    "deletedAt": "2026-05-14T10:10:00.000Z",
-    "createdAt": "2026-05-14T10:00:00.000Z",
-    "updatedAt": "2026-05-14T10:10:00.000Z",
-    "options": [
-      {
-        "id": "option-uuid",
-        "content": "Dừng lại",
-        "isCorrect": true,
-        "displayOrder": 1
-      }
-    ]
-  }
+	"success": true,
+	"code": "SUCCESS",
+	"message": "OK",
+	"timestamp": "2026-05-14T10:00:00.000Z",
+	"path": "/admin/questions/question-uuid",
+	"data": {
+		"id": "question-uuid",
+		"content": "Khi gặp đèn đỏ, người lái xe phải làm gì?",
+		"type": "THEORY",
+		"licenseCategories": ["B2"],
+		"difficulty": "EASY",
+		"explanation": "Đèn đỏ yêu cầu dừng lại trước vạch dừng.",
+		"imageUrl": null,
+		"mediaFileId": "media-file-uuid",
+		"isCritical": false,
+		"isActive": false,
+		"isDeleted": true,
+		"topicId": "topic-uuid",
+		"createdById": "admin-uuid",
+		"version": 3,
+		"deletedById": "admin-uuid",
+		"deletedAt": "2026-05-14T10:10:00.000Z",
+		"createdAt": "2026-05-14T10:00:00.000Z",
+		"updatedAt": "2026-05-14T10:10:00.000Z",
+		"options": [
+			{
+				"id": "option-uuid",
+				"content": "Dừng lại",
+				"isCorrect": true,
+				"displayOrder": 1
+			}
+		]
+	}
 }
 ```
 
@@ -562,13 +562,13 @@ Endpoint nội bộ cho exam-service lấy question pool active và chưa soft-d
 
 ```json
 {
-  "licenseCategory": "B2",
-  "size": 25,
-  "type": "THEORY",
-  "difficulty": "EASY",
-  "topicId": "topic-uuid",
-  "isCritical": false,
-  "excludeQuestionIds": ["question-uuid"]
+	"licenseCategory": "B2",
+	"size": 25,
+	"type": "THEORY",
+	"difficulty": "EASY",
+	"topicId": "topic-uuid",
+	"isCritical": false,
+	"excludeQuestionIds": ["question-uuid"]
 }
 ```
 
@@ -576,43 +576,43 @@ Endpoint nội bộ cho exam-service lấy question pool active và chưa soft-d
 
 ```json
 {
-  "success": true,
-  "code": "SUCCESS",
-  "message": "Created",
-  "timestamp": "2026-05-14T10:00:00.000Z",
-  "path": "/admin/questions/pool",
-  "data": {
-    "items": [
-      {
-        "id": "question-uuid",
-        "content": "Khi gặp đèn đỏ, người lái xe phải làm gì?",
-        "type": "THEORY",
-        "licenseCategories": ["B2"],
-        "difficulty": "EASY",
-        "explanation": "Đèn đỏ yêu cầu dừng lại trước vạch dừng.",
-        "imageUrl": null,
-        "mediaFileId": "media-file-uuid",
-        "isCritical": false,
-        "isActive": true,
-        "isDeleted": false,
-        "topicId": "topic-uuid",
-        "createdById": "admin-uuid",
-        "version": 1,
-        "deletedById": null,
-        "deletedAt": null,
-        "createdAt": "2026-05-14T10:00:00.000Z",
-        "updatedAt": "2026-05-14T10:00:00.000Z",
-        "options": [
-          {
-            "id": "option-uuid",
-            "content": "Dừng lại",
-            "isCorrect": true,
-            "displayOrder": 1
-          }
-        ]
-      }
-    ]
-  }
+	"success": true,
+	"code": "SUCCESS",
+	"message": "Created",
+	"timestamp": "2026-05-14T10:00:00.000Z",
+	"path": "/admin/questions/pool",
+	"data": {
+		"items": [
+			{
+				"id": "question-uuid",
+				"content": "Khi gặp đèn đỏ, người lái xe phải làm gì?",
+				"type": "THEORY",
+				"licenseCategories": ["B2"],
+				"difficulty": "EASY",
+				"explanation": "Đèn đỏ yêu cầu dừng lại trước vạch dừng.",
+				"imageUrl": null,
+				"mediaFileId": "media-file-uuid",
+				"isCritical": false,
+				"isActive": true,
+				"isDeleted": false,
+				"topicId": "topic-uuid",
+				"createdById": "admin-uuid",
+				"version": 1,
+				"deletedById": null,
+				"deletedAt": null,
+				"createdAt": "2026-05-14T10:00:00.000Z",
+				"updatedAt": "2026-05-14T10:00:00.000Z",
+				"options": [
+					{
+						"id": "option-uuid",
+						"content": "Dừng lại",
+						"isCorrect": true,
+						"displayOrder": 1
+					}
+				]
+			}
+		]
+	}
 }
 ```
 
@@ -626,10 +626,10 @@ Pool response có đáp án đúng để exam-service snapshot/grade nội bộ.
 
 ```json
 {
-  "eventName": "question.created",
-  "questionId": "question-uuid",
-  "licenseCategories": ["B2"],
-  "isCritical": false
+	"eventName": "question.created",
+	"questionId": "question-uuid",
+	"licenseCategories": ["B2"],
+	"isCritical": false
 }
 ```
 
@@ -637,8 +637,8 @@ Pool response có đáp án đúng để exam-service snapshot/grade nội bộ.
 
 ```json
 {
-  "eventName": "question.deactivated",
-  "questionId": "question-uuid"
+	"eventName": "question.deactivated",
+	"questionId": "question-uuid"
 }
 ```
 
@@ -646,9 +646,9 @@ Pool response có đáp án đúng để exam-service snapshot/grade nội bộ.
 
 ```json
 {
-  "eventName": "question.image.linked",
-  "questionId": "question-uuid",
-  "mediaFileId": "media-file-uuid"
+	"eventName": "question.image.linked",
+	"questionId": "question-uuid",
+	"mediaFileId": "media-file-uuid"
 }
 ```
 
@@ -673,28 +673,28 @@ Returns active, non-deleted questions for practice. Query shape matches `GET /ad
 
 ```json
 {
-  "items": [
-    {
-      "id": "question-uuid",
-      "content": "Question text",
-      "type": "THEORY",
-      "licenseCategories": ["B2"],
-      "difficulty": "EASY",
-      "imageUrl": null,
-      "mediaFileId": null,
-      "topicId": "topic-uuid",
-      "options": [
-        {
-          "id": "option-uuid",
-          "content": "Option text",
-          "displayOrder": 1
-        }
-      ]
-    }
-  ],
-  "total": 1,
-  "page": 1,
-  "size": 20
+	"items": [
+		{
+			"id": "question-uuid",
+			"content": "Question text",
+			"type": "THEORY",
+			"licenseCategories": ["B2"],
+			"difficulty": "EASY",
+			"imageUrl": null,
+			"mediaFileId": null,
+			"topicId": "topic-uuid",
+			"options": [
+				{
+					"id": "option-uuid",
+					"content": "Option text",
+					"displayOrder": 1
+				}
+			]
+		}
+	],
+	"total": 1,
+	"page": 1,
+	"size": 20
 }
 ```
 
@@ -706,7 +706,7 @@ Creates a pending report for a question.
 
 ```json
 {
-  "reason": "WRONG_ANSWER",
-  "message": "I think this question has an incorrect answer."
+	"reason": "WRONG_ANSWER",
+	"message": "I think this question has an incorrect answer."
 }
 ```

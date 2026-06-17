@@ -1,29 +1,29 @@
 .section-card {
-  border-radius: var(--radius-md);
-  padding: 20px;
+	border-radius: var(--radius-md);
+	padding: 20px;
 }
 
 .section-card--light {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  box-shadow: var(--shadow-sm);
+	background: var(--color-surface);
+	border: 1px solid var(--color-border);
+	box-shadow: var(--shadow-sm);
 }
 
 .section-card--dark {
-  background: #242424;
-  border: 1px solid #333333;
+	background: #242424;
+	border: 1px solid #333333;
 }
 
 .section-card__title {
-  font-size: 15px;
-  font-weight: 600;
-  margin-bottom: 16px;
+	font-size: 15px;
+	font-weight: 600;
+	margin-bottom: 16px;
 }
 
 .section-card--light .section-card__title {
-  color: var(--color-text);
+	color: var(--color-text);
 }
 
 .section-card--dark .section-card__title {
-  color: #f0f0f0;
+	color: #f0f0f0;
 }

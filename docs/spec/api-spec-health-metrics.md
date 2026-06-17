@@ -15,12 +15,12 @@ Qua Kong, các API này được truy cập bằng cách thêm tiền tố đị
 
 Tất cả các endpoint Health Check và Metrics đều là **Public** (không yêu cầu Bearer Token). Các bộ lọc xác thực (Guards) được cấu hình bỏ qua đối với các đường dẫn này.
 
-| Endpoint | Role |
-| --- | --- |
-| `GET /health` | Public |
-| `GET /health/live` | Public |
+| Endpoint            | Role   |
+| ------------------- | ------ |
+| `GET /health`       | Public |
+| `GET /health/live`  | Public |
 | `GET /health/ready` | Public |
-| `GET /metrics` | Public |
+| `GET /metrics`      | Public |
 
 ---
 
@@ -30,12 +30,12 @@ Các endpoint `/health`, `/health/live` và `/health/ready` sử dụng chung đ
 
 ```json
 {
-  "success": true,
-  "code": "SUCCESS",
-  "message": "OK",
-  "timestamp": "2026-05-30T07:10:00.000Z",
-  "path": "/health/live",
-  "data": {}
+	"success": true,
+	"code": "SUCCESS",
+	"message": "OK",
+	"timestamp": "2026-05-30T07:10:00.000Z",
+	"path": "/health/live",
+	"data": {}
 }
 ```
 
@@ -43,12 +43,12 @@ Trong trường hợp có sự cố (Ví dụ: `/health/ready` trả về HTTP 5
 
 ```json
 {
-  "success": false,
-  "code": "SERVICE_UNAVAILABLE",
-  "message": "Service is not ready",
-  "timestamp": "2026-05-30T07:05:46.019Z",
-  "path": "/health/ready",
-  "errors": {}
+	"success": false,
+	"code": "SERVICE_UNAVAILABLE",
+	"message": "Service is not ready",
+	"timestamp": "2026-05-30T07:05:46.019Z",
+	"path": "/health/ready",
+	"errors": {}
 }
 ```
 
@@ -58,9 +58,9 @@ Endpoint `/metrics` là một ngoại lệ, nó trả về dữ liệu định d
 
 ## Error Codes
 
-| HTTP | Code | Nguyên nhân |
-| ---: | -------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| 503 | `SERVICE_UNAVAILABLE` | Dịch vụ chưa sẵn sàng do có ít nhất một dependency hạ tầng (Database, Redis, Keycloak, RabbitMQ) bị ngắt kết nối. |
+| HTTP | Code                  | Nguyên nhân                                                                                                       |
+| ---: | --------------------- | ----------------------------------------------------------------------------------------------------------------- |
+|  503 | `SERVICE_UNAVAILABLE` | Dịch vụ chưa sẵn sàng do có ít nhất một dependency hạ tầng (Database, Redis, Keycloak, RabbitMQ) bị ngắt kết nối. |
 
 ---
 
@@ -68,33 +68,33 @@ Endpoint `/metrics` là một ngoại lệ, nó trả về dữ liệu định d
 
 ### `HealthLivenessReport`
 
-| Field | Type | Description |
-| --- | --- | --- |
-| `service` | string | Tên của microservice hiện tại |
-| `status` | string | Trạng thái của tiến trình (luôn là `ok` đối với liveness) |
-| `timestamp` | string | Thời gian kiểm tra (ISO 8601) |
-| `uptimeSeconds` | number | Số giây tiến trình đã chạy liên tục |
-| `pid` | number | Process ID của tiến trình trên hệ điều hành |
-| `memory` | object | Thông tin chi tiết về mức sử dụng bộ nhớ (RSS, Heap, v.v.) |
+| Field           | Type   | Description                                                |
+| --------------- | ------ | ---------------------------------------------------------- |
+| `service`       | string | Tên của microservice hiện tại                              |
+| `status`        | string | Trạng thái của tiến trình (luôn là `ok` đối với liveness)  |
+| `timestamp`     | string | Thời gian kiểm tra (ISO 8601)                              |
+| `uptimeSeconds` | number | Số giây tiến trình đã chạy liên tục                        |
+| `pid`           | number | Process ID của tiến trình trên hệ điều hành                |
+| `memory`        | object | Thông tin chi tiết về mức sử dụng bộ nhớ (RSS, Heap, v.v.) |
 
 ### `HealthReadinessReport`
 
-| Field | Type | Description |
-| --- | --- | --- |
-| `service` | string | Tên của microservice hiện tại |
-| `status` | string | Trạng thái tổng thể (`ok` hoặc `error`) |
-| `timestamp` | string | Thời gian kiểm tra (ISO 8601) |
-| `checks` | HealthDependencyReport[] | Danh sách kết quả kiểm tra từng dependency cụ thể |
+| Field       | Type                     | Description                                       |
+| ----------- | ------------------------ | ------------------------------------------------- |
+| `service`   | string                   | Tên của microservice hiện tại                     |
+| `status`    | string                   | Trạng thái tổng thể (`ok` hoặc `error`)           |
+| `timestamp` | string                   | Thời gian kiểm tra (ISO 8601)                     |
+| `checks`    | HealthDependencyReport[] | Danh sách kết quả kiểm tra từng dependency cụ thể |
 
 ### `HealthDependencyReport`
 
-| Field | Type | Description |
-| --- | --- | --- |
-| `name` | string | Tên của dependency (ví dụ: `database`, `rabbitmq`, `keycloak`, `redis`) |
-| `status` | string | Trạng thái kết nối (`ok`, `error`, `skipped`) |
-| `target` | string | Địa chỉ kết nối của dependency |
-| `latencyMs` | number | Độ trễ phản hồi tính bằng mili-giây |
-| `error` | string | Thông tin lỗi chi tiết nếu kết nối thất bại (chỉ có khi status là `error`) |
+| Field       | Type   | Description                                                                |
+| ----------- | ------ | -------------------------------------------------------------------------- |
+| `name`      | string | Tên của dependency (ví dụ: `database`, `rabbitmq`, `keycloak`, `redis`)    |
+| `status`    | string | Trạng thái kết nối (`ok`, `error`, `skipped`)                              |
+| `target`    | string | Địa chỉ kết nối của dependency                                             |
+| `latencyMs` | number | Độ trễ phản hồi tính bằng mili-giây                                        |
+| `error`     | string | Thông tin lỗi chi tiết nếu kết nối thất bại (chỉ có khi status là `error`) |
 
 ---
 
@@ -114,25 +114,25 @@ Accept: application/json
 
 ```json
 {
-  "success": true,
-  "code": "SUCCESS",
-  "message": "OK",
-  "timestamp": "2026-05-30T07:06:41.748Z",
-  "path": "/health/live",
-  "data": {
-    "service": "identity-service",
-    "status": "ok",
-    "timestamp": "2026-05-30T07:06:41.747Z",
-    "uptimeSeconds": 918,
-    "pid": 40444,
-    "memory": {
-      "rss": 54353920,
-      "heapTotal": 272400384,
-      "heapUsed": 266331328,
-      "external": 10571894,
-      "arrayBuffers": 5057460
-    }
-  }
+	"success": true,
+	"code": "SUCCESS",
+	"message": "OK",
+	"timestamp": "2026-05-30T07:06:41.748Z",
+	"path": "/health/live",
+	"data": {
+		"service": "identity-service",
+		"status": "ok",
+		"timestamp": "2026-05-30T07:06:41.747Z",
+		"uptimeSeconds": 918,
+		"pid": 40444,
+		"memory": {
+			"rss": 54353920,
+			"heapTotal": 272400384,
+			"heapUsed": 266331328,
+			"external": 10571894,
+			"arrayBuffers": 5057460
+		}
+	}
 }
 ```
 
@@ -152,36 +152,36 @@ Accept: application/json
 
 ```json
 {
-  "success": true,
-  "code": "SUCCESS",
-  "message": "OK",
-  "timestamp": "2026-05-30T07:10:00.000Z",
-  "path": "/health/ready",
-  "data": {
-    "service": "identity-service",
-    "status": "ok",
-    "timestamp": "2026-05-30T07:10:00.000Z",
-    "checks": [
-      {
-        "name": "database",
-        "status": "ok",
-        "target": "postgresql://user:password@localhost:5432/identity_db",
-        "latencyMs": 15
-      },
-      {
-        "name": "rabbitmq",
-        "status": "ok",
-        "target": "amqp://guest:guest@localhost:5672",
-        "latencyMs": 8
-      },
-      {
-        "name": "keycloak",
-        "status": "ok",
-        "target": "http://localhost:8080",
-        "latencyMs": 45
-      }
-    ]
-  }
+	"success": true,
+	"code": "SUCCESS",
+	"message": "OK",
+	"timestamp": "2026-05-30T07:10:00.000Z",
+	"path": "/health/ready",
+	"data": {
+		"service": "identity-service",
+		"status": "ok",
+		"timestamp": "2026-05-30T07:10:00.000Z",
+		"checks": [
+			{
+				"name": "database",
+				"status": "ok",
+				"target": "postgresql://user:password@localhost:5432/identity_db",
+				"latencyMs": 15
+			},
+			{
+				"name": "rabbitmq",
+				"status": "ok",
+				"target": "amqp://guest:guest@localhost:5672",
+				"latencyMs": 8
+			},
+			{
+				"name": "keycloak",
+				"status": "ok",
+				"target": "http://localhost:8080",
+				"latencyMs": 45
+			}
+		]
+	}
 }
 ```
 
@@ -189,37 +189,37 @@ Accept: application/json
 
 ```json
 {
-  "success": false,
-  "code": "SERVICE_UNAVAILABLE",
-  "message": "Service is not ready",
-  "timestamp": "2026-05-30T07:05:46.019Z",
-  "path": "/health/ready",
-  "errors": {
-    "service": "identity-service",
-    "status": "error",
-    "timestamp": "2026-05-30T07:05:45.997Z",
-    "checks": [
-      {
-        "name": "database",
-        "status": "ok",
-        "target": "postgresql://user:password@localhost:5432/identity_db",
-        "latencyMs": 122
-      },
-      {
-        "name": "rabbitmq",
-        "status": "ok",
-        "target": "amqp://guest:guest@localhost:5672",
-        "latencyMs": 81
-      },
-      {
-        "name": "keycloak",
-        "status": "error",
-        "target": "http://localhost:8080",
-        "latencyMs": 6004,
-        "error": "timeout of 1500ms exceeded"
-      }
-    ]
-  }
+	"success": false,
+	"code": "SERVICE_UNAVAILABLE",
+	"message": "Service is not ready",
+	"timestamp": "2026-05-30T07:05:46.019Z",
+	"path": "/health/ready",
+	"errors": {
+		"service": "identity-service",
+		"status": "error",
+		"timestamp": "2026-05-30T07:05:45.997Z",
+		"checks": [
+			{
+				"name": "database",
+				"status": "ok",
+				"target": "postgresql://user:password@localhost:5432/identity_db",
+				"latencyMs": 122
+			},
+			{
+				"name": "rabbitmq",
+				"status": "ok",
+				"target": "amqp://guest:guest@localhost:5672",
+				"latencyMs": 81
+			},
+			{
+				"name": "keycloak",
+				"status": "error",
+				"target": "http://localhost:8080",
+				"latencyMs": 6004,
+				"error": "timeout of 1500ms exceeded"
+			}
+		]
+	}
 }
 ```
 

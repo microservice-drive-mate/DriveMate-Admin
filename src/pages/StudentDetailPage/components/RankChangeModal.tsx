@@ -1,20 +1,20 @@
-import { useState } from "react";
-import type { LicenseTier } from "@/types/user-profile.types";
-import { userService } from "@/services";
+import { useState } from "react"
+import type { LicenseTier } from "@/types/user-profile.types"
+import { userService } from "@/services"
 import {
 	getLicenseAssignmentErrorMessage,
 	getLicenseAssignmentSuccessMessage,
-} from "@/utils/srsMessages";
-import type { Student } from "@/types/student.types";
-import { STUDENT_RANK_OPTIONS } from "@/types/student.types";
-import { Modal } from "./Modal";
+} from "@/utils/srsMessages"
+import type { Student } from "@/types/student.types"
+import { STUDENT_RANK_OPTIONS } from "@/types/student.types"
+import { Modal } from "./Modal"
 
 interface RankChangeModalProps {
-	student: Student;
-	onClose: () => void;
-	onToast: (message: string, type: "success" | "error") => void;
-	onStudentChange: (next: Student) => void;
-	onRefetch: () => void;
+	student: Student
+	onClose: () => void
+	onToast: (message: string, type: "success" | "error") => void
+	onStudentChange: (next: Student) => void
+	onRefetch: () => void
 }
 
 export function RankChangeModal({
@@ -24,22 +24,22 @@ export function RankChangeModal({
 	onStudentChange,
 	onRefetch,
 }: RankChangeModalProps) {
-	const [rank, setRank] = useState<LicenseTier>(student.licenseTier ?? "B1");
-	const [submitting, setSubmitting] = useState(false);
+	const [rank, setRank] = useState<LicenseTier>(student.licenseTier ?? "B1")
+	const [submitting, setSubmitting] = useState(false)
 
 	const confirmRank = async () => {
-		setSubmitting(true);
-		const res = await userService.assignLicenseTier(student.id, rank);
-		setSubmitting(false);
+		setSubmitting(true)
+		const res = await userService.assignLicenseTier(student.id, rank)
+		setSubmitting(false)
 		if (res.success) {
-			onStudentChange({ ...student, licenseTier: rank });
-			onRefetch();
-			onToast(getLicenseAssignmentSuccessMessage(), "success");
-			onClose();
+			onStudentChange({ ...student, licenseTier: rank })
+			onRefetch()
+			onToast(getLicenseAssignmentSuccessMessage(), "success")
+			onClose()
 		} else {
-			onToast(getLicenseAssignmentErrorMessage(res), "error");
+			onToast(getLicenseAssignmentErrorMessage(res), "error")
 		}
-	};
+	}
 
 	return (
 		<Modal
@@ -51,13 +51,16 @@ export function RankChangeModal({
 					<button
 						className="detail-modal__confirm detail-modal__confirm--yellow"
 						onClick={confirmRank}
-						disabled={submitting}>
+						disabled={submitting}
+					>
 						{submitting ? "Đang lưu..." : "Xác nhận phân hạng"}
 					</button>
 				</div>
-			}>
+			}
+		>
 			<p className="detail-modal__hint">
-				Hạng hiện tại: <strong>{student.licenseTier ?? "Chưa phân"}</strong>
+				Hạng hiện tại:{" "}
+				<strong>{student.licenseTier ?? "Chưa phân"}</strong>
 			</p>
 			<div className="detail-modal__rank-list">
 				{STUDENT_RANK_OPTIONS.map((option) => (
@@ -68,11 +71,12 @@ export function RankChangeModal({
 								? "detail-modal__rank detail-modal__rank--active"
 								: "detail-modal__rank"
 						}
-						onClick={() => setRank(option)}>
+						onClick={() => setRank(option)}
+					>
 						{option}
 					</button>
 				))}
 			</div>
 		</Modal>
-	);
+	)
 }

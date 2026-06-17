@@ -1,10 +1,10 @@
-import type { ReactNode } from "react";
+import type { ReactNode } from "react"
 
 interface InlineButtonProps {
-	children: ReactNode;
-	tone: "yellow" | "green" | "red";
-	onClick: () => void;
-	disabled?: boolean;
+	children: ReactNode
+	tone: "yellow" | "green" | "red"
+	onClick: () => void
+	disabled?: boolean
 }
 
 export function InlineButton({
@@ -17,8 +17,9 @@ export function InlineButton({
 		<button
 			className={`detail-action detail-action--${tone}`}
 			onClick={onClick}
-			disabled={disabled}>
+			disabled={disabled}
+		>
 			{children}
 		</button>
-	);
+	)
 }

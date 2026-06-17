@@ -1,19 +1,19 @@
-import type { IdentityUser } from "@/types/identity.types";
-import type { CourseFormData, LicenseCategory } from "@/types/course.types";
-import { COURSE_LICENSE_CATEGORIES } from "@/types/course.types";
-import { InstructorPicker } from "./InstructorPicker";
+import type { IdentityUser } from "@/types/identity.types"
+import type { CourseFormData, LicenseCategory } from "@/types/course.types"
+import { COURSE_LICENSE_CATEGORIES } from "@/types/course.types"
+import { InstructorPicker } from "./InstructorPicker"
 
-type FieldErrors = Partial<Record<"title" | "licenseCategory", string>>;
+type FieldErrors = Partial<Record<"title" | "licenseCategory", string>>
 
 interface CourseBasicInfoSectionProps {
-	form: CourseFormData;
-	isEdit: boolean;
-	errors: FieldErrors;
-	onUpdate: (patch: Partial<CourseFormData>) => void;
-	onClearError: (field: "title" | "licenseCategory") => void;
-	instructors: IdentityUser[];
-	instructorSearch: string;
-	onInstructorSearchChange: (next: string) => void;
+	form: CourseFormData
+	isEdit: boolean
+	errors: FieldErrors
+	onUpdate: (patch: Partial<CourseFormData>) => void
+	onClearError: (field: "title" | "licenseCategory") => void
+	instructors: IdentityUser[]
+	instructorSearch: string
+	onInstructorSearchChange: (next: string) => void
 }
 
 export function CourseBasicInfoSection({
@@ -35,14 +35,18 @@ export function CourseBasicInfoSection({
 					<input
 						value={form.title}
 						onChange={(e) => {
-							onUpdate({ title: e.target.value });
-							onClearError("title");
+							onUpdate({ title: e.target.value })
+							onClearError("title")
 						}}
 						placeholder="VD: Khóa học B2 cơ bản"
-						className={errors.title ? "add-course__input--error" : ""}
+						className={
+							errors.title ? "add-course__input--error" : ""
+						}
 					/>
 					{errors.title && (
-						<span className="add-course__error">{errors.title}</span>
+						<span className="add-course__error">
+							{errors.title}
+						</span>
 					)}
 				</div>
 
@@ -50,7 +54,9 @@ export function CourseBasicInfoSection({
 					<label>Mã khóa học</label>
 					<input
 						value={form.courseCode}
-						onChange={(e) => onUpdate({ courseCode: e.target.value })}
+						onChange={(e) =>
+							onUpdate({ courseCode: e.target.value })
+						}
 						placeholder="VD: B2-CB-2026"
 						readOnly={isEdit}
 					/>
@@ -71,15 +77,16 @@ export function CourseBasicInfoSection({
 									licenseCategory: e.target.value as
 										| LicenseCategory
 										| "",
-								});
-								onClearError("licenseCategory");
+								})
+								onClearError("licenseCategory")
 							}}
 							disabled={isEdit}
 							className={
 								errors.licenseCategory
 									? "add-course__input--error"
 									: ""
-							}>
+							}
+						>
 							<option value="">Chọn hạng bằng</option>
 							{COURSE_LICENSE_CATEGORIES.map((cls) => (
 								<option key={cls} value={cls}>
@@ -102,7 +109,9 @@ export function CourseBasicInfoSection({
 						<label>Thời lượng</label>
 						<input
 							value={form.duration}
-							onChange={(e) => onUpdate({ duration: e.target.value })}
+							onChange={(e) =>
+								onUpdate({ duration: e.target.value })
+							}
 							placeholder="VD: 3 tháng"
 						/>
 					</div>
@@ -137,7 +146,9 @@ export function CourseBasicInfoSection({
 					<label>Mô tả khóa học</label>
 					<textarea
 						value={form.description}
-						onChange={(e) => onUpdate({ description: e.target.value })}
+						onChange={(e) =>
+							onUpdate({ description: e.target.value })
+						}
 						placeholder="Mô tả chi tiết về khóa học..."
 						rows={4}
 					/>
@@ -156,5 +167,5 @@ export function CourseBasicInfoSection({
 				</div>
 			</div>
 		</div>
-	);
+	)
 }

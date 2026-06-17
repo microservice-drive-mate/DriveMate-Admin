@@ -1,13 +1,16 @@
 interface DependencyBadgeProps {
-	status: string;
+	status: string
 }
 
 export function DependencyBadge({ status }: DependencyBadgeProps) {
-	const normalized = status === "ok" || status === "skipped" ? status : "error";
+	const normalized =
+		status === "ok" || status === "skipped" ? status : "error"
 
 	return (
-		<span className={`system-health-dependency__badge system-health-dependency__badge--${normalized}`}>
+		<span
+			className={`system-health-dependency__badge system-health-dependency__badge--${normalized}`}
+		>
 			{status}
 		</span>
-	);
+	)
 }

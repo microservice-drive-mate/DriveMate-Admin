@@ -1,7 +1,7 @@
-import { NavLink, useNavigate } from "react-router-dom";
-import { useAuthStore } from "../../store/authStore";
-import { SidebarIcon, type SidebarIconId } from "./SidebarIcon";
-import "./Sidebar.css";
+import { NavLink, useNavigate } from "react-router-dom"
+import { useAuthStore } from "../../store/authStore"
+import { SidebarIcon, type SidebarIconId } from "./SidebarIcon"
+import "./Sidebar.css"
 
 const NAV_ITEMS: Array<{ label: string; path: string; icon: SidebarIconId }> = [
 	{ label: "Dashboard Tổng Quan", path: "/dashboard", icon: "dashboard" },
@@ -17,21 +17,21 @@ const NAV_ITEMS: Array<{ label: string; path: string; icon: SidebarIconId }> = [
 	{ label: "Cấu Hình Đề Thi", path: "/exam-config", icon: "settings" },
 	{ label: "Audit Logs", path: "/audit-logs", icon: "shield" },
 	{ label: "System Health", path: "/system-health", icon: "pulse" },
-];
+]
 
 interface SidebarProps {
-	collapsed: boolean;
-	onToggle: () => void;
+	collapsed: boolean
+	onToggle: () => void
 }
 
 export function Sidebar({ collapsed, onToggle }: SidebarProps) {
-	const logout = useAuthStore((s) => s.logout);
-	const navigate = useNavigate();
+	const logout = useAuthStore((s) => s.logout)
+	const navigate = useNavigate()
 
 	const handleLogout = () => {
-		logout();
-		navigate("/login");
-	};
+		logout()
+		navigate("/login")
+	}
 
 	return (
 		<aside className={`sidebar${collapsed ? " sidebar--collapsed" : ""}`}>
@@ -45,7 +45,8 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
 						stroke="#1a1a1a"
 						strokeWidth="2.2"
 						strokeLinecap="round"
-						strokeLinejoin="round">
+						strokeLinejoin="round"
+					>
 						<path d="M22 10v6M2 10l10-5 10 5-10 5z" />
 						<path d="M6 12v5c3 3 9 3 12 0v-5" />
 					</svg>
@@ -61,7 +62,8 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
 				<button
 					className="sidebar__close"
 					onClick={onToggle}
-					aria-label="Toggle sidebar">
+					aria-label="Toggle sidebar"
+				>
 					{collapsed ? <SidebarIcon id="menu" /> : "×"}
 				</button>
 			</div>
@@ -75,7 +77,8 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
 						title={collapsed ? item.label : undefined}
 						className={({ isActive }) =>
 							`sidebar__nav-item${isActive ? " sidebar__nav-item--active" : ""}`
-						}>
+						}
+					>
 						<span className="sidebar__nav-icon">
 							<SidebarIcon id={item.icon} />
 						</span>
@@ -88,7 +91,8 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
 				<button
 					className="sidebar__logout"
 					onClick={handleLogout}
-					title={collapsed ? "Đăng Xuất" : undefined}>
+					title={collapsed ? "Đăng Xuất" : undefined}
+				>
 					<span className="sidebar__nav-icon">
 						<SidebarIcon id="logout" />
 					</span>
@@ -96,5 +100,5 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
 				</button>
 			</div>
 		</aside>
-	);
+	)
 }

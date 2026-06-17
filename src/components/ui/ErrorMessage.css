@@ -1,8 +1,8 @@
 .error-message {
-  background: rgba(255, 67, 67, 0.1);
-  border: 1px solid #ff4343;
-  border-radius: 4px;
-  padding: 10px 12px;
-  color: #ff6b6b;
-  font-size: 13px;
+	background: rgba(255, 67, 67, 0.1);
+	border: 1px solid #ff4343;
+	border-radius: 4px;
+	padding: 10px 12px;
+	color: #ff6b6b;
+	font-size: 13px;
 }

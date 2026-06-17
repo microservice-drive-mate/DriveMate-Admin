@@ -1,6 +1,6 @@
-export { apiService } from "./api";
+export { apiService } from "./api"
 export {
 	getRenderableMediaUrl,
 	invalidateMediaUrl,
 	clearMediaUrlCache,
-} from "./mediaUrlCache";
+} from "./mediaUrlCache"

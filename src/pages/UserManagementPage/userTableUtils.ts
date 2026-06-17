@@ -5,19 +5,19 @@ const AVATAR_PALETTE = [
 	"#9B59B6",
 	"#E74C3C",
 	"#16A085",
-];
+]
 
 export function getAvatarColor(userId: string) {
-	let hash = 0;
+	let hash = 0
 	for (let i = 0; i < userId.length; i++) {
-		hash = (hash * 31 + userId.charCodeAt(i)) >>> 0;
+		hash = (hash * 31 + userId.charCodeAt(i)) >>> 0
 	}
-	return AVATAR_PALETTE[hash % AVATAR_PALETTE.length];
+	return AVATAR_PALETTE[hash % AVATAR_PALETTE.length]
 }
 
 export function formatDate(value: string | null) {
-	if (!value) return "";
-	const date = new Date(value);
-	if (Number.isNaN(date.getTime())) return value;
-	return date.toLocaleDateString("vi-VN");
+	if (!value) return ""
+	const date = new Date(value)
+	if (Number.isNaN(date.getTime())) return value
+	return date.toLocaleDateString("vi-VN")
 }

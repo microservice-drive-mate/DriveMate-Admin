@@ -2,11 +2,11 @@ import type {
 	ApiResponse,
 	LoginResponseData,
 	LoginResponseWireData,
-} from "@/types";
+} from "@/types"
 
 type ApiResponseLike<T> = {
-	data: ApiResponse<T>;
-};
+	data: ApiResponse<T>
+}
 
 export function normalizeLoginResponseData(
 	data: LoginResponseWireData,
@@ -18,7 +18,7 @@ export function normalizeLoginResponseData(
 		refreshExpiresIn: data.refreshExpiresIn ?? data.refresh_expires_in ?? 0,
 		tokenType: data.tokenType ?? data.token_type ?? "Bearer",
 		scope: data.scope ?? "",
-	};
+	}
 }
 
 export function normalizeLoginApiResponse<
@@ -28,7 +28,7 @@ export function normalizeLoginApiResponse<
 ): Omit<TResponse, "data"> & ApiResponseLike<LoginResponseData> {
 	if (!response.data?.data) {
 		return response as unknown as Omit<TResponse, "data"> &
-			ApiResponseLike<LoginResponseData>;
+			ApiResponseLike<LoginResponseData>
 	}
 
 	return {
@@ -37,5 +37,5 @@ export function normalizeLoginApiResponse<
 			...response.data,
 			data: normalizeLoginResponseData(response.data.data),
 		},
-	};
+	}
 }

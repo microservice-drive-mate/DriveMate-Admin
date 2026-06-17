@@ -38,12 +38,12 @@ HTTP response thành công được wrap bởi global `ApiResponseInterceptor`.
 
 ```json
 {
-  "success": true,
-  "code": "SUCCESS",
-  "message": "OK",
-  "timestamp": "2026-05-21T10:00:00.000Z",
-  "path": "/notifications/me",
-  "data": {}
+	"success": true,
+	"code": "SUCCESS",
+	"message": "OK",
+	"timestamp": "2026-05-21T10:00:00.000Z",
+	"path": "/notifications/me",
+	"data": {}
 }
 ```
 
@@ -51,11 +51,11 @@ Error response:
 
 ```json
 {
-  "success": false,
-  "code": "VALIDATION_ERROR",
-  "message": "Validation failed",
-  "timestamp": "2026-05-21T10:00:00.000Z",
-  "path": "/admin/academic-warnings"
+	"success": false,
+	"code": "VALIDATION_ERROR",
+	"message": "Validation failed",
+	"timestamp": "2026-05-21T10:00:00.000Z",
+	"path": "/admin/academic-warnings"
 }
 ```
 
@@ -112,33 +112,33 @@ Academic warning delivery status values: `PENDING`, `QUEUED`, `PENDING_RETRY`, `
 
 ```json
 {
-  "items": [
-    {
-      "id": "0b9cb629-4f43-4f4f-a936-7dc664a7351e",
-      "userId": "89ea9a17-1cce-4fff-855c-d32a081648cd",
-      "type": "IN_APP",
-      "eventType": "notification.academic-warning.created",
-      "title": "Academic warning: HIGH",
-      "body": "Ôn lại các nhóm câu hỏi còn yếu trước khi thi tiếp.",
-      "data": {
-        "warningId": "48c7047d-3db9-4dc0-bb75-b68735ab51ea",
-        "reason": "LOW_EXAM_SCORE",
-        "severity": "HIGH"
-      },
-      "status": "DELIVERED",
-      "retryCount": 0,
-      "errorMessage": null,
-      "isRead": false,
-      "readAt": null,
-      "sentAt": null,
-      "deliveredAt": "2026-05-21T10:00:00.000Z",
-      "createdAt": "2026-05-21T10:00:00.000Z",
-      "updatedAt": "2026-05-21T10:00:00.000Z"
-    }
-  ],
-  "total": 1,
-  "page": 1,
-  "size": 20
+	"items": [
+		{
+			"id": "0b9cb629-4f43-4f4f-a936-7dc664a7351e",
+			"userId": "89ea9a17-1cce-4fff-855c-d32a081648cd",
+			"type": "IN_APP",
+			"eventType": "notification.academic-warning.created",
+			"title": "Academic warning: HIGH",
+			"body": "Ôn lại các nhóm câu hỏi còn yếu trước khi thi tiếp.",
+			"data": {
+				"warningId": "48c7047d-3db9-4dc0-bb75-b68735ab51ea",
+				"reason": "LOW_EXAM_SCORE",
+				"severity": "HIGH"
+			},
+			"status": "DELIVERED",
+			"retryCount": 0,
+			"errorMessage": null,
+			"isRead": false,
+			"readAt": null,
+			"sentAt": null,
+			"deliveredAt": "2026-05-21T10:00:00.000Z",
+			"createdAt": "2026-05-21T10:00:00.000Z",
+			"updatedAt": "2026-05-21T10:00:00.000Z"
+		}
+	],
+	"total": 1,
+	"page": 1,
+	"size": 20
 }
 ```
 
@@ -158,11 +158,11 @@ HTTP API chỉ chấp nhận requested channel `IN_APP`. Email và push được
 
 ```json
 {
-  "studentIds": ["89ea9a17-1cce-4fff-855c-d32a081648cd"],
-  "deliveryChannels": ["IN_APP"],
-  "reason": "LOW_EXAM_SCORE",
-  "severity": "HIGH",
-  "message": "Ôn lại các nhóm câu hỏi còn yếu trước khi thi tiếp."
+	"studentIds": ["89ea9a17-1cce-4fff-855c-d32a081648cd"],
+	"deliveryChannels": ["IN_APP"],
+	"reason": "LOW_EXAM_SCORE",
+	"severity": "HIGH",
+	"message": "Ôn lại các nhóm câu hỏi còn yếu trước khi thi tiếp."
 }
 ```
 
@@ -181,17 +181,17 @@ HTTP API chỉ chấp nhận requested channel `IN_APP`. Email và push được
 
 ```json
 {
-  "success": true,
-  "code": "SUCCESS",
-  "message": "OK",
-  "timestamp": "2026-05-21T10:00:00.000Z",
-  "path": "/admin/academic-warnings",
-  "data": {
-    "status": "ACCEPTED",
-    "accepted": 1,
-    "studentIds": ["89ea9a17-1cce-4fff-855c-d32a081648cd"],
-    "message": "Academic warning notifications were queued for asynchronous delivery."
-  }
+	"success": true,
+	"code": "SUCCESS",
+	"message": "OK",
+	"timestamp": "2026-05-21T10:00:00.000Z",
+	"path": "/admin/academic-warnings",
+	"data": {
+		"status": "ACCEPTED",
+		"accepted": 1,
+		"studentIds": ["89ea9a17-1cce-4fff-855c-d32a081648cd"],
+		"message": "Academic warning notifications were queued for asynchronous delivery."
+	}
 }
 ```
 
@@ -216,17 +216,17 @@ Trả về notifications của current user theo thứ tự mới nhất trướ
 
 ```json
 {
-  "success": true,
-  "code": "SUCCESS",
-  "message": "OK",
-  "timestamp": "2026-05-21T10:00:00.000Z",
-  "path": "/notifications/me?page=1&size=20",
-  "data": {
-    "items": [],
-    "total": 0,
-    "page": 1,
-    "size": 20
-  }
+	"success": true,
+	"code": "SUCCESS",
+	"message": "OK",
+	"timestamp": "2026-05-21T10:00:00.000Z",
+	"path": "/notifications/me?page=1&size=20",
+	"data": {
+		"items": [],
+		"total": 0,
+		"page": 1,
+		"size": 20
+	}
 }
 ```
 
@@ -250,33 +250,33 @@ Trả về notifications của current user theo thứ tự mới nhất trướ
 
 ```json
 {
-  "success": true,
-  "code": "SUCCESS",
-  "message": "OK",
-  "timestamp": "2026-05-21T10:03:00.000Z",
-  "path": "/notifications/0b9cb629-4f43-4f4f-a936-7dc664a7351e/read",
-  "data": {
-    "id": "0b9cb629-4f43-4f4f-a936-7dc664a7351e",
-    "userId": "89ea9a17-1cce-4fff-855c-d32a081648cd",
-    "type": "IN_APP",
-    "eventType": "notification.academic-warning.created",
-    "title": "Academic warning: HIGH",
-    "body": "Ôn lại các nhóm câu hỏi còn yếu trước khi thi tiếp.",
-    "data": {
-      "warningId": "48c7047d-3db9-4dc0-bb75-b68735ab51ea",
-      "reason": "LOW_EXAM_SCORE",
-      "severity": "HIGH"
-    },
-    "status": "DELIVERED",
-    "retryCount": 0,
-    "errorMessage": null,
-    "isRead": true,
-    "readAt": "2026-05-21T10:03:00.000Z",
-    "sentAt": null,
-    "deliveredAt": "2026-05-21T10:00:00.000Z",
-    "createdAt": "2026-05-21T10:00:00.000Z",
-    "updatedAt": "2026-05-21T10:03:00.000Z"
-  }
+	"success": true,
+	"code": "SUCCESS",
+	"message": "OK",
+	"timestamp": "2026-05-21T10:03:00.000Z",
+	"path": "/notifications/0b9cb629-4f43-4f4f-a936-7dc664a7351e/read",
+	"data": {
+		"id": "0b9cb629-4f43-4f4f-a936-7dc664a7351e",
+		"userId": "89ea9a17-1cce-4fff-855c-d32a081648cd",
+		"type": "IN_APP",
+		"eventType": "notification.academic-warning.created",
+		"title": "Academic warning: HIGH",
+		"body": "Ôn lại các nhóm câu hỏi còn yếu trước khi thi tiếp.",
+		"data": {
+			"warningId": "48c7047d-3db9-4dc0-bb75-b68735ab51ea",
+			"reason": "LOW_EXAM_SCORE",
+			"severity": "HIGH"
+		},
+		"status": "DELIVERED",
+		"retryCount": 0,
+		"errorMessage": null,
+		"isRead": true,
+		"readAt": "2026-05-21T10:03:00.000Z",
+		"sentAt": null,
+		"deliveredAt": "2026-05-21T10:00:00.000Z",
+		"createdAt": "2026-05-21T10:00:00.000Z",
+		"updatedAt": "2026-05-21T10:03:00.000Z"
+	}
 }
 ```
 
@@ -294,8 +294,8 @@ Trả về notifications của current user theo thứ tự mới nhất trướ
 
 ```json
 {
-  "token": "fcm-device-token",
-  "platform": "android"
+	"token": "fcm-device-token",
+	"platform": "android"
 }
 ```
 
@@ -308,19 +308,19 @@ Trả về notifications của current user theo thứ tự mới nhất trướ
 
 ```json
 {
-  "success": true,
-  "code": "SUCCESS",
-  "message": "OK",
-  "timestamp": "2026-05-21T10:00:00.000Z",
-  "path": "/notifications/devices",
-  "data": {
-    "id": "bd4d6107-04a8-4480-9314-cf844063adf7",
-    "userId": "89ea9a17-1cce-4fff-855c-d32a081648cd",
-    "token": "fcm-device-token",
-    "platform": "android",
-    "createdAt": "2026-05-21T10:00:00.000Z",
-    "updatedAt": "2026-05-21T10:00:00.000Z"
-  }
+	"success": true,
+	"code": "SUCCESS",
+	"message": "OK",
+	"timestamp": "2026-05-21T10:00:00.000Z",
+	"path": "/notifications/devices",
+	"data": {
+		"id": "bd4d6107-04a8-4480-9314-cf844063adf7",
+		"userId": "89ea9a17-1cce-4fff-855c-d32a081648cd",
+		"token": "fcm-device-token",
+		"platform": "android",
+		"createdAt": "2026-05-21T10:00:00.000Z",
+		"updatedAt": "2026-05-21T10:00:00.000Z"
+	}
 }
 ```
 
@@ -393,21 +393,21 @@ Socket.IO is used only for realtime fan-out. REST APIs remain the source for lis
 Direct local:
 
 ```ts
-import { io } from "socket.io-client";
+import { io } from "socket.io-client"
 
 const socket = io("http://localhost:3006/notifications", {
-  path: "/notifications/socket.io",
-  auth: { token: accessToken },
-});
+	path: "/notifications/socket.io",
+	auth: { token: accessToken },
+})
 ```
 
 Through Kong:
 
 ```ts
 const socket = io("http://localhost:8000/notifications", {
-  path: "/notifications/socket.io",
-  auth: { token: accessToken },
-});
+	path: "/notifications/socket.io",
+	auth: { token: accessToken },
+})
 ```
 
 The service verifies the JWT signature with the Keycloak realm public key and rejects revoked tokens from the shared Redis token blacklist. After authentication succeeds, the socket joins room `user:{sub}`.
@@ -453,6 +453,7 @@ RabbitMQ resilience được cung cấp bởi `@repo/common`:
 - DLQ: `notification_service_events.dlq`
 
 `retry.maxAttempts` quyết định số retry queues được tạo. Khi không override, các retry queue dùng default TTL `5000`, `30000`, `120000` ms. `retry.intervalMs` chỉ dùng khi muốn mọi retry queue dùng cùng một TTL custom.
+
 ## Endpoint Gap Batch Additions
 
 ### PATCH `/notifications/mark-all-read`
@@ -465,7 +466,7 @@ Response:
 
 ```json
 {
-  "updated": 3
+	"updated": 3
 }
 ```
 
@@ -483,13 +484,13 @@ Updates current user notification preferences.
 
 ```json
 {
-  "inAppEnabled": true,
-  "emailEnabled": true,
-  "pushEnabled": false,
-  "smsEnabled": false,
-  "studyReminderEnabled": true,
-  "examReminderEnabled": true,
-  "courseUpdateEnabled": true,
-  "academicWarningEnabled": true
+	"inAppEnabled": true,
+	"emailEnabled": true,
+	"pushEnabled": false,
+	"smsEnabled": false,
+	"studyReminderEnabled": true,
+	"examReminderEnabled": true,
+	"courseUpdateEnabled": true,
+	"academicWarningEnabled": true
 }
 ```

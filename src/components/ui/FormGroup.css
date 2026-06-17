@@ -1,54 +1,54 @@
 .form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
 }
 
 .form-group label {
-  color: #ffffff;
-  font-size: 13px;
-  font-weight: 500;
+	color: #ffffff;
+	font-size: 13px;
+	font-weight: 500;
 }
 
 .form-group input {
-  background: #1a1a1a;
-  border: 1px solid #333333;
-  border-radius: 4px;
-  padding: 12px 14px;
-  color: #ffffff;
-  font-size: 14px;
-  transition: all 0.3s ease;
-  font-family: inherit;
+	background: #1a1a1a;
+	border: 1px solid #333333;
+	border-radius: 4px;
+	padding: 12px 14px;
+	color: #ffffff;
+	font-size: 14px;
+	transition: all 0.3s ease;
+	font-family: inherit;
 }
 
 .form-group input::placeholder {
-  color: #666666;
+	color: #666666;
 }
 
 .form-group input:focus {
-  outline: none;
-  border-color: #fdb913;
-  box-shadow: 0 0 0 3px rgba(253, 185, 19, 0.1);
+	outline: none;
+	border-color: #fdb913;
+	box-shadow: 0 0 0 3px rgba(253, 185, 19, 0.1);
 }
 
 .form-group input:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+	opacity: 0.6;
+	cursor: not-allowed;
 }
 
 .form-group__help {
-  font-size: 12px;
-  margin-top: 2px;
+	font-size: 12px;
+	margin-top: 2px;
 }
 
 .form-group__help--default {
-  color: #999999;
+	color: #999999;
 }
 
 .form-group__help--error {
-  color: #ff6b6b;
+	color: #ff6b6b;
 }
 
 .form-group__help--success {
-  color: #4ecdc4;
+	color: #4ecdc4;
 }

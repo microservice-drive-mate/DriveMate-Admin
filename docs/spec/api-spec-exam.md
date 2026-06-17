@@ -13,12 +13,12 @@ Exam-service dùng `ApiResponseInterceptor` từ `@repo/common`, nên tất cả
 
 ```json
 {
-  "success": true,
-  "code": "SUCCESS",
-  "message": "OK",
-  "timestamp": "2026-05-18T10:00:00.000Z",
-  "path": "/exams/available",
-  "data": {}
+	"success": true,
+	"code": "SUCCESS",
+	"message": "OK",
+	"timestamp": "2026-05-18T10:00:00.000Z",
+	"path": "/exams/available",
+	"data": {}
 }
 ```
 
@@ -26,11 +26,11 @@ Lỗi domain và validation cũng dùng format chung:
 
 ```json
 {
-  "success": false,
-  "code": "EXAM_SESSION_NOT_FOUND",
-  "message": "Exam session not found: session-uuid",
-  "timestamp": "2026-05-18T10:00:00.000Z",
-  "path": "/exams/sessions/session-uuid/result"
+	"success": false,
+	"code": "EXAM_SESSION_NOT_FOUND",
+	"message": "Exam session not found: session-uuid",
+	"timestamp": "2026-05-18T10:00:00.000Z",
+	"path": "/exams/sessions/session-uuid/result"
 }
 ```
 
@@ -44,22 +44,22 @@ Exam-service validate JWT/RBAC tại service bằng `nest-keycloak-connect`. Fro
 Authorization: Bearer <access_token>
 ```
 
-| Endpoint | Role |
-| --- | --- |
-| `POST /admin/exams/templates` | `ADMIN` |
-| `GET /admin/exams/templates` | `ADMIN` |
-| `GET /admin/exams/templates/:id` | `ADMIN` |
-| `PATCH /admin/exams/templates/:id` | `ADMIN` |
-| `DELETE /admin/exams/templates/:id` | `ADMIN` |
-| `GET /admin/exams/sessions` | `ADMIN`, `CENTER_MANAGER`, `INSTRUCTOR` |
-| `GET /exams/available` | `STUDENT` |
-| `POST /exams/sessions` | `STUDENT` |
-| `GET /exams/sessions` | `STUDENT` |
-| `GET /exams/review/missed-questions` | `STUDENT` |
-| `GET /exams/sessions/:id/questions` | `STUDENT`, owner only |
-| `PATCH /exams/sessions/:id/answers` | `STUDENT`, owner only |
-| `POST /exams/sessions/:id/submit` | `STUDENT`, owner only |
-| `GET /exams/sessions/:id/result` | `STUDENT`, owner only |
+| Endpoint                             | Role                                    |
+| ------------------------------------ | --------------------------------------- |
+| `POST /admin/exams/templates`        | `ADMIN`                                 |
+| `GET /admin/exams/templates`         | `ADMIN`                                 |
+| `GET /admin/exams/templates/:id`     | `ADMIN`                                 |
+| `PATCH /admin/exams/templates/:id`   | `ADMIN`                                 |
+| `DELETE /admin/exams/templates/:id`  | `ADMIN`                                 |
+| `GET /admin/exams/sessions`          | `ADMIN`, `CENTER_MANAGER`, `INSTRUCTOR` |
+| `GET /exams/available`               | `STUDENT`                               |
+| `POST /exams/sessions`               | `STUDENT`                               |
+| `GET /exams/sessions`                | `STUDENT`                               |
+| `GET /exams/review/missed-questions` | `STUDENT`                               |
+| `GET /exams/sessions/:id/questions`  | `STUDENT`, owner only                   |
+| `PATCH /exams/sessions/:id/answers`  | `STUDENT`, owner only                   |
+| `POST /exams/sessions/:id/submit`    | `STUDENT`, owner only                   |
+| `GET /exams/sessions/:id/result`     | `STUDENT`, owner only                   |
 
 Exam-service gọi nội bộ `question-service /admin/questions/pool` bằng Keycloak client-credentials token. Endpoint pool không expose trực tiếp cho student.
 
@@ -67,13 +67,13 @@ Exam-service gọi nội bộ `question-service /admin/questions/pool` bằng Ke
 
 ## Error Codes
 
-| HTTP | Code |
-| ---: | --- |
-| 400 | `INVALID_EXAM_TEMPLATE`, `INVALID_EXAM_SESSION`, `VALIDATION_ERROR` |
-| 403 | `EXAM_SESSION_UNAUTHORIZED`, `STUDENT_LICENSE_MISMATCH`, `FORBIDDEN` |
-| 404 | `EXAM_TEMPLATE_NOT_FOUND`, `EXAM_SESSION_NOT_FOUND`, `EXAM_SESSION_QUESTION_NOT_FOUND` |
-| 409 | `EXAM_TEMPLATE_VERSION_CONFLICT`, `EXAM_TEMPLATE_IN_USE`, `EXAM_SESSION_ALREADY_FINISHED`, `EXAM_SESSION_EXPIRED` |
-| 422 | `EXAM_TEMPLATE_INACTIVE`, `STUDENT_PROFILE_INVALID`, `EXAM_SESSION_NOT_FINISHED`, `INSUFFICIENT_QUESTION_POOL` |
+| HTTP | Code                                                                                                              |
+| ---: | ----------------------------------------------------------------------------------------------------------------- |
+|  400 | `INVALID_EXAM_TEMPLATE`, `INVALID_EXAM_SESSION`, `VALIDATION_ERROR`                                               |
+|  403 | `EXAM_SESSION_UNAUTHORIZED`, `STUDENT_LICENSE_MISMATCH`, `FORBIDDEN`                                              |
+|  404 | `EXAM_TEMPLATE_NOT_FOUND`, `EXAM_SESSION_NOT_FOUND`, `EXAM_SESSION_QUESTION_NOT_FOUND`                            |
+|  409 | `EXAM_TEMPLATE_VERSION_CONFLICT`, `EXAM_TEMPLATE_IN_USE`, `EXAM_SESSION_ALREADY_FINISHED`, `EXAM_SESSION_EXPIRED` |
+|  422 | `EXAM_TEMPLATE_INACTIVE`, `STUDENT_PROFILE_INVALID`, `EXAM_SESSION_NOT_FINISHED`, `INSUFFICIENT_QUESTION_POOL`    |
 
 ---
 
@@ -90,48 +90,48 @@ Exam-service gọi nội bộ `question-service /admin/questions/pool` bằng Ke
 
 ```json
 {
-  "id": "template-uuid",
-  "name": "Đề thi B2 cơ bản",
-  "description": "De thi mo phong theo cau truc GPLX hang B2",
-  "licenseCategory": "B2",
-  "totalQuestions": 30,
-  "passingScore": 26,
-  "durationMinutes": 20,
-  "criticalQuestions": 1,
-  "maxCriticalMistakes": 0,
-  "shuffleQuestions": true,
-  "topicDistribution": [
-    {
-      "topicId": "9f49045f-156e-5252-8486-babb36dc74fd",
-      "questionCount": 9
-    },
-    {
-      "topicId": "6d568ff3-458d-5764-bb15-ae3258b75a40",
-      "questionCount": 1
-    },
-    {
-      "topicId": "a81d3294-cc8b-579e-9567-8bbc39f96b60",
-      "questionCount": 1
-    },
-    {
-      "topicId": "6d38e12b-adec-5c2c-b029-e01ae1fdabd2",
-      "questionCount": 1
-    },
-    {
-      "topicId": "d7a509c3-153f-5c03-9398-6a5626aa70d0",
-      "questionCount": 9
-    },
-    {
-      "topicId": "0694bef4-6534-56d3-bc68-a3a0fb8f4f43",
-      "questionCount": 9
-    }
-  ],
-  "isActive": true,
-  "isDeleted": false,
-  "version": 1,
-  "createdById": "admin-user-id",
-  "createdAt": "2026-05-18T10:00:00.000Z",
-  "updatedAt": "2026-05-18T10:00:00.000Z"
+	"id": "template-uuid",
+	"name": "Đề thi B2 cơ bản",
+	"description": "De thi mo phong theo cau truc GPLX hang B2",
+	"licenseCategory": "B2",
+	"totalQuestions": 30,
+	"passingScore": 26,
+	"durationMinutes": 20,
+	"criticalQuestions": 1,
+	"maxCriticalMistakes": 0,
+	"shuffleQuestions": true,
+	"topicDistribution": [
+		{
+			"topicId": "9f49045f-156e-5252-8486-babb36dc74fd",
+			"questionCount": 9
+		},
+		{
+			"topicId": "6d568ff3-458d-5764-bb15-ae3258b75a40",
+			"questionCount": 1
+		},
+		{
+			"topicId": "a81d3294-cc8b-579e-9567-8bbc39f96b60",
+			"questionCount": 1
+		},
+		{
+			"topicId": "6d38e12b-adec-5c2c-b029-e01ae1fdabd2",
+			"questionCount": 1
+		},
+		{
+			"topicId": "d7a509c3-153f-5c03-9398-6a5626aa70d0",
+			"questionCount": 9
+		},
+		{
+			"topicId": "0694bef4-6534-56d3-bc68-a3a0fb8f4f43",
+			"questionCount": 9
+		}
+	],
+	"isActive": true,
+	"isDeleted": false,
+	"version": 1,
+	"createdById": "admin-user-id",
+	"createdAt": "2026-05-18T10:00:00.000Z",
+	"updatedAt": "2026-05-18T10:00:00.000Z"
 }
 ```
 
@@ -149,25 +149,25 @@ Student-facing question payload intentionally excludes `correctOptionId`, `optio
 
 ```json
 {
-  "questionId": "question-uuid",
-  "content": "Khi gặp đèn đỏ, người lái xe phải làm gì?",
-  "imageUrl": null,
-  "mediaFileId": "media-file-uuid",
-  "options": [
-    {
-      "id": "option-1",
-      "content": "Dừng lại",
-      "displayOrder": 1
-    },
-    {
-      "id": "option-2",
-      "content": "Đi tiếp",
-      "displayOrder": 2
-    }
-  ],
-  "displayOrder": 1,
-  "isBookmarked": false,
-  "selectedOptionId": null
+	"questionId": "question-uuid",
+	"content": "Khi gặp đèn đỏ, người lái xe phải làm gì?",
+	"imageUrl": null,
+	"mediaFileId": "media-file-uuid",
+	"options": [
+		{
+			"id": "option-1",
+			"content": "Dừng lại",
+			"displayOrder": 1
+		},
+		{
+			"id": "option-2",
+			"content": "Đi tiếp",
+			"displayOrder": 2
+		}
+	],
+	"displayOrder": 1,
+	"isBookmarked": false,
+	"selectedOptionId": null
 }
 ```
 
@@ -179,37 +179,37 @@ For active sessions, `questions[].isCorrect` and `questions[].isCritical` are no
 
 ```json
 {
-  "id": "session-uuid",
-  "studentId": "student-user-id",
-  "templateId": "template-uuid",
-  "licenseCategory": "B2",
-  "status": "IN_PROGRESS",
-  "score": null,
-  "isPassed": null,
-  "failedByCritical": false,
-  "criticalMistakes": 0,
-  "maxCriticalMistakes": 0,
-  "startedAt": "2026-05-18T10:00:00.000Z",
-  "finishedAt": null,
-  "expiresAt": "2026-05-18T10:20:00.000Z",
-  "questions": [
-    {
-      "questionId": "question-uuid",
-      "content": "Khi gặp đèn đỏ, người lái xe phải làm gì?",
-      "imageUrl": null,
-      "mediaFileId": "media-file-uuid",
-      "options": [
-        {
-          "id": "option-1",
-          "content": "Dừng lại",
-          "displayOrder": 1
-        }
-      ],
-      "displayOrder": 1,
-      "isBookmarked": false,
-      "selectedOptionId": null
-    }
-  ]
+	"id": "session-uuid",
+	"studentId": "student-user-id",
+	"templateId": "template-uuid",
+	"licenseCategory": "B2",
+	"status": "IN_PROGRESS",
+	"score": null,
+	"isPassed": null,
+	"failedByCritical": false,
+	"criticalMistakes": 0,
+	"maxCriticalMistakes": 0,
+	"startedAt": "2026-05-18T10:00:00.000Z",
+	"finishedAt": null,
+	"expiresAt": "2026-05-18T10:20:00.000Z",
+	"questions": [
+		{
+			"questionId": "question-uuid",
+			"content": "Khi gặp đèn đỏ, người lái xe phải làm gì?",
+			"imageUrl": null,
+			"mediaFileId": "media-file-uuid",
+			"options": [
+				{
+					"id": "option-1",
+					"content": "Dừng lại",
+					"displayOrder": 1
+				}
+			],
+			"displayOrder": 1,
+			"isBookmarked": false,
+			"selectedOptionId": null
+		}
+	]
 }
 ```
 
@@ -219,38 +219,38 @@ Submit/result responses include `questions[].isCorrect`, but still do not expose
 
 ```json
 {
-  "id": "session-uuid",
-  "studentId": "student-user-id",
-  "templateId": "template-uuid",
-  "licenseCategory": "B2",
-  "status": "COMPLETED",
-  "score": 26,
-  "isPassed": true,
-  "failedByCritical": false,
-  "criticalMistakes": 0,
-  "maxCriticalMistakes": 0,
-  "startedAt": "2026-05-18T10:00:00.000Z",
-  "finishedAt": "2026-05-18T10:15:00.000Z",
-  "expiresAt": "2026-05-18T10:20:00.000Z",
-  "questions": [
-    {
-      "questionId": "question-uuid",
-      "content": "Khi gặp đèn đỏ, người lái xe phải làm gì?",
-      "imageUrl": null,
-      "mediaFileId": "media-file-uuid",
-      "options": [
-        {
-          "id": "option-1",
-          "content": "Dừng lại",
-          "displayOrder": 1
-        }
-      ],
-      "displayOrder": 1,
-      "isBookmarked": false,
-      "selectedOptionId": "option-1",
-      "isCorrect": true
-    }
-  ]
+	"id": "session-uuid",
+	"studentId": "student-user-id",
+	"templateId": "template-uuid",
+	"licenseCategory": "B2",
+	"status": "COMPLETED",
+	"score": 26,
+	"isPassed": true,
+	"failedByCritical": false,
+	"criticalMistakes": 0,
+	"maxCriticalMistakes": 0,
+	"startedAt": "2026-05-18T10:00:00.000Z",
+	"finishedAt": "2026-05-18T10:15:00.000Z",
+	"expiresAt": "2026-05-18T10:20:00.000Z",
+	"questions": [
+		{
+			"questionId": "question-uuid",
+			"content": "Khi gặp đèn đỏ, người lái xe phải làm gì?",
+			"imageUrl": null,
+			"mediaFileId": "media-file-uuid",
+			"options": [
+				{
+					"id": "option-1",
+					"content": "Dừng lại",
+					"displayOrder": 1
+				}
+			],
+			"displayOrder": 1,
+			"isBookmarked": false,
+			"selectedOptionId": "option-1",
+			"isCorrect": true
+		}
+	]
 }
 ```
 
@@ -266,39 +266,39 @@ List active exam templates that the current student can start. Frontend should c
 
 **Query**
 
-| Param | Type | Default | Validation |
-| --- | --- | ---: | --- |
-| `page` | number | 1 | integer, `>= 1` |
-| `size` | number | 20 | integer, `1..100` |
+| Param  | Type   | Default | Validation        |
+| ------ | ------ | ------: | ----------------- |
+| `page` | number |       1 | integer, `>= 1`   |
+| `size` | number |      20 | integer, `1..100` |
 
 **Response `200 OK`**
 
 ```json
 {
-  "success": true,
-  "code": "SUCCESS",
-  "message": "OK",
-  "timestamp": "2026-05-18T10:00:00.000Z",
-  "path": "/exams/available",
-  "data": {
-    "items": [
-      {
-        "id": "template-uuid",
-        "name": "Đề thi B2 cơ bản",
-        "description": "De thi mo phong theo cau truc GPLX hang B2",
-        "licenseCategory": "B2",
-        "totalQuestions": 30,
-        "passingScore": 26,
-        "durationMinutes": 20,
-        "criticalQuestions": 1,
-        "maxCriticalMistakes": 0,
-        "shuffleQuestions": true
-      }
-    ],
-    "total": 1,
-    "page": 1,
-    "size": 20
-  }
+	"success": true,
+	"code": "SUCCESS",
+	"message": "OK",
+	"timestamp": "2026-05-18T10:00:00.000Z",
+	"path": "/exams/available",
+	"data": {
+		"items": [
+			{
+				"id": "template-uuid",
+				"name": "Đề thi B2 cơ bản",
+				"description": "De thi mo phong theo cau truc GPLX hang B2",
+				"licenseCategory": "B2",
+				"totalQuestions": 30,
+				"passingScore": 26,
+				"durationMinutes": 20,
+				"criticalQuestions": 1,
+				"maxCriticalMistakes": 0,
+				"shuffleQuestions": true
+			}
+		],
+		"total": 1,
+		"page": 1,
+		"size": 20
+	}
 }
 ```
 
@@ -322,110 +322,110 @@ Create an exam template. This is an admin-only blueprint; students do not call t
 
 ```json
 {
-  "name": "Đề thi B2 cơ bản",
-  "description": "De thi mo phong theo cau truc GPLX hang B2",
-  "licenseCategory": "B2",
-  "totalQuestions": 30,
-  "passingScore": 26,
-  "durationMinutes": 20,
-  "criticalQuestions": 1,
-  "maxCriticalMistakes": 0,
-  "shuffleQuestions": true,
-  "topicDistribution": [
-    {
-      "topicId": "9f49045f-156e-5252-8486-babb36dc74fd",
-      "questionCount": 9
-    },
-    {
-      "topicId": "6d568ff3-458d-5764-bb15-ae3258b75a40",
-      "questionCount": 1
-    },
-    {
-      "topicId": "a81d3294-cc8b-579e-9567-8bbc39f96b60",
-      "questionCount": 1
-    },
-    {
-      "topicId": "6d38e12b-adec-5c2c-b029-e01ae1fdabd2",
-      "questionCount": 1
-    },
-    {
-      "topicId": "d7a509c3-153f-5c03-9398-6a5626aa70d0",
-      "questionCount": 9
-    },
-    {
-      "topicId": "0694bef4-6534-56d3-bc68-a3a0fb8f4f43",
-      "questionCount": 9
-    }
-  ]
+	"name": "Đề thi B2 cơ bản",
+	"description": "De thi mo phong theo cau truc GPLX hang B2",
+	"licenseCategory": "B2",
+	"totalQuestions": 30,
+	"passingScore": 26,
+	"durationMinutes": 20,
+	"criticalQuestions": 1,
+	"maxCriticalMistakes": 0,
+	"shuffleQuestions": true,
+	"topicDistribution": [
+		{
+			"topicId": "9f49045f-156e-5252-8486-babb36dc74fd",
+			"questionCount": 9
+		},
+		{
+			"topicId": "6d568ff3-458d-5764-bb15-ae3258b75a40",
+			"questionCount": 1
+		},
+		{
+			"topicId": "a81d3294-cc8b-579e-9567-8bbc39f96b60",
+			"questionCount": 1
+		},
+		{
+			"topicId": "6d38e12b-adec-5c2c-b029-e01ae1fdabd2",
+			"questionCount": 1
+		},
+		{
+			"topicId": "d7a509c3-153f-5c03-9398-6a5626aa70d0",
+			"questionCount": 9
+		},
+		{
+			"topicId": "0694bef4-6534-56d3-bc68-a3a0fb8f4f43",
+			"questionCount": 9
+		}
+	]
 }
 ```
 
-| Field | Type | Required | Validation | Description |
-| --- | --- | --- | --- | --- |
-| `name` | string | Yes | non-empty | Display name shown to admins and students through `GET /exams/available`. |
-| `description` | string/null | No | string | Description shown in admin/student UI. |
-| `licenseCategory` | LicenseCategory | Yes | enum | License tier this template belongs to. |
-| `totalQuestions` | number | Yes | integer, `>= 1` | Number of questions pulled from question-service when a session starts. |
-| `passingScore` | number | Yes | integer, `>= 1` | Minimum score to pass; domain rejects invalid values. |
-| `durationMinutes` | number | Yes | integer, `1..180` | Session time limit. |
-| `criticalQuestions` | number | Yes | integer, `>= 0`, `<= totalQuestions` | Exact number of critical questions that must appear in the generated exam. |
-| `maxCriticalMistakes` | number | Yes | integer, `>= 0`, `<= criticalQuestions` | Maximum wrong/unanswered critical questions allowed. |
-| `shuffleQuestions` | boolean | Yes | boolean | Shuffle final session question order after strict topic selection. |
-| `topicDistribution` | array | Yes | non-empty, sum `questionCount = totalQuestions` | Strict question counts per topic. |
+| Field                 | Type            | Required | Validation                                      | Description                                                                |
+| --------------------- | --------------- | -------- | ----------------------------------------------- | -------------------------------------------------------------------------- |
+| `name`                | string          | Yes      | non-empty                                       | Display name shown to admins and students through `GET /exams/available`.  |
+| `description`         | string/null     | No       | string                                          | Description shown in admin/student UI.                                     |
+| `licenseCategory`     | LicenseCategory | Yes      | enum                                            | License tier this template belongs to.                                     |
+| `totalQuestions`      | number          | Yes      | integer, `>= 1`                                 | Number of questions pulled from question-service when a session starts.    |
+| `passingScore`        | number          | Yes      | integer, `>= 1`                                 | Minimum score to pass; domain rejects invalid values.                      |
+| `durationMinutes`     | number          | Yes      | integer, `1..180`                               | Session time limit.                                                        |
+| `criticalQuestions`   | number          | Yes      | integer, `>= 0`, `<= totalQuestions`            | Exact number of critical questions that must appear in the generated exam. |
+| `maxCriticalMistakes` | number          | Yes      | integer, `>= 0`, `<= criticalQuestions`         | Maximum wrong/unanswered critical questions allowed.                       |
+| `shuffleQuestions`    | boolean         | Yes      | boolean                                         | Shuffle final session question order after strict topic selection.         |
+| `topicDistribution`   | array           | Yes      | non-empty, sum `questionCount = totalQuestions` | Strict question counts per topic.                                          |
 
 **Response `201 Created`**
 
 ```json
 {
-  "success": true,
-  "code": "SUCCESS",
-  "message": "Created",
-  "timestamp": "2026-05-18T10:00:00.000Z",
-  "path": "/admin/exams/templates",
-  "data": {
-    "id": "template-uuid",
-    "name": "Đề thi B2 cơ bản",
-    "description": "De thi mo phong theo cau truc GPLX hang B2",
-    "licenseCategory": "B2",
-    "totalQuestions": 30,
-    "passingScore": 26,
-    "durationMinutes": 20,
-    "criticalQuestions": 1,
-    "maxCriticalMistakes": 0,
-    "shuffleQuestions": true,
-    "topicDistribution": [
-      {
-        "topicId": "9f49045f-156e-5252-8486-babb36dc74fd",
-        "questionCount": 9
-      },
-      {
-        "topicId": "6d568ff3-458d-5764-bb15-ae3258b75a40",
-        "questionCount": 1
-      },
-      {
-        "topicId": "a81d3294-cc8b-579e-9567-8bbc39f96b60",
-        "questionCount": 1
-      },
-      {
-        "topicId": "6d38e12b-adec-5c2c-b029-e01ae1fdabd2",
-        "questionCount": 1
-      },
-      {
-        "topicId": "d7a509c3-153f-5c03-9398-6a5626aa70d0",
-        "questionCount": 9
-      },
-      {
-        "topicId": "0694bef4-6534-56d3-bc68-a3a0fb8f4f43",
-        "questionCount": 9
-      }
-    ],
-    "isActive": true,
-    "isDeleted": false,
-    "version": 1,
-    "createdById": "admin-user-id",
-    "createdAt": "2026-05-18T10:00:00.000Z",
-    "updatedAt": "2026-05-18T10:00:00.000Z"
-  }
+	"success": true,
+	"code": "SUCCESS",
+	"message": "Created",
+	"timestamp": "2026-05-18T10:00:00.000Z",
+	"path": "/admin/exams/templates",
+	"data": {
+		"id": "template-uuid",
+		"name": "Đề thi B2 cơ bản",
+		"description": "De thi mo phong theo cau truc GPLX hang B2",
+		"licenseCategory": "B2",
+		"totalQuestions": 30,
+		"passingScore": 26,
+		"durationMinutes": 20,
+		"criticalQuestions": 1,
+		"maxCriticalMistakes": 0,
+		"shuffleQuestions": true,
+		"topicDistribution": [
+			{
+				"topicId": "9f49045f-156e-5252-8486-babb36dc74fd",
+				"questionCount": 9
+			},
+			{
+				"topicId": "6d568ff3-458d-5764-bb15-ae3258b75a40",
+				"questionCount": 1
+			},
+			{
+				"topicId": "a81d3294-cc8b-579e-9567-8bbc39f96b60",
+				"questionCount": 1
+			},
+			{
+				"topicId": "6d38e12b-adec-5c2c-b029-e01ae1fdabd2",
+				"questionCount": 1
+			},
+			{
+				"topicId": "d7a509c3-153f-5c03-9398-6a5626aa70d0",
+				"questionCount": 9
+			},
+			{
+				"topicId": "0694bef4-6534-56d3-bc68-a3a0fb8f4f43",
+				"questionCount": 9
+			}
+		],
+		"isActive": true,
+		"isDeleted": false,
+		"version": 1,
+		"createdById": "admin-user-id",
+		"createdAt": "2026-05-18T10:00:00.000Z",
+		"updatedAt": "2026-05-18T10:00:00.000Z"
+	}
 }
 ```
 
@@ -441,44 +441,44 @@ List templates for admin management.
 
 **Query**
 
-| Param | Type | Default | Validation | Description |
-| --- | --- | ---: | --- | --- |
-| `page` | number | 1 | integer, `>= 1` | Page index. |
-| `size` | number | 20 | integer, `1..100` | Items per page. |
-| `licenseCategory` | LicenseCategory | - | optional enum | Filter by license tier. |
-| `isActive` | boolean | - | optional boolean | Filter active/inactive templates. |
-| `includeDeleted` | boolean | false | optional boolean | Include soft-deleted templates when true. |
+| Param             | Type            | Default | Validation        | Description                               |
+| ----------------- | --------------- | ------: | ----------------- | ----------------------------------------- |
+| `page`            | number          |       1 | integer, `>= 1`   | Page index.                               |
+| `size`            | number          |      20 | integer, `1..100` | Items per page.                           |
+| `licenseCategory` | LicenseCategory |       - | optional enum     | Filter by license tier.                   |
+| `isActive`        | boolean         |       - | optional boolean  | Filter active/inactive templates.         |
+| `includeDeleted`  | boolean         |   false | optional boolean  | Include soft-deleted templates when true. |
 
 **Response `200 OK`**
 
 ```json
 {
-  "success": true,
-  "code": "SUCCESS",
-  "message": "OK",
-  "timestamp": "2026-05-18T10:00:00.000Z",
-  "path": "/admin/exams/templates",
-  "data": {
-    "items": [
-      {
-        "id": "template-uuid",
-        "name": "Đề thi B2 cơ bản",
-        "licenseCategory": "B2",
-        "totalQuestions": 30,
-        "passingScore": 26,
-        "durationMinutes": 20,
-        "isActive": true,
-        "isDeleted": false,
-        "version": 1,
-        "createdById": "admin-user-id",
-        "createdAt": "2026-05-18T10:00:00.000Z",
-        "updatedAt": "2026-05-18T10:00:00.000Z"
-      }
-    ],
-    "total": 1,
-    "page": 1,
-    "size": 20
-  }
+	"success": true,
+	"code": "SUCCESS",
+	"message": "OK",
+	"timestamp": "2026-05-18T10:00:00.000Z",
+	"path": "/admin/exams/templates",
+	"data": {
+		"items": [
+			{
+				"id": "template-uuid",
+				"name": "Đề thi B2 cơ bản",
+				"licenseCategory": "B2",
+				"totalQuestions": 30,
+				"passingScore": 26,
+				"durationMinutes": 20,
+				"isActive": true,
+				"isDeleted": false,
+				"version": 1,
+				"createdById": "admin-user-id",
+				"createdAt": "2026-05-18T10:00:00.000Z",
+				"updatedAt": "2026-05-18T10:00:00.000Z"
+			}
+		],
+		"total": 1,
+		"page": 1,
+		"size": 20
+	}
 }
 ```
 
@@ -492,33 +492,33 @@ Get one template for admin edit/detail screen.
 
 **Path params**
 
-| Param | Type | Required | Description |
-| --- | --- | --- | --- |
-| `id` | UUID | Yes | Exam template id. |
+| Param | Type | Required | Description       |
+| ----- | ---- | -------- | ----------------- |
+| `id`  | UUID | Yes      | Exam template id. |
 
 **Response `200 OK`**
 
 ```json
 {
-  "success": true,
-  "code": "SUCCESS",
-  "message": "OK",
-  "timestamp": "2026-05-18T10:00:00.000Z",
-  "path": "/admin/exams/templates/template-uuid",
-  "data": {
-    "id": "template-uuid",
-    "name": "Đề thi B2 cơ bản",
-    "licenseCategory": "B2",
-    "totalQuestions": 30,
-    "passingScore": 26,
-    "durationMinutes": 20,
-    "isActive": true,
-    "isDeleted": false,
-    "version": 1,
-    "createdById": "admin-user-id",
-    "createdAt": "2026-05-18T10:00:00.000Z",
-    "updatedAt": "2026-05-18T10:00:00.000Z"
-  }
+	"success": true,
+	"code": "SUCCESS",
+	"message": "OK",
+	"timestamp": "2026-05-18T10:00:00.000Z",
+	"path": "/admin/exams/templates/template-uuid",
+	"data": {
+		"id": "template-uuid",
+		"name": "Đề thi B2 cơ bản",
+		"licenseCategory": "B2",
+		"totalQuestions": 30,
+		"passingScore": 26,
+		"durationMinutes": 20,
+		"isActive": true,
+		"isDeleted": false,
+		"version": 1,
+		"createdById": "admin-user-id",
+		"createdAt": "2026-05-18T10:00:00.000Z",
+		"updatedAt": "2026-05-18T10:00:00.000Z"
+	}
 }
 ```
 
@@ -534,120 +534,120 @@ Optimistic concurrency uses `version`.
 
 **Path params**
 
-| Param | Type | Required | Description |
-| --- | --- | --- | --- |
-| `id` | UUID | Yes | Exam template id. |
+| Param | Type | Required | Description       |
+| ----- | ---- | -------- | ----------------- |
+| `id`  | UUID | Yes      | Exam template id. |
 
 **Body**
 
 ```json
 {
-  "version": 1,
-  "name": "Đề thi B2 cập nhật",
-  "description": "Cap nhat cau truc de thi B2",
-  "totalQuestions": 30,
-  "passingScore": 26,
-  "durationMinutes": 20,
-  "criticalQuestions": 1,
-  "maxCriticalMistakes": 0,
-  "shuffleQuestions": true,
-  "topicDistribution": [
-    {
-      "topicId": "9f49045f-156e-5252-8486-babb36dc74fd",
-      "questionCount": 9
-    },
-    {
-      "topicId": "6d568ff3-458d-5764-bb15-ae3258b75a40",
-      "questionCount": 1
-    },
-    {
-      "topicId": "a81d3294-cc8b-579e-9567-8bbc39f96b60",
-      "questionCount": 1
-    },
-    {
-      "topicId": "6d38e12b-adec-5c2c-b029-e01ae1fdabd2",
-      "questionCount": 1
-    },
-    {
-      "topicId": "d7a509c3-153f-5c03-9398-6a5626aa70d0",
-      "questionCount": 9
-    },
-    {
-      "topicId": "0694bef4-6534-56d3-bc68-a3a0fb8f4f43",
-      "questionCount": 9
-    }
-  ],
-  "isActive": true
+	"version": 1,
+	"name": "Đề thi B2 cập nhật",
+	"description": "Cap nhat cau truc de thi B2",
+	"totalQuestions": 30,
+	"passingScore": 26,
+	"durationMinutes": 20,
+	"criticalQuestions": 1,
+	"maxCriticalMistakes": 0,
+	"shuffleQuestions": true,
+	"topicDistribution": [
+		{
+			"topicId": "9f49045f-156e-5252-8486-babb36dc74fd",
+			"questionCount": 9
+		},
+		{
+			"topicId": "6d568ff3-458d-5764-bb15-ae3258b75a40",
+			"questionCount": 1
+		},
+		{
+			"topicId": "a81d3294-cc8b-579e-9567-8bbc39f96b60",
+			"questionCount": 1
+		},
+		{
+			"topicId": "6d38e12b-adec-5c2c-b029-e01ae1fdabd2",
+			"questionCount": 1
+		},
+		{
+			"topicId": "d7a509c3-153f-5c03-9398-6a5626aa70d0",
+			"questionCount": 9
+		},
+		{
+			"topicId": "0694bef4-6534-56d3-bc68-a3a0fb8f4f43",
+			"questionCount": 9
+		}
+	],
+	"isActive": true
 }
 ```
 
-| Field | Type | Required | Validation | Description |
-| --- | --- | --- | --- | --- |
-| `version` | number | Yes | integer, `>= 1` | Current version from latest template response. |
-| `name` | string | No | non-empty when present | New display name. |
-| `description` | string/null | No | string | New description. |
-| `totalQuestions` | number | No | integer, `>= 1` | New question count. |
-| `passingScore` | number | No | integer, `>= 1` | New passing score. |
-| `durationMinutes` | number | No | integer, `1..180` | New duration. |
-| `criticalQuestions` | number | No | integer, `>= 0`, `<= totalQuestions` | New exact critical question count. |
-| `maxCriticalMistakes` | number | No | integer, `>= 0`, `<= criticalQuestions` | New critical mistake threshold. |
-| `shuffleQuestions` | boolean | No | boolean | Enable/disable question order shuffle. |
-| `topicDistribution` | array | No | non-empty, sum `questionCount = totalQuestions` | Replace strict topic distribution. |
-| `isActive` | boolean | No | boolean | Enable or disable this template for student starts. |
+| Field                 | Type        | Required | Validation                                      | Description                                         |
+| --------------------- | ----------- | -------- | ----------------------------------------------- | --------------------------------------------------- |
+| `version`             | number      | Yes      | integer, `>= 1`                                 | Current version from latest template response.      |
+| `name`                | string      | No       | non-empty when present                          | New display name.                                   |
+| `description`         | string/null | No       | string                                          | New description.                                    |
+| `totalQuestions`      | number      | No       | integer, `>= 1`                                 | New question count.                                 |
+| `passingScore`        | number      | No       | integer, `>= 1`                                 | New passing score.                                  |
+| `durationMinutes`     | number      | No       | integer, `1..180`                               | New duration.                                       |
+| `criticalQuestions`   | number      | No       | integer, `>= 0`, `<= totalQuestions`            | New exact critical question count.                  |
+| `maxCriticalMistakes` | number      | No       | integer, `>= 0`, `<= criticalQuestions`         | New critical mistake threshold.                     |
+| `shuffleQuestions`    | boolean     | No       | boolean                                         | Enable/disable question order shuffle.              |
+| `topicDistribution`   | array       | No       | non-empty, sum `questionCount = totalQuestions` | Replace strict topic distribution.                  |
+| `isActive`            | boolean     | No       | boolean                                         | Enable or disable this template for student starts. |
 
 **Response `200 OK`**
 
 ```json
 {
-  "success": true,
-  "code": "SUCCESS",
-  "message": "OK",
-  "timestamp": "2026-05-18T10:00:00.000Z",
-  "path": "/admin/exams/templates/template-uuid",
-  "data": {
-    "id": "template-uuid",
-    "name": "Đề thi B2 cập nhật",
-    "description": "Cap nhat cau truc de thi B2",
-    "licenseCategory": "B2",
-    "totalQuestions": 30,
-    "passingScore": 26,
-    "durationMinutes": 20,
-    "criticalQuestions": 1,
-    "maxCriticalMistakes": 0,
-    "shuffleQuestions": true,
-    "topicDistribution": [
-      {
-        "topicId": "9f49045f-156e-5252-8486-babb36dc74fd",
-        "questionCount": 9
-      },
-      {
-        "topicId": "6d568ff3-458d-5764-bb15-ae3258b75a40",
-        "questionCount": 1
-      },
-      {
-        "topicId": "a81d3294-cc8b-579e-9567-8bbc39f96b60",
-        "questionCount": 1
-      },
-      {
-        "topicId": "6d38e12b-adec-5c2c-b029-e01ae1fdabd2",
-        "questionCount": 1
-      },
-      {
-        "topicId": "d7a509c3-153f-5c03-9398-6a5626aa70d0",
-        "questionCount": 9
-      },
-      {
-        "topicId": "0694bef4-6534-56d3-bc68-a3a0fb8f4f43",
-        "questionCount": 9
-      }
-    ],
-    "isActive": true,
-    "isDeleted": false,
-    "version": 2,
-    "createdById": "admin-user-id",
-    "createdAt": "2026-05-18T10:00:00.000Z",
-    "updatedAt": "2026-05-18T10:05:00.000Z"
-  }
+	"success": true,
+	"code": "SUCCESS",
+	"message": "OK",
+	"timestamp": "2026-05-18T10:00:00.000Z",
+	"path": "/admin/exams/templates/template-uuid",
+	"data": {
+		"id": "template-uuid",
+		"name": "Đề thi B2 cập nhật",
+		"description": "Cap nhat cau truc de thi B2",
+		"licenseCategory": "B2",
+		"totalQuestions": 30,
+		"passingScore": 26,
+		"durationMinutes": 20,
+		"criticalQuestions": 1,
+		"maxCriticalMistakes": 0,
+		"shuffleQuestions": true,
+		"topicDistribution": [
+			{
+				"topicId": "9f49045f-156e-5252-8486-babb36dc74fd",
+				"questionCount": 9
+			},
+			{
+				"topicId": "6d568ff3-458d-5764-bb15-ae3258b75a40",
+				"questionCount": 1
+			},
+			{
+				"topicId": "a81d3294-cc8b-579e-9567-8bbc39f96b60",
+				"questionCount": 1
+			},
+			{
+				"topicId": "6d38e12b-adec-5c2c-b029-e01ae1fdabd2",
+				"questionCount": 1
+			},
+			{
+				"topicId": "d7a509c3-153f-5c03-9398-6a5626aa70d0",
+				"questionCount": 9
+			},
+			{
+				"topicId": "0694bef4-6534-56d3-bc68-a3a0fb8f4f43",
+				"questionCount": 9
+			}
+		],
+		"isActive": true,
+		"isDeleted": false,
+		"version": 2,
+		"createdById": "admin-user-id",
+		"createdAt": "2026-05-18T10:00:00.000Z",
+		"updatedAt": "2026-05-18T10:05:00.000Z"
+	}
 }
 ```
 
@@ -665,37 +665,37 @@ Soft delete an unused template.
 
 ```json
 {
-  "version": 1
+	"version": 1
 }
 ```
 
-| Field | Type | Required | Validation | Description |
-| --- | --- | --- | --- | --- |
-| `version` | number | Yes | integer, `>= 1` | Current version from latest template response. |
+| Field     | Type   | Required | Validation      | Description                                    |
+| --------- | ------ | -------- | --------------- | ---------------------------------------------- |
+| `version` | number | Yes      | integer, `>= 1` | Current version from latest template response. |
 
 **Response `200 OK`**
 
 ```json
 {
-  "success": true,
-  "code": "SUCCESS",
-  "message": "OK",
-  "timestamp": "2026-05-18T10:00:00.000Z",
-  "path": "/admin/exams/templates/template-uuid",
-  "data": {
-    "id": "template-uuid",
-    "name": "Đề thi B2 cơ bản",
-    "licenseCategory": "B2",
-    "totalQuestions": 30,
-    "passingScore": 26,
-    "durationMinutes": 20,
-    "isActive": false,
-    "isDeleted": true,
-    "version": 2,
-    "createdById": "admin-user-id",
-    "createdAt": "2026-05-18T10:00:00.000Z",
-    "updatedAt": "2026-05-18T10:10:00.000Z"
-  }
+	"success": true,
+	"code": "SUCCESS",
+	"message": "OK",
+	"timestamp": "2026-05-18T10:00:00.000Z",
+	"path": "/admin/exams/templates/template-uuid",
+	"data": {
+		"id": "template-uuid",
+		"name": "Đề thi B2 cơ bản",
+		"licenseCategory": "B2",
+		"totalQuestions": 30,
+		"passingScore": 26,
+		"durationMinutes": 20,
+		"isActive": false,
+		"isDeleted": true,
+		"version": 2,
+		"createdById": "admin-user-id",
+		"createdAt": "2026-05-18T10:00:00.000Z",
+		"updatedAt": "2026-05-18T10:10:00.000Z"
+	}
 }
 ```
 
@@ -713,13 +713,13 @@ Start exam session for current student. Exam-service validates current profile b
 
 ```json
 {
-  "templateId": "template-uuid"
+	"templateId": "template-uuid"
 }
 ```
 
-| Field | Type | Required | Validation | Description |
-| --- | --- | --- | --- | --- |
-| `templateId` | UUID | Yes | `IsUUID` | Template id selected from `GET /exams/available`. |
+| Field        | Type | Required | Validation | Description                                       |
+| ------------ | ---- | -------- | ---------- | ------------------------------------------------- |
+| `templateId` | UUID | Yes      | `IsUUID`   | Template id selected from `GET /exams/available`. |
 
 **Response `201 Created`**
 
@@ -727,44 +727,44 @@ The response includes `questions[]` so frontend can render the exam immediately 
 
 ```json
 {
-  "success": true,
-  "code": "SUCCESS",
-  "message": "Created",
-  "timestamp": "2026-05-18T10:00:00.000Z",
-  "path": "/exams/sessions",
-  "data": {
-    "id": "session-uuid",
-    "studentId": "student-user-id",
-    "templateId": "template-uuid",
-    "licenseCategory": "B2",
-    "status": "IN_PROGRESS",
-    "score": null,
-    "isPassed": null,
-    "failedByCritical": false,
-    "criticalMistakes": 0,
-    "maxCriticalMistakes": 0,
-    "startedAt": "2026-05-18T10:00:00.000Z",
-    "finishedAt": null,
-    "expiresAt": "2026-05-18T10:20:00.000Z",
-    "questions": [
-      {
-        "questionId": "question-uuid",
-        "content": "Khi gặp đèn đỏ, người lái xe phải làm gì?",
-        "imageUrl": null,
-        "mediaFileId": "media-file-uuid",
-        "options": [
-          {
-            "id": "option-1",
-            "content": "Dừng lại",
-            "displayOrder": 1
-          }
-        ],
-        "displayOrder": 1,
-        "isBookmarked": false,
-        "selectedOptionId": null
-      }
-    ]
-  }
+	"success": true,
+	"code": "SUCCESS",
+	"message": "Created",
+	"timestamp": "2026-05-18T10:00:00.000Z",
+	"path": "/exams/sessions",
+	"data": {
+		"id": "session-uuid",
+		"studentId": "student-user-id",
+		"templateId": "template-uuid",
+		"licenseCategory": "B2",
+		"status": "IN_PROGRESS",
+		"score": null,
+		"isPassed": null,
+		"failedByCritical": false,
+		"criticalMistakes": 0,
+		"maxCriticalMistakes": 0,
+		"startedAt": "2026-05-18T10:00:00.000Z",
+		"finishedAt": null,
+		"expiresAt": "2026-05-18T10:20:00.000Z",
+		"questions": [
+			{
+				"questionId": "question-uuid",
+				"content": "Khi gặp đèn đỏ, người lái xe phải làm gì?",
+				"imageUrl": null,
+				"mediaFileId": "media-file-uuid",
+				"options": [
+					{
+						"id": "option-1",
+						"content": "Dừng lại",
+						"displayOrder": 1
+					}
+				],
+				"displayOrder": 1,
+				"isBookmarked": false,
+				"selectedOptionId": null
+			}
+		]
+	}
 }
 ```
 
@@ -778,61 +778,61 @@ List current student exam history.
 
 **Query**
 
-| Param | Type | Default | Validation |
-| --- | --- | ---: | --- |
-| `page` | number | 1 | integer, `>= 1` |
-| `size` | number | 20 | integer, `1..100` |
-| `status` | ExamSessionStatus | - | optional enum |
+| Param    | Type              | Default | Validation        |
+| -------- | ----------------- | ------: | ----------------- |
+| `page`   | number            |       1 | integer, `>= 1`   |
+| `size`   | number            |      20 | integer, `1..100` |
+| `status` | ExamSessionStatus |       - | optional enum     |
 
 **Response `200 OK`**
 
 ```json
 {
-  "success": true,
-  "code": "SUCCESS",
-  "message": "OK",
-  "timestamp": "2026-05-18T10:00:00.000Z",
-  "path": "/exams/sessions",
-  "data": {
-    "items": [
-      {
-        "id": "session-uuid",
-        "studentId": "student-user-id",
-        "templateId": "template-uuid",
-        "licenseCategory": "B2",
-        "status": "IN_PROGRESS",
-        "score": null,
-        "isPassed": null,
-        "failedByCritical": false,
-        "criticalMistakes": 0,
-        "maxCriticalMistakes": 0,
-        "startedAt": "2026-05-18T10:00:00.000Z",
-        "finishedAt": null,
-        "expiresAt": "2026-05-18T10:20:00.000Z",
-        "questions": [
-          {
-            "questionId": "question-uuid",
-            "content": "Khi gặp đèn đỏ, người lái xe phải làm gì?",
-            "imageUrl": null,
-            "mediaFileId": "media-file-uuid",
-            "options": [
-              {
-                "id": "option-1",
-                "content": "Dừng lại",
-                "displayOrder": 1
-              }
-            ],
-            "displayOrder": 1,
-            "isBookmarked": false,
-            "selectedOptionId": null
-          }
-        ]
-      }
-    ],
-    "total": 1,
-    "page": 1,
-    "size": 20
-  }
+	"success": true,
+	"code": "SUCCESS",
+	"message": "OK",
+	"timestamp": "2026-05-18T10:00:00.000Z",
+	"path": "/exams/sessions",
+	"data": {
+		"items": [
+			{
+				"id": "session-uuid",
+				"studentId": "student-user-id",
+				"templateId": "template-uuid",
+				"licenseCategory": "B2",
+				"status": "IN_PROGRESS",
+				"score": null,
+				"isPassed": null,
+				"failedByCritical": false,
+				"criticalMistakes": 0,
+				"maxCriticalMistakes": 0,
+				"startedAt": "2026-05-18T10:00:00.000Z",
+				"finishedAt": null,
+				"expiresAt": "2026-05-18T10:20:00.000Z",
+				"questions": [
+					{
+						"questionId": "question-uuid",
+						"content": "Khi gặp đèn đỏ, người lái xe phải làm gì?",
+						"imageUrl": null,
+						"mediaFileId": "media-file-uuid",
+						"options": [
+							{
+								"id": "option-1",
+								"content": "Dừng lại",
+								"displayOrder": 1
+							}
+						],
+						"displayOrder": 1,
+						"isBookmarked": false,
+						"selectedOptionId": null
+					}
+				]
+			}
+		],
+		"total": 1,
+		"page": 1,
+		"size": 20
+	}
 }
 ```
 
@@ -846,39 +846,39 @@ Return current session questions without answer keys.
 
 **Path params**
 
-| Param | Type | Required | Description |
-| --- | --- | --- | --- |
-| `id` | UUID | Yes | Exam session id. |
+| Param | Type | Required | Description      |
+| ----- | ---- | -------- | ---------------- |
+| `id`  | UUID | Yes      | Exam session id. |
 
 **Response `200 OK`**
 
 ```json
 {
-  "success": true,
-  "code": "SUCCESS",
-  "message": "OK",
-  "timestamp": "2026-05-18T10:00:00.000Z",
-  "path": "/exams/sessions/session-uuid/questions",
-  "data": {
-    "items": [
-      {
-        "questionId": "question-uuid",
-        "content": "Khi gặp đèn đỏ, người lái xe phải làm gì?",
-        "imageUrl": null,
-        "mediaFileId": "media-file-uuid",
-        "options": [
-          {
-            "id": "option-1",
-            "content": "Dừng lại",
-            "displayOrder": 1
-          }
-        ],
-        "displayOrder": 1,
-        "isBookmarked": false,
-        "selectedOptionId": null
-      }
-    ]
-  }
+	"success": true,
+	"code": "SUCCESS",
+	"message": "OK",
+	"timestamp": "2026-05-18T10:00:00.000Z",
+	"path": "/exams/sessions/session-uuid/questions",
+	"data": {
+		"items": [
+			{
+				"questionId": "question-uuid",
+				"content": "Khi gặp đèn đỏ, người lái xe phải làm gì?",
+				"imageUrl": null,
+				"mediaFileId": "media-file-uuid",
+				"options": [
+					{
+						"id": "option-1",
+						"content": "Dừng lại",
+						"displayOrder": 1
+					}
+				],
+				"displayOrder": 1,
+				"isBookmarked": false,
+				"selectedOptionId": null
+			}
+		]
+	}
 }
 ```
 
@@ -896,17 +896,17 @@ Autosave answer and/or bookmark. Autosave is applied only while session is activ
 
 ```json
 {
-  "questionId": "question-uuid",
-  "selectedOptionId": "option-uuid",
-  "isBookmarked": true
+	"questionId": "question-uuid",
+	"selectedOptionId": "option-uuid",
+	"isBookmarked": true
 }
 ```
 
-| Field | Type | Required | Validation | Description |
-| --- | --- | --- | --- | --- |
-| `questionId` | UUID | Yes | `IsUUID` | Question id from session snapshot. |
-| `selectedOptionId` | UUID/null | No | optional `IsUUID` | Selected option id. Omit for bookmark-only update. |
-| `isBookmarked` | boolean | No | optional boolean | Bookmark flag. |
+| Field              | Type      | Required | Validation        | Description                                        |
+| ------------------ | --------- | -------- | ----------------- | -------------------------------------------------- |
+| `questionId`       | UUID      | Yes      | `IsUUID`          | Question id from session snapshot.                 |
+| `selectedOptionId` | UUID/null | No       | optional `IsUUID` | Selected option id. Omit for bookmark-only update. |
+| `isBookmarked`     | boolean   | No       | optional boolean  | Bookmark flag.                                     |
 
 **Response `200 OK`**
 
@@ -914,44 +914,44 @@ Controller returns the updated session. `questions[].isCorrect` is not returned.
 
 ```json
 {
-  "success": true,
-  "code": "SUCCESS",
-  "message": "OK",
-  "timestamp": "2026-05-18T10:00:00.000Z",
-  "path": "/exams/sessions/session-uuid/answers",
-  "data": {
-    "id": "session-uuid",
-    "studentId": "student-user-id",
-    "templateId": "template-uuid",
-    "licenseCategory": "B2",
-    "status": "IN_PROGRESS",
-    "score": null,
-    "isPassed": null,
-    "failedByCritical": false,
-    "criticalMistakes": 0,
-    "maxCriticalMistakes": 0,
-    "startedAt": "2026-05-18T10:00:00.000Z",
-    "finishedAt": null,
-    "expiresAt": "2026-05-18T10:20:00.000Z",
-    "questions": [
-      {
-        "questionId": "question-uuid",
-        "content": "Khi gặp đèn đỏ, người lái xe phải làm gì?",
-        "imageUrl": null,
-        "mediaFileId": "media-file-uuid",
-        "options": [
-          {
-            "id": "option-1",
-            "content": "Dừng lại",
-            "displayOrder": 1
-          }
-        ],
-        "displayOrder": 1,
-        "isBookmarked": true,
-        "selectedOptionId": "option-uuid"
-      }
-    ]
-  }
+	"success": true,
+	"code": "SUCCESS",
+	"message": "OK",
+	"timestamp": "2026-05-18T10:00:00.000Z",
+	"path": "/exams/sessions/session-uuid/answers",
+	"data": {
+		"id": "session-uuid",
+		"studentId": "student-user-id",
+		"templateId": "template-uuid",
+		"licenseCategory": "B2",
+		"status": "IN_PROGRESS",
+		"score": null,
+		"isPassed": null,
+		"failedByCritical": false,
+		"criticalMistakes": 0,
+		"maxCriticalMistakes": 0,
+		"startedAt": "2026-05-18T10:00:00.000Z",
+		"finishedAt": null,
+		"expiresAt": "2026-05-18T10:20:00.000Z",
+		"questions": [
+			{
+				"questionId": "question-uuid",
+				"content": "Khi gặp đèn đỏ, người lái xe phải làm gì?",
+				"imageUrl": null,
+				"mediaFileId": "media-file-uuid",
+				"options": [
+					{
+						"id": "option-1",
+						"content": "Dừng lại",
+						"displayOrder": 1
+					}
+				],
+				"displayOrder": 1,
+				"isBookmarked": true,
+				"selectedOptionId": "option-uuid"
+			}
+		]
+	}
 }
 ```
 
@@ -965,9 +965,9 @@ Submit and synchronously grade. Each correct answer is 1 point; wrong/unanswered
 
 **Path params**
 
-| Param | Type | Required | Description |
-| --- | --- | --- | --- |
-| `id` | UUID | Yes | Exam session id. |
+| Param | Type | Required | Description      |
+| ----- | ---- | -------- | ---------------- |
+| `id`  | UUID | Yes      | Exam session id. |
 
 **Body:** no body.
 
@@ -975,45 +975,45 @@ Submit and synchronously grade. Each correct answer is 1 point; wrong/unanswered
 
 ```json
 {
-  "success": true,
-  "code": "SUCCESS",
-  "message": "OK",
-  "timestamp": "2026-05-18T10:00:00.000Z",
-  "path": "/exams/sessions/session-uuid/submit",
-  "data": {
-    "id": "session-uuid",
-    "studentId": "student-user-id",
-    "templateId": "template-uuid",
-    "licenseCategory": "B2",
-    "status": "COMPLETED",
-    "score": 26,
-    "isPassed": true,
-    "failedByCritical": false,
-    "criticalMistakes": 0,
-    "maxCriticalMistakes": 0,
-    "startedAt": "2026-05-18T10:00:00.000Z",
-    "finishedAt": "2026-05-18T10:15:00.000Z",
-    "expiresAt": "2026-05-18T10:20:00.000Z",
-    "questions": [
-      {
-        "questionId": "question-uuid",
-        "content": "Khi gặp đèn đỏ, người lái xe phải làm gì?",
-        "imageUrl": null,
-        "mediaFileId": "media-file-uuid",
-        "options": [
-          {
-            "id": "option-1",
-            "content": "Dừng lại",
-            "displayOrder": 1
-          }
-        ],
-        "displayOrder": 1,
-        "isBookmarked": false,
-        "selectedOptionId": "option-1",
-        "isCorrect": true
-      }
-    ]
-  }
+	"success": true,
+	"code": "SUCCESS",
+	"message": "OK",
+	"timestamp": "2026-05-18T10:00:00.000Z",
+	"path": "/exams/sessions/session-uuid/submit",
+	"data": {
+		"id": "session-uuid",
+		"studentId": "student-user-id",
+		"templateId": "template-uuid",
+		"licenseCategory": "B2",
+		"status": "COMPLETED",
+		"score": 26,
+		"isPassed": true,
+		"failedByCritical": false,
+		"criticalMistakes": 0,
+		"maxCriticalMistakes": 0,
+		"startedAt": "2026-05-18T10:00:00.000Z",
+		"finishedAt": "2026-05-18T10:15:00.000Z",
+		"expiresAt": "2026-05-18T10:20:00.000Z",
+		"questions": [
+			{
+				"questionId": "question-uuid",
+				"content": "Khi gặp đèn đỏ, người lái xe phải làm gì?",
+				"imageUrl": null,
+				"mediaFileId": "media-file-uuid",
+				"options": [
+					{
+						"id": "option-1",
+						"content": "Dừng lại",
+						"displayOrder": 1
+					}
+				],
+				"displayOrder": 1,
+				"isBookmarked": false,
+				"selectedOptionId": "option-1",
+				"isCorrect": true
+			}
+		]
+	}
 }
 ```
 
@@ -1033,45 +1033,45 @@ Same shape as `POST /exams/sessions/:id/submit`.
 
 ```json
 {
-  "success": true,
-  "code": "SUCCESS",
-  "message": "OK",
-  "timestamp": "2026-05-18T10:00:00.000Z",
-  "path": "/exams/sessions/session-uuid/result",
-  "data": {
-    "id": "session-uuid",
-    "studentId": "student-user-id",
-    "templateId": "template-uuid",
-    "licenseCategory": "B2",
-    "status": "COMPLETED",
-    "score": 26,
-    "isPassed": true,
-    "failedByCritical": false,
-    "criticalMistakes": 0,
-    "maxCriticalMistakes": 0,
-    "startedAt": "2026-05-18T10:00:00.000Z",
-    "finishedAt": "2026-05-18T10:15:00.000Z",
-    "expiresAt": "2026-05-18T10:20:00.000Z",
-    "questions": [
-      {
-        "questionId": "question-uuid",
-        "content": "Khi gặp đèn đỏ, người lái xe phải làm gì?",
-        "imageUrl": null,
-        "mediaFileId": "media-file-uuid",
-        "options": [
-          {
-            "id": "option-1",
-            "content": "Dừng lại",
-            "displayOrder": 1
-          }
-        ],
-        "displayOrder": 1,
-        "isBookmarked": false,
-        "selectedOptionId": "option-1",
-        "isCorrect": true
-      }
-    ]
-  }
+	"success": true,
+	"code": "SUCCESS",
+	"message": "OK",
+	"timestamp": "2026-05-18T10:00:00.000Z",
+	"path": "/exams/sessions/session-uuid/result",
+	"data": {
+		"id": "session-uuid",
+		"studentId": "student-user-id",
+		"templateId": "template-uuid",
+		"licenseCategory": "B2",
+		"status": "COMPLETED",
+		"score": 26,
+		"isPassed": true,
+		"failedByCritical": false,
+		"criticalMistakes": 0,
+		"maxCriticalMistakes": 0,
+		"startedAt": "2026-05-18T10:00:00.000Z",
+		"finishedAt": "2026-05-18T10:15:00.000Z",
+		"expiresAt": "2026-05-18T10:20:00.000Z",
+		"questions": [
+			{
+				"questionId": "question-uuid",
+				"content": "Khi gặp đèn đỏ, người lái xe phải làm gì?",
+				"imageUrl": null,
+				"mediaFileId": "media-file-uuid",
+				"options": [
+					{
+						"id": "option-1",
+						"content": "Dừng lại",
+						"displayOrder": 1
+					}
+				],
+				"displayOrder": 1,
+				"isBookmarked": false,
+				"selectedOptionId": "option-1",
+				"isCorrect": true
+			}
+		]
+	}
 }
 ```
 
@@ -1087,34 +1087,34 @@ Access logging is emitted for every HTTP request. Successful exam-template mutat
 
 Student exam answers/session operations are not in audit phase 1; they are already persisted as business records in `exam_db`. Phase 1 focuses on admin template mutations because these affect exam structure and grading rules.
 
-| Endpoint | Audit action | Resource | Metadata |
-| --- | --- | --- | --- |
-| `POST /admin/exams/templates` | `EXAM_TEMPLATE_CREATED` | `EXAM_TEMPLATE/:id` | `{ "name": "...", "licenseCategory": "B1" }` |
-| `PATCH /admin/exams/templates/:id` | `EXAM_TEMPLATE_UPDATED` | `EXAM_TEMPLATE/:id` | `{ "name": "...", "version": 2 }` |
-| `DELETE /admin/exams/templates/:id` | `EXAM_TEMPLATE_DELETED` | `EXAM_TEMPLATE/:id` | `{ "name": "...", "version": 3 }` |
+| Endpoint                            | Audit action            | Resource            | Metadata                                     |
+| ----------------------------------- | ----------------------- | ------------------- | -------------------------------------------- |
+| `POST /admin/exams/templates`       | `EXAM_TEMPLATE_CREATED` | `EXAM_TEMPLATE/:id` | `{ "name": "...", "licenseCategory": "B1" }` |
+| `PATCH /admin/exams/templates/:id`  | `EXAM_TEMPLATE_UPDATED` | `EXAM_TEMPLATE/:id` | `{ "name": "...", "version": 2 }`            |
+| `DELETE /admin/exams/templates/:id` | `EXAM_TEMPLATE_DELETED` | `EXAM_TEMPLATE/:id` | `{ "name": "...", "version": 3 }`            |
 
 Example audit event:
 
 ```json
 {
-  "eventId": "audit-event-uuid",
-  "eventName": "security.audit.recorded",
-  "schemaVersion": 1,
-  "serviceName": "exam-service",
-  "actorId": "admin-keycloak-sub",
-  "actorRole": "ADMIN",
-  "action": "EXAM_TEMPLATE_UPDATED",
-  "resourceType": "EXAM_TEMPLATE",
-  "resourceId": "template-id",
-  "outcome": "SUCCESS",
-  "occurredAt": "2026-05-24T10:00:00.000Z",
-  "correlationId": "request-correlation-id",
-  "requestPath": "/admin/exams/templates/template-id",
-  "httpMethod": "PATCH",
-  "metadata": {
-    "name": "Đề thi B1 cập nhật",
-    "version": 2
-  }
+	"eventId": "audit-event-uuid",
+	"eventName": "security.audit.recorded",
+	"schemaVersion": 1,
+	"serviceName": "exam-service",
+	"actorId": "admin-keycloak-sub",
+	"actorRole": "ADMIN",
+	"action": "EXAM_TEMPLATE_UPDATED",
+	"resourceType": "EXAM_TEMPLATE",
+	"resourceId": "template-id",
+	"outcome": "SUCCESS",
+	"occurredAt": "2026-05-24T10:00:00.000Z",
+	"correlationId": "request-correlation-id",
+	"requestPath": "/admin/exams/templates/template-id",
+	"httpMethod": "PATCH",
+	"metadata": {
+		"name": "Đề thi B1 cập nhật",
+		"version": 2
+	}
 }
 ```
 
@@ -1138,12 +1138,12 @@ Authorization: Bearer <admin_access_token>
 
 ```json
 {
-  "eventName": "exam.session.completed",
-  "sessionId": "session-uuid",
-  "studentId": "student-user-id",
-  "score": 26,
-  "isPassed": true,
-  "licenseCategory": "B2"
+	"eventName": "exam.session.completed",
+	"sessionId": "session-uuid",
+	"studentId": "student-user-id",
+	"score": 26,
+	"isPassed": true,
+	"licenseCategory": "B2"
 }
 ```
 
@@ -1151,16 +1151,16 @@ Authorization: Bearer <admin_access_token>
 
 ```json
 {
-  "eventName": "exam.session.passed",
-  "sessionId": "session-uuid",
-  "studentId": "student-user-id",
-  "licenseCategory": "B2"
+	"eventName": "exam.session.passed",
+	"sessionId": "session-uuid",
+	"studentId": "student-user-id",
+	"licenseCategory": "B2"
 }
 ```
 
 ### `exam.session.failed`
 
-```json
+````json
 {
   "eventName": "exam.session.failed",
   "sessionId": "session-uuid",
@@ -1231,19 +1231,20 @@ Returns recently missed question snapshots for review. Response does not include
     }
   ]
 }
-```
+````
 
 Exam sessions store immutable template snapshot fields at start time: template name/version, license category, total questions, passing score, duration, critical config, and topic distribution.
+
 ## SRS Alignment Additions: UC32 Missed Review Filters
 
 `GET /exams/review/missed-questions` supports:
 
-| Query | Type | Default | Notes |
-| --- | --- | --- | --- |
-| `limit` | number | `20` | 1-50 |
-| `size` | number | `20` | SRS UC32 alias for `limit`; 1-50 |
-| `periodDays` | number | all history | 1-365 |
-| `period` | number | all history | SRS UC32 alias for `periodDays`; 1-365 |
-| `mode` | `frequent` or `recent` | `frequent` | Frequency prioritizes repeated misses; recent prioritizes latest mistakes. |
+| Query        | Type                   | Default     | Notes                                                                      |
+| ------------ | ---------------------- | ----------- | -------------------------------------------------------------------------- |
+| `limit`      | number                 | `20`        | 1-50                                                                       |
+| `size`       | number                 | `20`        | SRS UC32 alias for `limit`; 1-50                                           |
+| `periodDays` | number                 | all history | 1-365                                                                      |
+| `period`     | number                 | all history | SRS UC32 alias for `periodDays`; 1-365                                     |
+| `mode`       | `frequent` or `recent` | `frequent`  | Frequency prioritizes repeated misses; recent prioritizes latest mistakes. |
 
 Each item includes `missedCount`. The response remains student-safe and does not expose `correctOptionId`.

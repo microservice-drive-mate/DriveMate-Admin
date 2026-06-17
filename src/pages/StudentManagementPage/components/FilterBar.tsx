@@ -1,19 +1,19 @@
-import type { LicenseTier } from "@/types/user-profile.types";
+import type { LicenseTier } from "@/types/user-profile.types"
 import {
 	STUDENT_LICENSE_TIERS,
 	STUDENT_STATUS_OPTIONS,
 	type StudentFilters,
-} from "@/types/student.types";
-import { FilterSelect } from "@/components/ui/FilterSelect";
+} from "@/types/student.types"
+import { FilterSelect } from "@/components/ui/FilterSelect"
 
 interface FilterBarProps {
-	filters: StudentFilters;
-	onChange: (next: StudentFilters) => void;
+	filters: StudentFilters
+	onChange: (next: StudentFilters) => void
 }
 
 export function FilterBar({ filters, onChange }: FilterBarProps) {
 	const update = (patch: Partial<StudentFilters>) =>
-		onChange({ ...filters, ...patch });
+		onChange({ ...filters, ...patch })
 
 	return (
 		<div className="student-filters">
@@ -38,16 +38,20 @@ export function FilterBar({ filters, onChange }: FilterBarProps) {
 
 			<FilterSelect
 				value={filters.status}
-				onChange={(v) => update({ status: v as StudentFilters["status"] })}
+				onChange={(v) =>
+					update({ status: v as StudentFilters["status"] })
+				}
 				placeholder="Trạng thái"
 				options={STUDENT_STATUS_OPTIONS.map((item) => {
 					const unsupported =
-						item.value === "warning" || item.value === "completed";
+						item.value === "warning" || item.value === "completed"
 					return {
 						value: item.value,
-						label: unsupported ? `${item.label} (chưa hỗ trợ)` : item.label,
+						label: unsupported
+							? `${item.label} (chưa hỗ trợ)`
+							: item.label,
 						disabled: unsupported,
-					};
+					}
 				})}
 			/>
 
@@ -55,9 +59,10 @@ export function FilterBar({ filters, onChange }: FilterBarProps) {
 				className="student-filters__clear"
 				onClick={() =>
 					onChange({ search: "", licenseTier: "", status: "" })
-				}>
+				}
+			>
 				⊘ Lọc
 			</button>
 		</div>
-	);
+	)
 }
