@@ -10,7 +10,7 @@
 		"format": "prettier --write .",
 		"format:check": "prettier --check .",
 		"test": "vitest run",
-		"test:pact": "vitest run src/pact --pool=forks",
+		"test:pact": "vitest run --config vitest.pact.config.ts",
 		"test:watch": "vitest",
 		"preview": "vite preview",
 		"typecheck:pact": "tsc -p tsconfig.pact.json --noEmit"
