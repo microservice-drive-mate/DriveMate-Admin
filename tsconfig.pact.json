@@ -1,0 +1,10 @@
+{
+	"extends": "./tsconfig.app.json",
+	"compilerOptions": {
+		"composite": false,
+		"tsBuildInfoFile": "./node_modules/.tmp/tsconfig.pact.tsbuildinfo",
+		"types": ["vite/client", "vitest/globals", "node"]
+	},
+	"include": ["src/pact/**/*.ts"],
+	"exclude": []
+}

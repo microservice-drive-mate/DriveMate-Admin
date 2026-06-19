@@ -1,0 +1,93 @@
+name: Contract Tests (Consumer)
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "src/**"
+      - "package.json"
+      - "package-lock.json"
+  push:
+    branches: [main]
+    paths:
+      - "src/**"
+  workflow_dispatch:
+
+concurrency:
+  group: pact-admin-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
+jobs:
+  generate-pacts:
+    name: Generate pact files (drivemate-admin)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - run: npm ci
+
+      - name: Checkout backend (for pact-matchers)
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ vars.BACKEND_REPO || 'org/luyen-thi-lai-xe-microservices' }}
+          path: _backend
+          sparse-checkout: packages/pact-matchers
+
+      - name: Build @repo/pact-matchers
+        working-directory: _backend
+        run: |
+          npm install --prefix packages/pact-matchers
+          npm --prefix packages/pact-matchers run build
+
+      - name: Link pact-matchers (override file: dep for CI)
+        run: npm install --no-save @repo/pact-matchers@file:_backend/packages/pact-matchers
+
+      - name: Run pact consumer tests (Vitest)
+        env:
+          PACT_OUTPUT_DIR: pacts
+        run: npm run test:pact
+
+      - name: Verify pact files generated
+        run: |
+          if ! find pacts -name '*.json' -print -quit | grep -q .; then
+            echo "::error::No pact JSON files generated."
+            exit 1
+          fi
+          echo "Generated pact files:"
+          find pacts -name '*.json' -print
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: drivemate-admin-pacts
+          path: pacts/
+          retention-days: 7
+
+  trigger-provider-verify:
+    name: Trigger provider verification
+    needs: generate-pacts
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Dispatch to backend contract-tests workflow
+        env:
+          GH_TOKEN: ${{ secrets.BACKEND_DISPATCH_TOKEN }}
+        run: |
+          gh workflow run contract-tests.yml \
+            --repo "${{ vars.BACKEND_REPO || 'org/luyen-thi-lai-xe-microservices' }}" \
+            --field pact_artifact_repo="${{ github.repository }}" \
+            --field pact_artifact_run_id="${{ github.run_id }}" \
+            --field pact_artifact_name="drivemate-admin-pacts" \
+            --field pact_consumer_commit_sha="${{ github.event.pull_request.head.sha || github.sha }}"
