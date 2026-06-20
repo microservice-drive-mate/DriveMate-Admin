@@ -22,7 +22,8 @@ export interface Notification {
 }
 
 export interface SendAcademicWarningPayload {
-	studentIds: string[]
+	studentId?: string
+	studentIds?: string[]
 	reason: string
 	severity: AcademicWarningSeverity
 	message: string
