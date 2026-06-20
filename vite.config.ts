@@ -32,6 +32,7 @@ export default defineConfig(({ mode }) => {
 		test: {
 			globals: true,
 			environment: "jsdom",
+			exclude: ["src/pact/**", "**/node_modules/**", "**/dist/**"],
 			setupFiles: "./src/test/setup.ts",
 		},
 	}
