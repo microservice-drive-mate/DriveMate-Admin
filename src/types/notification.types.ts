@@ -30,6 +30,13 @@ export interface SendAcademicWarningPayload {
 	deliveryChannels?: NotificationType[]
 }
 
+export interface SendAcademicWarningResponse {
+	status: string
+	accepted: number
+	studentIds: string[]
+	message: string
+}
+
 export interface NotificationListParams {
 	page?: number
 	size?: number

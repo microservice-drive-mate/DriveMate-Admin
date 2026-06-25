@@ -262,7 +262,7 @@ export default function StudentDetailPage() {
 					{analytics && (
 						<div
 							className="card-surface student-detail__chart-card"
-							style={{ marginBottom: 16 }}
+							style={{ marginBottom: 10 }}
 						>
 							<h2>Tiến Độ Học Tập</h2>
 							<div
@@ -359,7 +359,7 @@ export default function StudentDetailPage() {
 					)}
 					<div
 						className="card-surface student-detail__chart-card"
-						style={{ marginBottom: 16 }}
+						style={{ marginBottom: 10 }}
 					>
 						<h2>Khóa Học Đã Đăng Ký</h2>
 						{enrollmentsQuery.loading ? (

@@ -3,6 +3,7 @@ import type {
 	Notification,
 	NotificationListParams,
 	SendAcademicWarningPayload,
+	SendAcademicWarningResponse,
 } from "@/types/notification.types"
 import { apiService } from "@/lib"
 import { withErrorHandling } from "@/utils"
@@ -10,7 +11,7 @@ import { withErrorHandling } from "@/utils"
 export const notificationService = {
 	sendAcademicWarning: withErrorHandling(
 		(payload: SendAcademicWarningPayload) =>
-			apiService.post<ApiResponse<Notification>>(
+			apiService.post<ApiResponse<SendAcademicWarningResponse>>(
 				"/admin/academic-warnings",
 				payload,
 			),

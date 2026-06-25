@@ -13,6 +13,7 @@ interface Props {
 	onChangeRole: (user: IdentityUser) => void
 	onDelete: (user: IdentityUser) => void
 	onResetPassword: (user: IdentityUser) => void
+	onViewDashboard: (user: IdentityUser) => void
 }
 
 export default function UserTable({
@@ -24,6 +25,7 @@ export default function UserTable({
 	onChangeRole,
 	onDelete,
 	onResetPassword,
+	onViewDashboard,
 }: Props) {
 	if (users.length === 0) {
 		return (
@@ -127,6 +129,18 @@ export default function UserTable({
 										>
 											◆
 										</button>
+										{user.role === "INSTRUCTOR" && (
+											<button
+												className="action-btn action-btn--dashboard"
+												title="Xem dashboard giảng viên"
+												disabled={disabled}
+												onClick={() =>
+													onViewDashboard(user)
+												}
+											>
+												📊
+											</button>
+										)}
 										<button
 											className="action-btn action-btn--reset-password"
 											title="Đặt lại mật khẩu"
