@@ -6,13 +6,11 @@ import type {
 	WeeklyTeachingData,
 	TopicScore,
 	ClassProgress,
-	TodaySession,
 } from "@/types"
 import { InstructorHeader } from "./InstructorHeader"
 import { StatCardsSection } from "./StatCardsSection"
 import { ChartsSection } from "./ChartsSection"
 import { ClassProgressSection } from "./ClassProgressSection"
-import { TodayScheduleSection } from "./TodayScheduleSection"
 
 function toStatCards(
 	summary: InstructorDashboard["summary"],
@@ -55,13 +53,26 @@ function toWeeklyData(
 	}))
 }
 
+// Tên topic chưa resolve được trả về dạng ID (hex + dấu gạch, đủ dài).
+// Mẫu này không bao giờ khớp tên topic tiếng Việt thật (có khoảng trắng/dấu).
+const UUID_RE = /^[0-9a-f-]{30,}$/i
+
 function toTopicScores(
 	avgs: InstructorDashboard["topicAverages"],
 ): TopicScore[] {
-	return avgs.map((t) => ({
-		topic: t.topicName,
-		score: Math.round(t.averageScore),
-	}))
+	// Backend đôi khi không resolve được tên topic (orphan) và trả về ID.
+	// Thay bằng nhãn chung để không lòi ID ra UI; đánh số khi có nhiều hơn một.
+	const unknownTotal = avgs.filter((t) => UUID_RE.test(t.topicName)).length
+	let unknownIdx = 0
+	return avgs.map((t) => {
+		let topic = t.topicName
+		if (UUID_RE.test(t.topicName)) {
+			unknownIdx += 1
+			topic =
+				unknownTotal > 1 ? `Chủ đề khác ${unknownIdx}` : "Chủ đề khác"
+		}
+		return { topic, score: Math.round(t.averageScore) }
+	})
 }
 
 function toClassProgress(
@@ -76,21 +87,13 @@ function toClassProgress(
 		students: (c.students ?? []).map((s) => ({
 			id: s.studentId,
 			name: s.fullName,
+			email: s.email,
+			licenseTier: s.licenseTier,
 			progress: Math.round(s.progress),
 			status: ENROLLMENT_STATUS_LABELS[s.status],
+			enrolledAt: s.enrolledAt,
+			completedAt: s.completedAt,
 		})),
-	}))
-}
-
-function toTodaySessions(
-	schedule: InstructorDashboard["todaySchedule"],
-): TodaySession[] {
-	return schedule.map((s) => ({
-		id: s.scheduleId,
-		timeRange: `${s.startTime}–${s.endTime}`,
-		className: s.title,
-		room: s.room,
-		studentCount: s.studentCount,
 	}))
 }
 
@@ -112,9 +115,6 @@ export function InstructorDashboardView({
 				topicScores={toTopicScores(data.topicAverages)}
 			/>
 			<ClassProgressSection classes={toClassProgress(data.classProgress)} />
-			<TodayScheduleSection
-				sessions={toTodaySessions(data.todaySchedule)}
-			/>
 		</>
 	)
 }

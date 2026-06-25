@@ -136,8 +136,12 @@ export interface TopicScore {
 export interface ClassProgressStudent {
 	id: string
 	name: string
+	email: string
+	licenseTier: string | null
 	progress: number
 	status: string
+	enrolledAt: string
+	completedAt: string | null
 }
 
 export interface ClassProgress {
@@ -147,12 +151,4 @@ export interface ClassProgress {
 	total: number
 	percent: number
 	students: ClassProgressStudent[]
-}
-
-export interface TodaySession {
-	id: string
-	timeRange: string
-	className: string
-	room: string
-	studentCount: number
 }
