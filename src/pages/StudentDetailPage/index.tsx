@@ -240,15 +240,6 @@ export default function StudentDetailPage() {
 					<div className="student-detail__divider" />
 					<div className="student-detail__label">Địa chỉ</div>
 					<div>{student.address ?? "—"}</div>
-					<div className="student-detail__divider" />
-					<div className="student-detail__label">Ngày nhập học</div>
-					<div>
-						{student.enrolledAt
-							? new Date(student.enrolledAt).toLocaleDateString(
-									"vi-VN",
-								)
-							: "—"}
-					</div>
 					{student.notes && (
 						<>
 							<div className="student-detail__divider" />
@@ -370,6 +361,16 @@ export default function StudentDetailPage() {
 								}}
 							>
 								Đang tải...
+							</p>
+						) : enrollmentsQuery.error ? (
+							<p
+								style={{
+									color: "#f87171",
+									padding: "16px 0",
+								}}
+							>
+								Không tải được danh sách khóa học:{" "}
+								{enrollmentsQuery.error}
 							</p>
 						) : (
 							<EnrollmentsTable enrollments={enrollments} />
