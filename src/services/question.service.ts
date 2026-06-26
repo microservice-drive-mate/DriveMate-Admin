@@ -21,7 +21,10 @@ interface TopicListParams {
 	parentId?: string
 }
 
-interface QuestionListParams extends Partial<QuestionFilters> {
+interface QuestionListParams extends Omit<
+	Partial<QuestionFilters>,
+	"criticalStatus"
+> {
 	page?: number
 	size?: number
 	isActive?: boolean

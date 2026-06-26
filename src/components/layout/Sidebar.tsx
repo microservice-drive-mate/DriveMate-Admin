@@ -1,22 +1,69 @@
 import { NavLink, useNavigate } from "react-router-dom"
+import type { UserRole } from "../../types/identity.types"
 import { useAuthStore } from "../../store/authStore"
 import { SidebarIcon, type SidebarIconId } from "./SidebarIcon"
 import "./Sidebar.css"
 
-const NAV_ITEMS: Array<{ label: string; path: string; icon: SidebarIconId }> = [
-	{ label: "Dashboard Tổng Quan", path: "/dashboard", icon: "dashboard" },
+const NAV_ITEMS: Array<{
+	label: string
+	path: string
+	icon: SidebarIconId
+	roles: UserRole[]
+}> = [
+	{
+		label: "Dashboard Tổng Quan",
+		path: "/dashboard",
+		icon: "dashboard",
+		roles: ["ADMIN", "CENTER_MANAGER"],
+	},
 	{
 		label: "Dashboard Giảng Viên",
 		path: "/dashboard/giang-vien",
 		icon: "user",
+		roles: ["INSTRUCTOR"],
 	},
-	{ label: "Quản Lý Người Dùng", path: "/users", icon: "users" },
-	{ label: "Quản Lý Học Viên", path: "/students", icon: "graduation" },
-	{ label: "Quản Lý Khóa Học", path: "/courses", icon: "book" },
-	{ label: "Ngân Hàng Câu Hỏi", path: "/questions", icon: "document" },
-	{ label: "Cấu Hình Đề Thi", path: "/exam-config", icon: "settings" },
-	{ label: "Audit Logs", path: "/audit-logs", icon: "shield" },
-	{ label: "System Health", path: "/system-health", icon: "pulse" },
+	{
+		label: "Quản Lý Người Dùng",
+		path: "/users",
+		icon: "users",
+		roles: ["ADMIN", "CENTER_MANAGER"],
+	},
+	{
+		label: "Quản Lý Học Viên",
+		path: "/students",
+		icon: "graduation",
+		roles: ["ADMIN", "CENTER_MANAGER"],
+	},
+	{
+		label: "Quản Lý Khóa Học",
+		path: "/courses",
+		icon: "book",
+		roles: ["ADMIN", "CENTER_MANAGER", "INSTRUCTOR"],
+	},
+	{
+		label: "Ngân Hàng Câu Hỏi",
+		path: "/questions",
+		icon: "document",
+		roles: ["ADMIN", "CENTER_MANAGER"],
+	},
+	{
+		label: "Cấu Hình Đề Thi",
+		path: "/exam-config",
+		icon: "settings",
+		roles: ["ADMIN", "CENTER_MANAGER"],
+	},
+	{
+		label: "Audit Logs",
+		path: "/audit-logs",
+		icon: "shield",
+		roles: ["ADMIN", "CENTER_MANAGER"],
+	},
+	{
+		label: "System Health",
+		path: "/system-health",
+		icon: "pulse",
+		roles: ["ADMIN"],
+	},
 ]
 
 interface SidebarProps {
@@ -26,6 +73,7 @@ interface SidebarProps {
 
 export function Sidebar({ collapsed, onToggle }: SidebarProps) {
 	const logout = useAuthStore((s) => s.logout)
+	const user = useAuthStore((s) => s.user)
 	const navigate = useNavigate()
 
 	const handleLogout = () => {
@@ -69,7 +117,9 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
 			</div>
 
 			<nav className="sidebar__nav">
-				{NAV_ITEMS.map((item) => (
+				{NAV_ITEMS.filter(
+					(item) => user?.role && item.roles.includes(user.role),
+				).map((item) => (
 					<NavLink
 						key={item.path}
 						to={item.path}

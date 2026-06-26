@@ -2,7 +2,7 @@
 	color: #f0f0f0;
 	display: flex;
 	flex-direction: column;
-	gap: 18px;
+	gap: 10px;
 }
 
 .student-detail__topbar {
@@ -72,7 +72,7 @@
 .student-detail__grid {
 	display: grid;
 	grid-template-columns: 300px minmax(0, 1fr);
-	gap: 18px;
+	gap: 10px;
 }
 
 .card-surface {
@@ -164,7 +164,7 @@
 .student-detail__content {
 	display: flex;
 	flex-direction: column;
-	gap: 18px;
+	gap: 10px;
 }
 
 .student-detail__stats {

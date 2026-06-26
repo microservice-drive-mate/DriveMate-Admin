@@ -197,6 +197,9 @@ export default function UserManagementPage() {
 					onChangeRole={setRoleUser}
 					onDelete={handleDelete}
 					onResetPassword={setResetPasswordUser}
+					onViewDashboard={(user) =>
+						navigate(`/users/${user.userId}/instructor-dashboard`)
+					}
 				/>
 			)}
 

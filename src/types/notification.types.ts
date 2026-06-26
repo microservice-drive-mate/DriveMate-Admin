@@ -22,11 +22,19 @@ export interface Notification {
 }
 
 export interface SendAcademicWarningPayload {
-	studentIds: string[]
+	studentId?: string
+	studentIds?: string[]
 	reason: string
 	severity: AcademicWarningSeverity
 	message: string
 	deliveryChannels?: NotificationType[]
+}
+
+export interface SendAcademicWarningResponse {
+	status: string
+	accepted: number
+	studentIds: string[]
+	message: string
 }
 
 export interface NotificationListParams {

@@ -2,12 +2,11 @@ import { useState } from "react"
 import { notificationService } from "@/services"
 import type { AcademicWarningSeverity } from "@/types/notification.types"
 import { SEVERITY_LABELS } from "@/types/notification.types"
-import type { Student } from "@/types/student.types"
 import { STUDENT_ALERT_TEMPLATES } from "@/types/student.types"
 import { Modal } from "./Modal"
 
 interface AlertModalProps {
-	student: Student
+	student: { id: string }
 	onClose: () => void
 	onToast: (message: string, type: "success" | "error") => void
 }
