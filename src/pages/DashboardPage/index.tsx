@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react"
+import type { ReactNode } from "react"
+import { Users, BookOpen, GraduationCap, FileCheck } from "lucide-react"
 import { analyticsService } from "@/services"
 import type { AdminDashboard, DashboardCard } from "@/types/analytics.types"
 import type { AdminStatCard } from "../../types"
@@ -11,14 +13,26 @@ const PIE_COLORS = ["#f59e0b", "#2563eb", "#10b981", "#8b5cf6", "#ef4444"]
 
 const CARD_CONFIG: Record<
 	DashboardCard["key"],
-	{ title: string; icon: string; iconBg: string }
+	{ title: string; icon: ReactNode; iconBg: string }
 > = {
-	students: { title: "Tổng Học Viên", icon: "👥", iconBg: "#f97316" },
-	courses: { title: "Tổng Khóa Học", icon: "📚", iconBg: "#10b981" },
-	instructors: { title: "Giảng Viên", icon: "👤", iconBg: "#3b82f6" },
+	students: {
+		title: "Tổng Học Viên",
+		icon: <Users size={22} />,
+		iconBg: "#f97316",
+	},
+	courses: {
+		title: "Tổng Khóa Học",
+		icon: <BookOpen size={22} />,
+		iconBg: "#10b981",
+	},
+	instructors: {
+		title: "Giảng Viên",
+		icon: <GraduationCap size={22} />,
+		iconBg: "#3b82f6",
+	},
 	completedExams: {
 		title: "Bài Thi Hoàn Thành",
-		icon: "📄",
+		icon: <FileCheck size={22} />,
 		iconBg: "#8b5cf6",
 	},
 }

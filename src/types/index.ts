@@ -23,7 +23,7 @@ export type ButtonVariant = "primary" | "secondary"
 export interface AdminStatCard {
 	title: string
 	value: string
-	icon: string
+	icon: ReactNode
 	iconBg: string
 	change?: string
 	changeLabel?: string
@@ -118,7 +118,7 @@ export interface InstructorProfile {
 export interface InstructorStatCard {
 	title: string
 	value: string
-	icon: string
+	icon: ReactNode
 	iconBg: string
 }
 

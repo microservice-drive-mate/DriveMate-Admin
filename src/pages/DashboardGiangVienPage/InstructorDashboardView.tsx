@@ -1,3 +1,4 @@
+import { BookOpen, Users, TrendingUp, Clock } from "lucide-react"
 import type { InstructorDashboard } from "@/types/analytics.types"
 import { ENROLLMENT_STATUS_LABELS } from "@/types/course.types"
 import type {
@@ -19,25 +20,25 @@ function toStatCards(
 		{
 			title: "Lớp đang dạy",
 			value: String(summary.activeClassCount),
-			icon: "📖",
+			icon: <BookOpen size={22} />,
 			iconBg: "#f97316",
 		},
 		{
 			title: "Tổng học viên",
 			value: String(summary.totalStudents),
-			icon: "👤",
+			icon: <Users size={22} />,
 			iconBg: "#10b981",
 		},
 		{
 			title: "Tỷ lệ đậu",
 			value: `${Math.round(summary.passRate)}%`,
-			icon: "✅",
+			icon: <TrendingUp size={22} />,
 			iconBg: "#3b82f6",
 		},
 		{
 			title: "Giờ dạy tháng này",
 			value: `${summary.teachingHoursThisMonth}h`,
-			icon: "🕐",
+			icon: <Clock size={22} />,
 			iconBg: "#8b5cf6",
 		},
 	]
