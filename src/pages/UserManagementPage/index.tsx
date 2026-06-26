@@ -198,9 +198,7 @@ export default function UserManagementPage() {
 					onDelete={handleDelete}
 					onResetPassword={setResetPasswordUser}
 					onViewDashboard={(user) =>
-						navigate(
-							`/users/${user.userId}/instructor-dashboard`,
-						)
+						navigate(`/users/${user.userId}/instructor-dashboard`)
 					}
 				/>
 			)}

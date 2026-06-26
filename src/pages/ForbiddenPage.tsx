@@ -23,10 +23,19 @@ export function ForbiddenPage() {
 				color: "#1a1a1a",
 			}}
 		>
-			<div style={{ fontSize: 64, fontWeight: 700, color: "#e53e3e", lineHeight: 1 }}>
+			<div
+				style={{
+					fontSize: 64,
+					fontWeight: 700,
+					color: "#e53e3e",
+					lineHeight: 1,
+				}}
+			>
 				403
 			</div>
-			<div style={{ fontSize: 20, fontWeight: 600 }}>Bạn không có quyền truy cập trang này</div>
+			<div style={{ fontSize: 20, fontWeight: 600 }}>
+				Bạn không có quyền truy cập trang này
+			</div>
 			<div style={{ fontSize: 14, color: "#666" }}>
 				Tài khoản của bạn không được phép xem nội dung này.
 			</div>

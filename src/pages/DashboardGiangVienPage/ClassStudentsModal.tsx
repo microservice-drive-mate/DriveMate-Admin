@@ -185,7 +185,12 @@ function StudentDetailPanel({ student }: StudentDetailPanelProps) {
 			<div className="card-surface student-detail__chart-card">
 				<h2>Tiến Độ Học Tập</h2>
 				{analyticsQuery.loading ? (
-					<p style={{ color: "rgba(255,255,255,0.4)", padding: "16px 0" }}>
+					<p
+						style={{
+							color: "rgba(255,255,255,0.4)",
+							padding: "16px 0",
+						}}
+					>
 						Đang tải...
 					</p>
 				) : analytics ? (
@@ -279,7 +284,12 @@ function StudentDetailPanel({ student }: StudentDetailPanelProps) {
 						)}
 					</>
 				) : (
-					<p style={{ color: "rgba(255,255,255,0.4)", padding: "16px 0" }}>
+					<p
+						style={{
+							color: "rgba(255,255,255,0.4)",
+							padding: "16px 0",
+						}}
+					>
 						Chưa có dữ liệu tiến độ.
 					</p>
 				)}
@@ -288,7 +298,12 @@ function StudentDetailPanel({ student }: StudentDetailPanelProps) {
 			<div className="card-surface student-detail__chart-card">
 				<h2>Lịch Sử Thi</h2>
 				{examSessionsQuery.loading ? (
-					<p style={{ color: "rgba(255,255,255,0.4)", padding: "16px 0" }}>
+					<p
+						style={{
+							color: "rgba(255,255,255,0.4)",
+							padding: "16px 0",
+						}}
+					>
 						Đang tải...
 					</p>
 				) : (

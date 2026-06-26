@@ -12,10 +12,15 @@ export const ROUTE_PERMISSIONS: Record<string, UserRole[]> = {
 	"/system-health": ["ADMIN"],
 }
 
-export function hasRouteAccess(role: UserRole | undefined, path: string): boolean {
+export function hasRouteAccess(
+	role: UserRole | undefined,
+	path: string,
+): boolean {
 	if (!role) return false
 
-	for (const [routePrefix, allowedRoles] of Object.entries(ROUTE_PERMISSIONS)) {
+	for (const [routePrefix, allowedRoles] of Object.entries(
+		ROUTE_PERMISSIONS,
+	)) {
 		if (path === routePrefix || path.startsWith(routePrefix + "/")) {
 			return allowedRoles.includes(role)
 		}

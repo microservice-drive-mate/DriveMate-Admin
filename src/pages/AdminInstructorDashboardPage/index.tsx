@@ -22,10 +22,7 @@ export default function AdminInstructorDashboardPage() {
 		initialData: EMPTY_DASHBOARD,
 	})
 
-	const loadProfile = useCallback(
-		() => userService.getById(userId),
-		[userId],
-	)
+	const loadProfile = useCallback(() => userService.getById(userId), [userId])
 	const { data: profile } = useAsyncData<UserProfile | null>(loadProfile, {
 		initialData: null,
 	})

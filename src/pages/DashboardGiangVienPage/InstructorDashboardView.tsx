@@ -114,7 +114,9 @@ export function InstructorDashboardView({
 				weeklyData={toWeeklyData(data.weeklyTeachingTrend)}
 				topicScores={toTopicScores(data.topicAverages)}
 			/>
-			<ClassProgressSection classes={toClassProgress(data.classProgress)} />
+			<ClassProgressSection
+				classes={toClassProgress(data.classProgress)}
+			/>
 		</>
 	)
 }
