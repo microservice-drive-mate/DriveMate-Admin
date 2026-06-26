@@ -1,10 +1,11 @@
+import type { ReactNode } from "react"
 import "./StatCard.css"
 import type { StatCardVariant, ChangeType } from "../../types"
 
 interface StatCardProps {
 	title: string
 	value: string
-	icon: string
+	icon: ReactNode
 	iconBg: string
 	variant?: StatCardVariant
 	change?: string
