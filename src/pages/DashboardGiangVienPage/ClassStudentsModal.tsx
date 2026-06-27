@@ -4,6 +4,7 @@ import { useAsyncData } from "@/hooks/useAsyncData"
 import type { ProgressDashboard } from "@/types/analytics.types"
 import type { AdminExamSession } from "@/types/exam-session.types"
 import type { ClassProgress, ClassProgressStudent } from "@/types"
+import { filterResolvedWeakTopics } from "@/utils/topics"
 import Toast from "../../components/ui/Toast"
 import { AlertModal } from "../StudentDetailPage/components/AlertModal"
 import { ExamSessionTable } from "../StudentDetailPage/components/ExamSessionTable"
@@ -250,38 +251,46 @@ function StudentDetailPanel({ student }: StudentDetailPanelProps) {
 								</div>
 							))}
 						</div>
-						{analytics.weakTopics.length > 0 && (
-							<div style={{ marginTop: 14 }}>
-								<div
-									style={{
-										fontSize: 12,
-										color: "rgba(255,255,255,0.45)",
-										marginBottom: 6,
-									}}
-								>
-									Topic yếu
-								</div>
-								{analytics.weakTopics.map((t) => (
+						{(() => {
+							const weakTopics = filterResolvedWeakTopics(
+								analytics.weakTopics,
+							)
+							if (weakTopics.length === 0) return null
+							return (
+								<div style={{ marginTop: 14 }}>
 									<div
-										key={t.topicId}
 										style={{
-											display: "flex",
-											justifyContent: "space-between",
-											fontSize: 13,
-											padding: "4px 0",
-											borderTop:
-												"1px solid rgba(255,255,255,0.06)",
+											fontSize: 12,
+											color: "rgba(255,255,255,0.45)",
+											marginBottom: 6,
 										}}
 									>
-										<span>{t.topicName}</span>
-										<span style={{ color: "#f87171" }}>
-											{Math.round(t.accuracyRate * 100)}%
-											chính xác
-										</span>
+										Topic yếu
 									</div>
-								))}
-							</div>
-						)}
+									{weakTopics.map((t) => (
+										<div
+											key={t.topicId}
+											style={{
+												display: "flex",
+												justifyContent: "space-between",
+												fontSize: 13,
+												padding: "4px 0",
+												borderTop:
+													"1px solid rgba(255,255,255,0.06)",
+											}}
+										>
+											<span>{t.topicName}</span>
+											<span style={{ color: "#f87171" }}>
+												{Math.round(
+													t.accuracyRate * 100,
+												)}
+												% chính xác
+											</span>
+										</div>
+									))}
+								</div>
+							)
+						})()}
 					</>
 				) : (
 					<p
